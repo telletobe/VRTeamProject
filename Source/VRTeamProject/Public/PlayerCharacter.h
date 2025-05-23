@@ -1,0 +1,68 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "GameFramework/Character.h"
+#include <InputMappingContext.h>
+#include <EnhancedInputComponent.h>
+#include <EnhancedInputSubsystems.h>
+#include "GameFramework/PlayerController.h"
+#include "Kismet/GameplayStatics.h"
+#include "Engine/TargetPoint.h"
+#include "PlayerCharacter.generated.h"
+
+UCLASS()
+class VRTEAMPROJECT_API APlayerCharacter : public ACharacter
+{
+	GENERATED_BODY()
+
+public:
+	// Sets default values for this character's properties
+	APlayerCharacter();
+	void SetHp(float PlayerHp);
+	void SetAtk(float PlayerAtk);
+	void SetDef(float PlayerDef);
+	void SetExp(float PlayerExp);
+
+	float GetHp() const { return Hp; }
+	float GetAtk() const { return Atk; }
+	float GetDef() const { return Def; }
+	float GetExp() const { return Exp; }
+
+	void MoveTargetPoint(AActor* TargetPoint);
+private:
+	void Move(const FInputActionValue& Value);
+	void Look(const FInputActionValue& Value);
+protected:
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
+
+public:	
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
+
+	// Called to bind functionality to input
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+private:
+	UPROPERTY(EditAnywhere)
+	float Hp;
+
+	UPROPERTY(EditAnywhere)
+	float Atk;
+
+	UPROPERTY(EditAnywhere)
+	float Def;
+
+	float Exp;
+	bool bIsArrived;
+	
+	TObjectPtr<UInputMappingContext> IMC_InputMappingContext;
+	TObjectPtr<UInputAction> IA_Move;
+	TObjectPtr<UInputAction> IA_Look;
+	TObjectPtr<APlayerController> PlayerController;
+
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<AActor> EndPoint;
+};
