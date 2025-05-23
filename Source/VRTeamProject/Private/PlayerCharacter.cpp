@@ -62,11 +62,18 @@ void APlayerCharacter::BeginPlay()
 
 	for (auto PlayerPoint : FoundEndPoint)
 	{
-		EndPoint = Cast<ATargetPoint>(PlayerPoint);
-		if (!EndPoint)
+		if (Cast<ATargetPoint>(PlayerPoint))
 		{
-			EndPoint->ActorHasTag(TEXT("PlayerEndPoint"));
+			if (!EndPoint)
+			{
+				if (PlayerPoint->ActorHasTag(TEXT("PlayerEndPoint")))
+				{
+					EndPoint = PlayerPoint;
+				}
+
+			}
 		}
+	
 	}
 
 
@@ -100,7 +107,7 @@ void APlayerCharacter::MoveTargetPoint(AActor* TargetPoint)
 {
 	if (!TargetPoint)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("TargetPoint Doesn't exist!"));
+		//UE_LOG(LogTemp, Warning, TEXT("Playercharacter.cpp : TargetPoint Doesn't exist!"));
 		return;
 	}
 
