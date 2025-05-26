@@ -15,6 +15,7 @@ APlayerCharacter::APlayerCharacter()
 	static ConstructorHelpers::FObjectFinder<UInputMappingContext> IMCObject(TEXT("'/Game/Map/System/Input/IMC_InputMappingContext.IMC_InputMappingContext'"));
 	static ConstructorHelpers::FObjectFinder<UInputAction> MoveObject(TEXT("'/Game/Map/System/Input/IA_Move.IA_Move'"));
 	static ConstructorHelpers::FObjectFinder<UInputAction> LookObject(TEXT("'/Game/Map/System/Input/IA_Look.IA_Look'"));
+	static ConstructorHelpers::FObjectFinder<UInputAction> AttackObject(TEXT("'/Game/Map/System/Input/IA_Attack.IA_Attack'"));
 
 	if (IMCObject.Succeeded())
 	{
@@ -29,6 +30,11 @@ APlayerCharacter::APlayerCharacter()
 	if (LookObject.Succeeded())
 	{
 		IA_Look = LookObject.Object;
+	}
+
+	if (AttackObject.Succeeded())
+	{
+		IA_Attack = AttackObject.Object;
 	}
 
 	bIsArrived = false;
@@ -72,11 +78,23 @@ void APlayerCharacter::BeginPlay()
 				}
 
 			}
-		}
-	
+		}	
 	}
 
+	if (!Weapon)
+	{
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.Owner = this;
+		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
+		APlayerWeapon* NewWeapon = GetWorld()->SpawnActor<APlayerWeapon>(APlayerWeapon::StaticClass(), FVector(0), FRotator(0),SpawnParams);
+		if (IsValid(NewWeapon))
+		{
+			Weapon = NewWeapon;
+			Weapon->AttachToActor(this,FAttachmentTransformRules::KeepRelativeTransform);
+		}
+
+	}
 }
 
 // Called every frame
@@ -99,6 +117,7 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	{
 		EnhancedInputComponent->BindAction(IA_Move, ETriggerEvent::Triggered, this, &APlayerCharacter::Move);
 		EnhancedInputComponent->BindAction(IA_Look, ETriggerEvent::Triggered, this, &APlayerCharacter::Look);
+		EnhancedInputComponent->BindAction(IA_Attack, ETriggerEvent::Triggered, this, &APlayerCharacter::Attack);
 	}
 
 }
@@ -158,6 +177,14 @@ void APlayerCharacter::Look(const FInputActionValue& Value)
 		// add yaw and pitch input to controller
 		AddControllerYawInput((LookAxisVector.X)*-1);
 		AddControllerPitchInput(LookAxisVector.Y);
+	}
+}
+
+void APlayerCharacter::Attack(const FInputActionValue& Value)
+{
+	if (Weapon)
+	{
+		Weapon->Fire(Atk);
 	}
 }
 

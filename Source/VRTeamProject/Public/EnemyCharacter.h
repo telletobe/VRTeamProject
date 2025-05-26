@@ -50,17 +50,17 @@ public:
 
 private:
 	UPROPERTY()
-	AAIController* AIController;
+	TObjectPtr<AAIController> AIController;
 
 	//Invoker setting
 	UPROPERTY(EditAnywhere, Category = Navigation, meta = (AllowPrivateAccess = "true"))
-	UNavigationInvokerComponent* NavInvoker;
+	TObjectPtr<UNavigationInvokerComponent> NavInvoker;
 
 	UPROPERTY(EditAnywhere, Category = "AI MoveMent")
-	AActor* Target;
+	TObjectPtr<AActor> Target;
 
 	UPROPERTY(EditAnywhere, Category = "AI MoveMent")
-	AActor* Target2;
+	TObjectPtr<AActor> Target2;
 
 	bool bIsSucceeded;
 	bool bIsMoving;

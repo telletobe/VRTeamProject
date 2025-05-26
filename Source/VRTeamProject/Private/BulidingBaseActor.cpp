@@ -49,7 +49,6 @@ void ABulidingBaseActor::MovetoTarget(ATargetPoint* End,float DeltaTime)
 	float Distance = FVector::Dist2D(GetActorLocation(), EndPoint->GetActorLocation());
 	if (Distance < 200.0f)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Arrived Target!"));
 		bIsArrive = true;
 		return;
 	}

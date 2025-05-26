@@ -46,6 +46,7 @@ protected:
 	virtual void Tick(float DeltaTime) override;
 
 private:
+	UPROPERTY()
 	TObjectPtr<UAISenseConfig_Sight> SightConfig;
 
 	EAIState CurrentState = EAIState::Idle;

@@ -10,7 +10,9 @@
 #include "GameFramework/PlayerController.h"
 #include "Kismet/GameplayStatics.h"
 #include "Engine/TargetPoint.h"
+#include <PlayerWeapon.h>
 #include "PlayerCharacter.generated.h"
+
 
 UCLASS()
 class VRTEAMPROJECT_API APlayerCharacter : public ACharacter
@@ -34,6 +36,7 @@ public:
 private:
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
+	void Attack(const FInputActionValue& Value);
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -58,11 +61,25 @@ private:
 	float Exp;
 	bool bIsArrived;
 	
+	UPROPERTY()
 	TObjectPtr<UInputMappingContext> IMC_InputMappingContext;
+
+	UPROPERTY()
 	TObjectPtr<UInputAction> IA_Move;
+
+	UPROPERTY()
 	TObjectPtr<UInputAction> IA_Look;
+
+	UPROPERTY()
+	TObjectPtr<UInputAction> IA_Attack;
+
+	UPROPERTY()
 	TObjectPtr<APlayerController> PlayerController;
 
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<AActor> EndPoint;
+	
+	UPROPERTY(EditAnywhere, Category = "Weapon")
+	TObjectPtr<APlayerWeapon> Weapon;
+	
 };
