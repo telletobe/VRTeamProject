@@ -17,6 +17,8 @@ public:
 	// Sets default values for this actor's properties
 	APlayerBulletActor();
 	void BulletMove();
+	void SetDamage(float BulletDamage);
+	float GetDamage() { return Damage; }
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -35,4 +37,5 @@ private :
 
 	float BulletSpeed = 1500.0f;
 	float MoveInterval = 0.01f;
+	float Damage = 0.0f;
 };

@@ -43,6 +43,11 @@ void APlayerBulletActor::BulletMove()
 	SetActorLocation(NewLocation);
 }
 
+void APlayerBulletActor::SetDamage(float BulletDamage)
+{
+	Damage = BulletDamage;
+}
+
 
 
 

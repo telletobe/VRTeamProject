@@ -37,6 +37,7 @@ void APlayerWeapon::Fire(float Damage)
 
 	bIsFire = false;
 	APlayerBulletActor* NewBullet = GetWorld()->SpawnActor<APlayerBulletActor>(APlayerBulletActor::StaticClass(),GetActorLocation(), FRotator(0));
+	NewBullet->SetDamage(Damage);
 
 	GetWorld()->GetTimerManager().SetTimer(FireTimer,this,&APlayerWeapon::ChangeFireState,0.2f,false);
 
