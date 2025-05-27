@@ -2,7 +2,7 @@
 
 
 #include "EnemyCharacter.h"
-
+#include "Components/CapsuleComponent.h"
 
 
 AEnemyCharacter::AEnemyCharacter()
@@ -10,12 +10,16 @@ AEnemyCharacter::AEnemyCharacter()
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	SetHp(10.0f);
+	SetDef(1.0f);
+	SetAtk(1.0f);
+
 	NavInvoker = CreateDefaultSubobject<UNavigationInvokerComponent>(TEXT("NavInvoker"));
 
 
 	// NavInvoker 관련 생성,삭제 변수값 설정
-	NavGenerationRadius = 1000.0f;
-	NavRemovalRadius = 150.0f;
+	NavGenerationRadius = 2000.0f;
+	NavRemovalRadius = 500.0f;
 	NavInvoker->SetGenerationRadii(NavGenerationRadius, NavRemovalRadius);
 
 
@@ -25,6 +29,8 @@ AEnemyCharacter::AEnemyCharacter()
 	bIsSucceeded = false;
 	bIsMoving = false;
 
+	UCapsuleComponent* EnemyCollision = GetCapsuleComponent();
+	EnemyCollision->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 }
 
 // Called when the game starts or when spawned
@@ -33,7 +39,7 @@ void AEnemyCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	
-
+	/*
 	AIController = Cast<AAIController>(GetController());
 
 	if (AIController)
@@ -43,8 +49,9 @@ void AEnemyCharacter::BeginPlay()
 
 	FindTargetPoints();
 	StartMoving();
-
+	*/
 }
+
 
 // Called every frame
 void AEnemyCharacter::Tick(float DeltaTime)
@@ -60,6 +67,8 @@ void AEnemyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 
 }
 
+/*
+* 적 캐릭터가 패트롤 하는 코드
 void AEnemyCharacter::MoveToTarget()
 {
 	if (!AIController)
@@ -101,7 +110,9 @@ void AEnemyCharacter::MoveToTarget()
 	}
 
 }
+*/
 
+/*
 void AEnemyCharacter::OnMoveCompleted(FAIRequestID RequestID, EPathFollowingResult::Type Result)
 {
 	bIsMoving = false;
@@ -126,14 +137,18 @@ void AEnemyCharacter::OnMoveCompleted(FAIRequestID RequestID, EPathFollowingResu
 		GetWorldTimerManager().SetTimer(TimerHandle, this, &AEnemyCharacter::MoveToTarget, 1.0f, false);
 	}
 }
+*/
 
+/*
 void AEnemyCharacter::StartMoving()
 {
 	// 타겟 포인트를 찾고 이동 시작
 	FindTargetPoints();
 	MoveToTarget();
 }
+*/
 
+/*
 void AEnemyCharacter::FindTargetPoints()
 {
 	// 타겟 포인트가 설정되어 있지 않은 경우 자동으로 찾기
@@ -155,5 +170,20 @@ void AEnemyCharacter::FindTargetPoints()
 		}
 	}
 
+}
+*/
+void AEnemyCharacter::SetHp(float EnemyHp)
+{
+	Hp = EnemyHp;
+}
+
+void AEnemyCharacter::SetDef(float EnemyDef)
+{
+	Def = EnemyDef;
+}
+
+void AEnemyCharacter::SetAtk(float EnemyAtk)
+{
+	Atk = EnemyAtk;
 }
 

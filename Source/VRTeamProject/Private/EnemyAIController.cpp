@@ -63,7 +63,7 @@ void AEnemyAIController::Tick(float DeltaTime)
 
 			if (Distance <= ChaseRadius)
 			{
-				MoveToActor(TargetActor, 100.0f);
+				MoveToActor(TargetActor, 20.0f);
 
 
 #if WITH_EDITOR 

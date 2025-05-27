@@ -43,17 +43,14 @@ void ABulidingBaseActor::BeginPlay()
 void ABulidingBaseActor::MovetoTarget(ATargetPoint* End,float DeltaTime)
 {
 
-	FVector Direction = EndPoint->GetActorLocation() - GetActorLocation();
-	Direction.Normalize();
-
-	float Distance = FVector::Dist2D(GetActorLocation(), EndPoint->GetActorLocation());
+	float Distance = FVector::Dist2D(GetActorLocation(), EndPoint->GetActorLocation()); // 건물과 타겟포인트의 거리
 	if (Distance < 200.0f)
 	{
 		bIsArrive = true;
 		return;
 	}
-
-	FVector NewLocation = GetActorLocation() + MoveForce * DeltaTime;
+																	  // MoveForce 값에 따라 이동속도조절
+	FVector NewLocation = GetActorLocation() + MoveForce * DeltaTime; //DelataTime을 활용하여 자연스러운 움직임 처리
 	SetActorLocation(NewLocation);
 
 }

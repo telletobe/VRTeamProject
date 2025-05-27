@@ -37,7 +37,7 @@ private:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<APlayerBulletActor> WeaponBullet;
 
-	FTimerHandle FireTimer;
+
 
 	bool bIsFire = true;
 

@@ -28,12 +28,21 @@ public:
 	FORCEINLINE class UNavigationInvokerComponent* GetNavInvoker() const { return NavInvoker; }
 
 
+	/*
 	UFUNCTION()
 	void OnMoveCompleted(FAIRequestID RequestID, EPathFollowingResult::Type Result);
 
 	void MoveToTarget();
 	void StartMoving();
 	void FindTargetPoints();
+	*/
+	void SetHp(float EnemyHp);
+	void SetDef(float EnemyDef);
+	void SetAtk(float EnemyAtk);
+
+	float GetHp() { return Hp; }
+	float GetDef() { return Def; }
+	float GetAtk() { return Atk; }
 
 protected:
 	// Called when the game starts or when spawned
