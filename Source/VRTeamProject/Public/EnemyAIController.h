@@ -4,16 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "AIController.h"
-#include "Perception/AIPerceptionComponent.h"
-#include "Perception/AISenseConfig_sight.h"
-#include "Kismet/GamePlayStatics.h"
-#include "GameFramework/Character.h"
 #include "EnemyAIController.generated.h"
 
-/**
- * 
- */
-
+class UAISenseConfig_Sight;
 
 UENUM(BlueprintType)
 enum class EAIState : uint8
@@ -50,7 +43,6 @@ private:
 	TObjectPtr<UAISenseConfig_Sight> SightConfig;
 
 	EAIState CurrentState = EAIState::Idle;
-	FVector LastKnownLocation;
 
 	bool bIsChasing = false;
 

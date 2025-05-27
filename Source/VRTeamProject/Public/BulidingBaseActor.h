@@ -4,10 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include <Components/BoxComponent.h>
-#include <Engine/TargetPoint.h>
 #include "BulidingBaseActor.generated.h"
 
+class UBoxComponent;
+class ATargetPoint;
 
 UCLASS()
 class VRTEAMPROJECT_API ABulidingBaseActor : public AActor

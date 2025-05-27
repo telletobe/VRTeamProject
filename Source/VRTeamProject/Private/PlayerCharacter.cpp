@@ -3,7 +3,11 @@
 
 #include "PlayerCharacter.h"
 #include "NavigationSystem.h"
-#include <Blueprint/AIBlueprintHelperLibrary.h>
+#include "Engine/TargetPoint.h"
+#include "Kismet/GameplayStatics.h"
+#include <EnhancedInputComponent.h>
+#include <EnhancedInputSubsystems.h>
+#include <PlayerWeapon.h>
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()

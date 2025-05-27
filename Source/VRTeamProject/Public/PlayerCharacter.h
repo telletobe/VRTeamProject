@@ -5,14 +5,10 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include <InputMappingContext.h>
-#include <EnhancedInputComponent.h>
-#include <EnhancedInputSubsystems.h>
-#include "GameFramework/PlayerController.h"
-#include "Kismet/GameplayStatics.h"
-#include "Engine/TargetPoint.h"
-#include <PlayerWeapon.h>
 #include "PlayerCharacter.generated.h"
 
+class APlayerWeapon;
+class APlayerController;
 
 UCLASS()
 class VRTEAMPROJECT_API APlayerCharacter : public ACharacter

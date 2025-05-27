@@ -3,9 +3,9 @@
 
 #include "EnemyAIController.h"
 #include <EnemyCharacter.h>
-
-//패트롤을 하다가 체이싱 후, AI의 네비게이션에 플레이어가 존재해야지 패트롤을 다시 하는 버그가있음. 
-
+#include "Perception/AISenseConfig_sight.h"
+#include "Perception/AIPerceptionComponent.h"
+#include "Kismet/GamePlayStatics.h"
 
 // Sets default values
 AEnemyAIController::AEnemyAIController()
@@ -20,8 +20,6 @@ AEnemyAIController::AEnemyAIController()
 	SightConfig->DetectionByAffiliation.bDetectEnemies = true; 
 	SightConfig->DetectionByAffiliation.bDetectNeutrals = true;
 	SightConfig->DetectionByAffiliation.bDetectFriendlies = true;
-
-
 }
 
 // Called when the game starts or when spawned
@@ -35,7 +33,6 @@ void AEnemyAIController::BeginPlay()
 		GetPerceptionComponent()->SetDominantSense(SightConfig->GetSenseImplementation());
 		GetPerceptionComponent()->OnTargetPerceptionUpdated.AddDynamic(this, &AEnemyAIController::OnPerceptionUpdate);
 	}
-
 	
 	ACharacter* PlayerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
 	if (PlayerCharacter)
@@ -43,8 +40,6 @@ void AEnemyAIController::BeginPlay()
 		
 		TargetActor = PlayerCharacter;
 	}
-
-
 }
 
 // Called every frame
@@ -64,7 +59,6 @@ void AEnemyAIController::Tick(float DeltaTime)
 			if (Distance <= ChaseRadius)
 			{
 				MoveToActor(TargetActor, 20.0f);
-
 
 #if WITH_EDITOR 
 
@@ -91,7 +85,6 @@ void AEnemyAIController::Tick(float DeltaTime)
 
 
 }
-
 
 void AEnemyAIController::StartChasing(AActor* Target)
 {

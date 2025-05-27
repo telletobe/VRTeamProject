@@ -4,14 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "AIController.h"
-#include "Engine/TargetPoint.h"
-#include "Logging/LogMacros.h"
-#include "NavigationInvokerComponent.h"
-#include "Navigation/PathFollowingComponent.h"
-#include "kismet/GameplayStatics.h"
-#include "GameFramework/CharacterMovementComponent.h"
 #include "EnemyCharacter.generated.h"
+
+class AAIController;
+class UNavigationInvokerComponent;
 
 
 UCLASS()
@@ -27,15 +23,6 @@ public:
 	// NavInvoker Subobject return forcely
 	FORCEINLINE class UNavigationInvokerComponent* GetNavInvoker() const { return NavInvoker; }
 
-
-	/*
-	UFUNCTION()
-	void OnMoveCompleted(FAIRequestID RequestID, EPathFollowingResult::Type Result);
-
-	void MoveToTarget();
-	void StartMoving();
-	void FindTargetPoints();
-	*/
 	void SetHp(float EnemyHp);
 	void SetDef(float EnemyDef);
 	void SetAtk(float EnemyAtk);
@@ -55,8 +42,6 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-
-
 private:
 	UPROPERTY()
 	TObjectPtr<AAIController> AIController;
@@ -65,18 +50,8 @@ private:
 	UPROPERTY(EditAnywhere, Category = Navigation, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UNavigationInvokerComponent> NavInvoker;
 
-	UPROPERTY(EditAnywhere, Category = "AI MoveMent")
-	TObjectPtr<AActor> Target;
-
-	UPROPERTY(EditAnywhere, Category = "AI MoveMent")
-	TObjectPtr<AActor> Target2;
-
-	bool bIsSucceeded;
-	bool bIsMoving;
-
 	float NavGenerationRadius; // 동적으로 초록색 칸을 생성
 	float NavRemovalRadius; // 동적으로 초록색 칸을 제거
-	float AcceptanceRadius;
 
 	UPROPERTY(EditAnywhere)
 	float Hp;

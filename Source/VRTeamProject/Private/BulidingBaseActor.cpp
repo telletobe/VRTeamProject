@@ -2,6 +2,8 @@
 
 
 #include "BulidingBaseActor.h"
+#include <Components/BoxComponent.h>
+#include <Engine/TargetPoint.h>
 
 // Sets default values
 ABulidingBaseActor::ABulidingBaseActor()
