@@ -58,8 +58,12 @@ void AEnemyAIController::Tick(float DeltaTime)
 
 			if (Distance <= ChaseRadius)
 			{
-				MoveToActor(TargetActor, 20.0f);
+				/*플레이어의 안쪽으로 들어오기위한 식*/
+				FVector PlayerLocation = TargetActor->GetActorLocation();
+				FVector Dir = (PlayerLocation - ControlledPawn->GetActorLocation().GetSafeNormal());
+				FVector Destination = PlayerLocation - Dir * 50.0f;  // 플레이어 안쪽으로 50cm 들어감
 
+				MoveToLocation(TargetActor->GetActorLocation(), AcceptRadius);
 #if WITH_EDITOR 
 
 				DrawDebugLine(

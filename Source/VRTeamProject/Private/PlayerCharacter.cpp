@@ -8,6 +8,8 @@
 #include <EnhancedInputComponent.h>
 #include <EnhancedInputSubsystems.h>
 #include <PlayerWeapon.h>
+#include "Components/CapsuleComponent.h"
+#include <EnemyCharacter.h>
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -43,9 +45,12 @@ APlayerCharacter::APlayerCharacter()
 
 	bIsArrived = false;
 
-	SetHp(100.0f);
+	SetHp(10.0f);
 	SetAtk(5);
 	SetDef(1);
+
+	UCapsuleComponent* CharacterCollision = GetCapsuleComponent();
+	CharacterCollision->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 
 }
 
@@ -67,6 +72,22 @@ void APlayerCharacter::BeginPlay()
 		}
 	}
 
+	UCapsuleComponent* CharacterCollision = GetCapsuleComponent();
+	if (IsValid(CharacterCollision))
+	{
+		CharacterCollision->OnComponentHit.AddDynamic(this,&APlayerCharacter::OnComponentHit);
+		GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Orange, TEXT("PlayerCharater BeginOverlap Binding succed"));
+
+	} 
+	else 
+	{
+		GEngine->AddOnScreenDebugMessage(-1,3.0f,FColor::Orange,TEXT("PlayerCharater BeginOverlap Binding Fail"));
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////
+	/*
+	* 게임 시작 시, TargetPoint를 찾아서 플레이어에게 등록 해줌.
+	* 
 	TArray<AActor*> FoundEndPoint;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(),ATargetPoint::StaticClass(),FoundEndPoint);
 
@@ -84,12 +105,13 @@ void APlayerCharacter::BeginPlay()
 			}
 		}	
 	}
-
+	*/
+	//////////////////////////////////////////////////////////////////////////////////////
 	if (!Weapon)
 	{
 		FActorSpawnParameters SpawnParams;
 		SpawnParams.Owner = this;
-		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn; // 항상 스폰허용
 
 		APlayerWeapon* NewWeapon = GetWorld()->SpawnActor<APlayerWeapon>(APlayerWeapon::StaticClass(), FVector(0), FRotator(0),SpawnParams);
 		if (IsValid(NewWeapon))
@@ -101,13 +123,48 @@ void APlayerCharacter::BeginPlay()
 	}
 }
 
+void APlayerCharacter::OnComponentHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+{
+	// 1회성 충돌이므로, 체력의 감소는 플레이어에서 처리함.
+	AEnemyCharacter* Enemy = Cast<AEnemyCharacter>(OtherActor);
+	if (IsValid(Enemy))
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Emerald, TEXT("Enemy InComming!"));
+		float CurrentHp = this->GetHp();
+		float PlayerHp = CurrentHp - (Enemy->GetAtk() - this->GetDef());
+		GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Emerald, FString::Printf(TEXT("EnemyATk: %.1f"), Enemy->GetAtk()));
+		GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Emerald, FString::Printf(TEXT("PlayerHp: %.1f"),PlayerHp));
+		if (PlayerHp > 0)
+		{
+			SetHp(PlayerHp);
+		}
+		else
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Emerald, TEXT("Player Die!"));
+			Weapon->Destroy();
+			Destroy();
+		}
+
+		Enemy->Destroy();
+	}
+	else
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Emerald, TEXT("PlayerCharacter OnBeginOverLap : Fail To Cast!"));
+		return;
+	}
+}
+
 // Called every frame
 void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	////////////////////////////////////////////////////////////////
+	/*
+	설정된 TargetPoint가 존재할 경우 TargetPoint로 이동합니다. 
 	if(!bIsArrived) MoveTargetPoint(EndPoint);
-
+	*/
+	////////////////////////////////////////////////////////////////
 }
 
 // Called to bind functionality to input
@@ -126,6 +183,10 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 }
 
+//////////////////////////////////////////////////////////////////////////////////////
+/*
+* 플레이어 캐릭터에게 TargetPoint가 있다면 TargetPoint로 이동합니다.
+* 
 void APlayerCharacter::MoveTargetPoint(AActor* TargetPoint)
 {
 	if (!TargetPoint)
@@ -156,6 +217,9 @@ void APlayerCharacter::MoveTargetPoint(AActor* TargetPoint)
 	AddMovementInput(Direction, 1.0f,true);
 
 }
+*/
+
+//////////////////////////////////////////////////////////////////////////////////////////////
 
 void APlayerCharacter::Move(const FInputActionValue& Value)
 {
@@ -189,6 +253,11 @@ void APlayerCharacter::Attack(const FInputActionValue& Value)
 	if (Weapon)
 	{
 		Weapon->Fire(Atk);
+	} 
+	else
+	{
+		UE_LOG(LogTemp,Warning,TEXT("Player Weapon inValid"));
+		return;
 	}
 }
 

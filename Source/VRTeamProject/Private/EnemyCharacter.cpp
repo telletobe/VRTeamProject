@@ -13,7 +13,7 @@ AEnemyCharacter::AEnemyCharacter()
 	//기본 값 세팅
 	SetHp(10.0f);
 	SetDef(1.0f);
-	SetAtk(1.0f);
+	SetAtk(3.0f);
 
 	NavInvoker = CreateDefaultSubobject<UNavigationInvokerComponent>(TEXT("NavInvoker"));
 
@@ -25,6 +25,10 @@ AEnemyCharacter::AEnemyCharacter()
 
 	UCapsuleComponent* EnemyCollision = GetCapsuleComponent();
 	EnemyCollision->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+
+	USkeletalMeshComponent* EnemyMesh = GetMesh();
+	EnemyMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
 }
 
 // Called when the game starts or when spawned

@@ -58,6 +58,6 @@ private:
 	UPROPERTY(EditAnywhere, Category = "AI")
 	float ChaseRadius = 5000.f; //¦i´Â°Å¸®
 
-
+	float AcceptRadius = 0.0f;
 
 };

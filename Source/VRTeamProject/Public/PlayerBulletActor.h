@@ -18,7 +18,8 @@ public:
 	APlayerBulletActor();
 	void BulletMove();
 	void SetDamage(float BulletDamage);
-	float GetDamage() { return Damage; }
+	float GetDamage() const { return Damage; }
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

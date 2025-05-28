@@ -34,7 +34,7 @@ APlayerBulletActor::APlayerBulletActor()
 	BulletCollision->SetRelativeScale3D(FVector(0.25f));
 	BulletMesh->SetRelativeScale3D(FVector(0.25f));
 
-	//총알 메쉬의 충돌을 무시, 콜리전 컴포넌트는 설정되어있지 않음.
+	//총알 메쉬의 충돌을 무시
 	BulletMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	//총알 콜리전 충돌 활성화

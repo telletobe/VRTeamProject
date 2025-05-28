@@ -9,7 +9,6 @@
 class AAIController;
 class UNavigationInvokerComponent;
 
-
 UCLASS()
 class VRTEAMPROJECT_API AEnemyCharacter : public ACharacter
 {
@@ -27,9 +26,9 @@ public:
 	void SetDef(float EnemyDef);
 	void SetAtk(float EnemyAtk);
 
-	float GetHp() { return Hp; }
-	float GetDef() { return Def; }
-	float GetAtk() { return Atk; }
+	float GetHp() const { return Hp; }
+	float GetDef() const { return Def; }
+	float GetAtk() const { return Atk; }
 
 protected:
 	// Called when the game starts or when spawned

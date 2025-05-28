@@ -19,6 +19,7 @@ public:
 	APlayerWeapon();
 	void Fire(float Damage);
 	void ChangeFireState();
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -33,11 +34,6 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UStaticMeshComponent> WeaponMesh;
-
-	UPROPERTY(EditAnywhere)
-	TObjectPtr<APlayerBulletActor> WeaponBullet;
-
-
 
 	bool bIsFire = true;
 

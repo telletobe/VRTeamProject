@@ -27,6 +27,11 @@ ABulidingBaseActor::ABulidingBaseActor()
 
 }
 
+void ABulidingBaseActor::SetIsArrive(bool IsArrive)
+{
+	bIsArrive = IsArrive;
+}
+
 // Called when the game starts or when spawned
 void ABulidingBaseActor::BeginPlay()
 {
@@ -48,7 +53,7 @@ void ABulidingBaseActor::MovetoTarget(ATargetPoint* End,float DeltaTime)
 	float Distance = FVector::Dist2D(GetActorLocation(), EndPoint->GetActorLocation()); // 건물과 타겟포인트의 거리
 	if (Distance < 200.0f)
 	{
-		bIsArrive = true;
+		SetIsArrive(true);
 		return;
 	}
 																	  // MoveForce 값에 따라 이동속도조절
@@ -60,7 +65,7 @@ void ABulidingBaseActor::MovetoTarget(ATargetPoint* End,float DeltaTime)
 void ABulidingBaseActor::BackToStartPoint(FVector Location)
 {
 	this->SetActorLocation(Location);
-	bIsArrive = false;
+	SetIsArrive(false);
 }
 
 // Called every frame

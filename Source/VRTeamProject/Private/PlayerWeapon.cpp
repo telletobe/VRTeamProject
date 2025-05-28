@@ -33,7 +33,7 @@ void APlayerWeapon::Fire(float Damage)
 {
 	if (!bIsFire) return;
 
-	bIsFire = false;
+	ChangeFireState();
 
 
 	GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Black, TEXT("APlayerWeapon : Fire()"));
@@ -54,7 +54,7 @@ void APlayerWeapon::Fire(float Damage)
 
 void APlayerWeapon::ChangeFireState()
 {
-	bIsFire = true;
+	bIsFire = !bIsFire;
 }
 
 // Called when the game starts or when spawned

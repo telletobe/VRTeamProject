@@ -18,6 +18,7 @@ class VRTEAMPROJECT_API APlayerCharacter : public ACharacter
 public:
 	// Sets default values for this character's properties
 	APlayerCharacter();
+
 	void SetHp(float PlayerHp);
 	void SetAtk(float PlayerAtk);
 	void SetDef(float PlayerDef);
@@ -28,7 +29,10 @@ public:
 	float GetDef() const { return Def; }
 	float GetExp() const { return Exp; }
 
-	void MoveTargetPoint(AActor* TargetPoint);
+
+	///////////////////////////////////////////////////
+	// 미사용 코드
+	//void MoveTargetPoint(AActor* TargetPoint);
 private:
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
@@ -36,6 +40,9 @@ private:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	UFUNCTION()
+	virtual void OnComponentHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
 public:	
 	// Called every frame
@@ -54,7 +61,9 @@ private:
 	UPROPERTY(EditAnywhere)
 	float Def;
 
+	UPROPERTY(VisibleAnywhere)
 	float Exp;
+
 	bool bIsArrived;
 	
 	UPROPERTY()
