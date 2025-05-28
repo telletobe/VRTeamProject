@@ -64,21 +64,6 @@ void AEnemyAIController::Tick(float DeltaTime)
 				FVector Destination = PlayerLocation - Dir * 50.0f;  // 플레이어 안쪽으로 50cm 들어감
 
 				MoveToLocation(TargetActor->GetActorLocation(), AcceptRadius);
-#if WITH_EDITOR 
-
-				DrawDebugLine(
-					GetWorld(),
-					ControlledPawn->GetActorLocation(),
-					TargetActor->GetActorLocation(),
-					FColor::Red,
-					false,
-					-1.0f,
-					0,
-					2.0f
-				);
-#endif
-
-
 			}
 			else if (Distance > LoseInterestRadius)
 			{
