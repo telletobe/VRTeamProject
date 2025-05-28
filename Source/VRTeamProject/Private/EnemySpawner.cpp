@@ -48,7 +48,7 @@ void AEnemySpawner::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	GetWorld()->GetTimerManager().SetTimer(SpawnHandle,this,&AEnemySpawner::SpawnEnemy,0.7f,true);
+	GetWorld()->GetTimerManager().SetTimer(SpawnHandle,this,&AEnemySpawner::SpawnEnemy,SpawnDelay,true);
 
 }
 

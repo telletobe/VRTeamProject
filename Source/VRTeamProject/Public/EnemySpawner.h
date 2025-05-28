@@ -30,5 +30,9 @@ private :
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UBoxComponent> SpawnBox;
 
+	UPROPERTY(EditAnywhere)
+	float SpawnDelay = 1.0f;
+
+
 	FTimerHandle SpawnHandle;
 };
