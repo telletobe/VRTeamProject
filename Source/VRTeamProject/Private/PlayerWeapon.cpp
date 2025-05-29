@@ -45,6 +45,7 @@ void APlayerWeapon::Fire(float Damage)
 
 	/////////////////////////////////////////////////////////////////////////////////////////
 	APlayerBulletActor* NewBullet = GetWorld()->SpawnActor<APlayerBulletActor>(APlayerBulletActor::StaticClass(),GetActorLocation(), StartRotation);
+	NewBullet->SetOwner(this);
 	NewBullet->SetDamage(Damage);
 
 	//총알이 0.2초마다 발사될 수 있도록 타이머설정.

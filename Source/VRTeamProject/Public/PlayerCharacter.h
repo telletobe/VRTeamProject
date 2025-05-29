@@ -3,12 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameItem.h"
 #include "GameFramework/Character.h"
 #include <InputMappingContext.h>
 #include "PlayerCharacter.generated.h"
 
 class APlayerWeapon;
 class APlayerController;
+
 
 UCLASS()
 class VRTEAMPROJECT_API APlayerCharacter : public ACharacter
@@ -29,6 +31,7 @@ public:
 	float GetDef() const { return Def; }
 	float GetExp() const { return Exp; }
 
+	void ApplyEffectItem(EItemEffectData Data);
 
 	///////////////////////////////////////////////////
 	// 미사용 코드

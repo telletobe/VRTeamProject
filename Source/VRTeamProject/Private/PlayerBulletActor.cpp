@@ -4,6 +4,8 @@
 #include "PlayerBulletActor.h"
 #include "Components/SphereComponent.h"
 #include <EnemyCharacter.h>
+#include <GameItem.h>
+#include <Kismet/GameplayStatics.h>
 
 // Sets default values
 APlayerBulletActor::APlayerBulletActor()
@@ -88,9 +90,9 @@ void APlayerBulletActor::BeginPlay()
 
 void APlayerBulletActor::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	AEnemyCharacter* Enemy = Cast<AEnemyCharacter>(OtherActor);
 
-	if (IsValid(Enemy))
+
+	if (AEnemyCharacter* Enemy = Cast<AEnemyCharacter>(OtherActor))
 	{
 		GEngine->AddOnScreenDebugMessage(-1,3.0f,FColor::Blue,TEXT("BulletActor : OnBeginOverlap"));
 
@@ -112,10 +114,31 @@ void APlayerBulletActor::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent
 		}
 		Destroy();
 	}
-	else
+	
+	if (AGameItem* Item = Cast<AGameItem>(OtherActor))
 	{
-		return;
+		
+		UGameplayStatics::ApplyDamage(Item,GetDamage(),nullptr, GetOwner(),nullptr); // 총알의 데미지와 총알의오너(무기) 정보 넘겨줌
+
+		if (Item->GetHp() > 0)
+		{
+			float ItemHp = Item->GetHp() - GetDamage();
+			GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Blue, FString::Printf(TEXT("ItemHp : %.1f"), ItemHp));
+
+			if (ItemHp > 0)
+			{
+				Item->SetHp(ItemHp);
+			}
+			else
+			{
+				Item->Destroy();
+				GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Blue, TEXT("Item Destory!"));
+			}
+
+		}
+
 	}
+
 
 }
 
