@@ -5,6 +5,8 @@
 #include "Components/BoxComponent.h"
 #include <EnemyCharacter.h>
 
+float AEnemySpawner::SpawnDelay = 1.0f;
+
 // Sets default values
 AEnemySpawner::AEnemySpawner()
 {
@@ -49,7 +51,7 @@ void AEnemySpawner::CreateEnemy()
 		if (CommonEnemy)
 		{
 
-			if (EnemyPool.Num() < 20)
+			if (EnemyPool.Num() < EnemyPooSize)
 			{
 				AEnemyCharacter* SpawnedEnemy = GetWorld()->SpawnActor<AEnemyCharacter>(CommonEnemy, SpawnPoint, FRotator(0));
 
@@ -64,6 +66,7 @@ void AEnemySpawner::CreateEnemy()
 			else
 			{
 				GetWorld()->GetTimerManager().ClearTimer(CreateHandle);
+				GEngine->AddOnScreenDebugMessage(-1,3.0f,FColor::Cyan,TEXT("Fin"));
 			}
 
 
@@ -82,8 +85,10 @@ void AEnemySpawner::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	GetWorld()->GetTimerManager().SetTimer(CreateHandle,this,&AEnemySpawner::CreateEnemy,0.1f,true);
-	GetWorld()->GetTimerManager().SetTimer(SpawnHandle, this, &AEnemySpawner::SpawnEnemy, 1.0f, true);
+	float RandomOffset = FMath::RandRange(0.0f, SpawnDelay);
+
+	GetWorld()->GetTimerManager().SetTimer(CreateHandle,this,&AEnemySpawner::CreateEnemy,CreateDelay,true);
+	GetWorld()->GetTimerManager().SetTimer(SpawnHandle, this, &AEnemySpawner::SpawnEnemy, SpawnDelay, true);
 
 }
 

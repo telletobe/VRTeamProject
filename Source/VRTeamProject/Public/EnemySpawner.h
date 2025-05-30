@@ -32,11 +32,17 @@ private :
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UBoxComponent> SpawnBox;
 
-	UPROPERTY(EditAnywhere)
-	float SpawnDelay = 1.0f;
-
 	FTimerHandle CreateHandle;
 	FTimerHandle SpawnHandle;
 
 	TArray<AEnemyCharacter*> EnemyPool;
+
+	UPROPERTY(EditAnywhere, category = "EnemyPool")
+	float CreateDelay = 1.0f;
+
+
+	UPROPERTY(EditAnywhere, category = "EnemyPool")
+	int32 EnemyPooSize = 20;
+
+	static float SpawnDelay;
 };

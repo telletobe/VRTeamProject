@@ -37,6 +37,7 @@ AEnemyCharacter::AEnemyCharacter()
 void AEnemyCharacter::FindSpawnPoint()
 {
 	TArray<AActor*> FoundEndPoint;
+	TArray<AActor*> RandomPoint;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ATargetPoint::StaticClass(), FoundEndPoint);
 
 	for (auto StartPoint : FoundEndPoint)
@@ -47,12 +48,15 @@ void AEnemyCharacter::FindSpawnPoint()
 			{
 				if (StartPoint->ActorHasTag(TEXT("EnemySpawnPoint")))
 				{
-					SpawnPoint = StartPoint;
+					RandomPoint.Add(StartPoint);
+					
 				}
 
 			}
 		}
 	}
+
+	SpawnPoint = RandomPoint[FMath::RandRange(0,RandomPoint.Num()-1)];
 }
 
 
