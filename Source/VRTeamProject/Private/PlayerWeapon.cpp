@@ -50,7 +50,7 @@ void APlayerWeapon::Fire(float Damage)
 
 	//총알이 0.2초마다 발사될 수 있도록 타이머설정.
 	FTimerHandle FireTimer;
-	GetWorld()->GetTimerManager().SetTimer(FireTimer,this,&APlayerWeapon::ChangeFireState,0.2f,false);
+	GetWorld()->GetTimerManager().SetTimer(FireTimer,this,&APlayerWeapon::ChangeFireState, FireDelay,false);
 }
 
 void APlayerWeapon::ChangeFireState()

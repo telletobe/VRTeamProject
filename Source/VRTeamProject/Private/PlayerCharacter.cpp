@@ -86,8 +86,8 @@ void APlayerCharacter::BeginPlay()
 
 	//////////////////////////////////////////////////////////////////////////////////////
 	/*
-	* 게임 시작 시, TargetPoint를 찾아서 플레이어에게 등록 해줌.
-	* 
+	//* 게임 시작 시, TargetPoint를 찾아서 플레이어에게 등록 해줌.
+	//* 
 	TArray<AActor*> FoundEndPoint;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(),ATargetPoint::StaticClass(),FoundEndPoint);
 
@@ -145,7 +145,7 @@ void APlayerCharacter::OnComponentHit(UPrimitiveComponent* HitComponent, AActor*
 			Destroy();
 		}
 
-		Enemy->Destroy();
+		Enemy->DeSpawn();
 	}
 	else
 	{
@@ -227,7 +227,19 @@ void APlayerCharacter::ApplyEffectItem(EItemEffectData Data)
 	//Switch를 활용하여 Data에 들어있는 값으로 효과 적용
 	GEngine->AddOnScreenDebugMessage(-1,3.0f,FColor::Green,TEXT("Player ApplyEffetItem!"));
 
-
+	switch (Data)
+	{
+	case EItemEffectData::HEAL:
+		break;
+	case EItemEffectData::AtkUp:
+		break;
+	case EItemEffectData::DefUp:
+		break;
+	case EItemEffectData::AppendWeapon:
+		break;
+	default:
+		break;
+	}
 
 }
 
@@ -262,7 +274,7 @@ void APlayerCharacter::Attack(const FInputActionValue& Value)
 {
 	if (Weapon)
 	{
-		Weapon->Fire(Atk);
+		Weapon->Fire(GetAtk());
 	} 
 	else
 	{

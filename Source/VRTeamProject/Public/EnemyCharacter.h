@@ -8,6 +8,7 @@
 
 class AAIController;
 class UNavigationInvokerComponent;
+class ATargetPoint;
 
 UCLASS()
 class VRTEAMPROJECT_API AEnemyCharacter : public ACharacter
@@ -22,13 +23,23 @@ public:
 	// NavInvoker Subobject return forcely
 	FORCEINLINE class UNavigationInvokerComponent* GetNavInvoker() const { return NavInvoker; }
 
-	void SetHp(float EnemyHp);
+	
+	void SetCurrentHp(float EnemyHp);
+	void SetMaxHp(float EnemyHp);
 	void SetDef(float EnemyDef);
 	void SetAtk(float EnemyAtk);
 
-	float GetHp() const { return Hp; }
+	float GetCurrentHp() const { return CurrentHp; }
+	float GetMaxHp() const { return MaxHp; }
 	float GetDef() const { return Def; }
 	float GetAtk() const { return Atk; }
+
+	bool IsActive() const { return bIsActive; }
+	void FindSpawnPoint();
+	void FindDeSpawnPoint();
+
+	void DeSpawn();
+	void Spawn();
 
 protected:
 	// Called when the game starts or when spawned
@@ -49,16 +60,27 @@ private:
 	UPROPERTY(EditAnywhere, Category = Navigation, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UNavigationInvokerComponent> NavInvoker;
 
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<AActor> DeSpawnPoint;
+
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<AActor> SpawnPoint;
+
 	float NavGenerationRadius; // 동적으로 초록색 칸을 생성
 	float NavRemovalRadius; // 동적으로 초록색 칸을 제거
 
 	UPROPERTY(EditAnywhere)
-	float Hp;
+	float CurrentHp;
+
+	UPROPERTY(EditAnywhere)
+	float MaxHp;
 
 	UPROPERTY(EditAnywhere)
 	float Def;
 
 	UPROPERTY(EditAnywhere)
 	float Atk;
+
+	bool bIsActive = false;
 
 };

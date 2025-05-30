@@ -37,4 +37,7 @@ private:
 
 	bool bIsFire = true;
 
+	UPROPERTY(EditAnywhere)
+	float FireDelay = 0.2;
+
 };

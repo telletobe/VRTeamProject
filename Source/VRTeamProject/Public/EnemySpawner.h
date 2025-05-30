@@ -7,6 +7,7 @@
 #include "EnemySpawner.generated.h"
 
 class UBoxComponent;
+class AEnemyCharacter;
 
 UCLASS()
 class VRTEAMPROJECT_API AEnemySpawner : public AActor
@@ -17,6 +18,7 @@ public:
 	// Sets default values for this actor's properties
 	AEnemySpawner();
 	void SpawnEnemy();
+	void CreateEnemy();
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -33,6 +35,8 @@ private :
 	UPROPERTY(EditAnywhere)
 	float SpawnDelay = 1.0f;
 
-
+	FTimerHandle CreateHandle;
 	FTimerHandle SpawnHandle;
+
+	TArray<AEnemyCharacter*> EnemyPool;
 };

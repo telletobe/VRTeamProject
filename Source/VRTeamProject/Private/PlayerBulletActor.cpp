@@ -74,6 +74,7 @@ void APlayerBulletActor::BeginPlay()
 
 	FTimerHandle MoveTimerHandle;
 	FTimerHandle DestroyTimerHandle;
+
 	GetWorld()->GetTimerManager().SetTimer(MoveTimerHandle,this,&APlayerBulletActor::BulletMove, MoveInterval,true);
 
 	GetWorld()->GetTimerManager().SetTimer(DestroyTimerHandle, FTimerDelegate::CreateLambda([this]() {
@@ -96,18 +97,18 @@ void APlayerBulletActor::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent
 	{
 		GEngine->AddOnScreenDebugMessage(-1,3.0f,FColor::Blue,TEXT("BulletActor : OnBeginOverlap"));
 
-		if(Enemy->GetHp() > 0)
+		if(Enemy->GetCurrentHp() > 0)
 		{
-			float EnemyHp = Enemy->GetHp() - (GetDamage()-Enemy->GetDef());
+			float EnemyHp = Enemy->GetCurrentHp() - (GetDamage()-Enemy->GetDef());
 			if(EnemyHp > 0)
 			{ 
 				GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Blue, FString::Printf(TEXT("EnemyHp : %.1f"), EnemyHp));
-				Enemy->SetHp(EnemyHp);
+				Enemy->SetCurrentHp(EnemyHp);
 			}
 			else
 			{
-				Enemy->Destroy();
-				GEngine->AddOnScreenDebugMessage(-1,3.0f,FColor::Blue,TEXT("Enemy Destory!"));
+				Enemy->DeSpawn();
+				GEngine->AddOnScreenDebugMessage(-1,3.0f,FColor::Blue,TEXT("Enemy Despawn!"));
 
 			}
 
