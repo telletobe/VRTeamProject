@@ -26,7 +26,7 @@ void AEnemySpawner::SpawnEnemy()
 	{
 		for (AEnemyCharacter* Enemy : EnemyPool)
 		{
-			if (IsValid(Enemy) && (Enemy->IsActive()))
+			if (IsValid(Enemy) && !(Enemy->IsActive()))
 			{
 				Enemy->Spawn();
 			}
@@ -56,7 +56,6 @@ void AEnemySpawner::CreateEnemy()
 				if (SpawnedEnemy)
 				{
 					SpawnedEnemy->SpawnDefaultController();
-					SpawnedEnemy->Spawn();
 				}
 
 				EnemyPool.Add(SpawnedEnemy);
@@ -83,7 +82,8 @@ void AEnemySpawner::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	GetWorld()->GetTimerManager().SetTimer(CreateHandle,this,&AEnemySpawner::CreateEnemy,1.0f,true);
+	GetWorld()->GetTimerManager().SetTimer(CreateHandle,this,&AEnemySpawner::CreateEnemy,0.1f,true);
+	GetWorld()->GetTimerManager().SetTimer(SpawnHandle, this, &AEnemySpawner::SpawnEnemy, 1.0f, true);
 
 }
 
