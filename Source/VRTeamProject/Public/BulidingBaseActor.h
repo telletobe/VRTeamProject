@@ -23,7 +23,7 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-	virtual void MovetoTarget(ATargetPoint* End, float DeltaTime);
+	virtual void MovetoTarget(float DeltaTime);
 	virtual void BackToStartPoint(FVector Location);
 public:	
 	// Called every frame

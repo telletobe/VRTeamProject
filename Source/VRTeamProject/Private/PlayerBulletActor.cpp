@@ -95,21 +95,16 @@ void APlayerBulletActor::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent
 
 	if (AEnemyCharacter* Enemy = Cast<AEnemyCharacter>(OtherActor))
 	{
-		GEngine->AddOnScreenDebugMessage(-1,3.0f,FColor::Blue,TEXT("BulletActor : OnBeginOverlap"));
-
 		if(Enemy->GetCurrentHp() > 0)
 		{
 			float EnemyHp = Enemy->GetCurrentHp() - (GetDamage()-Enemy->GetDef());
 			if(EnemyHp > 0)
 			{ 
-				GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Blue, FString::Printf(TEXT("EnemyHp : %.1f"), EnemyHp));
 				Enemy->SetCurrentHp(EnemyHp);
 			}
 			else
 			{
 				Enemy->DeSpawn();
-				GEngine->AddOnScreenDebugMessage(-1,3.0f,FColor::Blue,TEXT("Enemy Despawn!"));
-
 			}
 
 		}
@@ -124,8 +119,6 @@ void APlayerBulletActor::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent
 		if (Item->GetHp() > 0)
 		{
 			float ItemHp = Item->GetHp() - GetDamage();
-			GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Blue, FString::Printf(TEXT("ItemHp : %.1f"), ItemHp));
-
 			if (ItemHp > 0)
 			{
 				Item->SetHp(ItemHp);
@@ -133,9 +126,8 @@ void APlayerBulletActor::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent
 			else
 			{
 				Item->Destroy();
-				GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Blue, TEXT("Item Destory!"));
 			}
-
+			Destroy();
 		}
 
 	}

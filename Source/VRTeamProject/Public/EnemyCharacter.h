@@ -86,6 +86,7 @@ private:
 	UPROPERTY(EditAnywhere)
 	float SpawnDelay;
 
+	
 
 	bool bIsActive = false;
 

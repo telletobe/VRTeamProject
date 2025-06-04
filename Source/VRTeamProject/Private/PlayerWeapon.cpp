@@ -35,9 +35,6 @@ void APlayerWeapon::Fire(float Damage)
 
 	ChangeFireState();
 
-
-	GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Black, TEXT("APlayerWeapon : Fire()"));
-
 	//임시 코드.
 	//카메라의 회전값을 받아서 총알의 방향을 정해줌.
 	//VR활용 시 VR컨트롤러의 정보를 받아서 방향을 다시 설정해주어야 할수있음.

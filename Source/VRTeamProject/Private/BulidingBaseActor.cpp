@@ -47,14 +47,17 @@ void ABulidingBaseActor::BeginPlay()
 
 }
 
-void ABulidingBaseActor::MovetoTarget(ATargetPoint* End,float DeltaTime)
+void ABulidingBaseActor::MovetoTarget(float DeltaTime)
 {
 
-	float Distance = FVector::Dist2D(GetActorLocation(), EndPoint->GetActorLocation()); // 건물과 타겟포인트의 거리
-	if (Distance < 200.0f)
+	if (IsValid(EndPoint))
 	{
-		SetIsArrive(true);
-		return;
+		float Distance = FVector::Dist2D(GetActorLocation(), EndPoint->GetActorLocation()); // 건물과 타겟포인트의 거리
+		if (Distance < 200.0f)
+		{
+			SetIsArrive(true);
+			return;
+		}
 	}
 																	  // MoveForce 값에 따라 이동속도조절
 	FVector NewLocation = GetActorLocation() + MoveForce * DeltaTime; //DelataTime을 활용하여 자연스러운 움직임 처리
@@ -75,7 +78,7 @@ void ABulidingBaseActor::Tick(float DeltaTime)
 
 	if (!bIsArrive)
 	{
-		MovetoTarget(EndPoint,DeltaTime);
+		MovetoTarget(DeltaTime);
 	}
 	else
 	{

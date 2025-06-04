@@ -89,22 +89,19 @@ void AEnemyCharacter::DeSpawn()
 		SetActorLocation(DeSpawnPoint->GetActorLocation());
 	}
 
-
-	SetActorHiddenInGame(false);
+	SetActorHiddenInGame(true);
 	PrimaryActorTick.bCanEverTick = false;
 	bIsActive = false;
 
-
 	GetWorld()->GetTimerManager().SetTimer(SpawnHandle,this,&AEnemyCharacter::Spawn,GetSpawnDelay(), false);
-
 }
 
 void AEnemyCharacter::Spawn()
 {
+	SetActorHiddenInGame(false);
 	bIsActive = true;
 
 	GetWorld()->GetTimerManager().ClearTimer(SpawnHandle);
-	GEngine->AddOnScreenDebugMessage(-1,3.0f,FColor::Red,TEXT("Spawn() called!"));
 
 	if (IsValid(SpawnPoint))
 	{
@@ -112,7 +109,6 @@ void AEnemyCharacter::Spawn()
 		SetActorLocation(SpawnPoint->GetActorLocation());
 	}
 
-	SetActorHiddenInGame(true);
 	PrimaryActorTick.bCanEverTick = true;
 }
 
@@ -130,14 +126,12 @@ void AEnemyCharacter::BeginPlay()
 void AEnemyCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 // Called to bind functionality to input
 void AEnemyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
 }
 
 
