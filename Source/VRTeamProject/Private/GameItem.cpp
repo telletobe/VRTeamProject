@@ -59,7 +59,7 @@ float AGameItem::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent,
 	
 	if (Player = Cast<APlayerCharacter>(DamageCauser->GetOwner()))
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Emerald, TEXT("TakeDamage"));
+		UE_LOG(LogTemp,Warning,TEXT("GameItem.cpp : TakeDamage Get Player Info!"));
 	}
 
 	return 0.0f;

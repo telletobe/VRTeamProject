@@ -18,6 +18,9 @@ public:
 	// Sets default values for this actor's properties
 	AItemSpawnActor();
 	void SpawnItem();
+	void MoveToEndPoint(float DeltaTime);
+	void FindTartgetPoint();
+	void ChangeActiveState();
 
 protected:
 	// Called when the game starts or when spawned
@@ -38,6 +41,22 @@ private:
 	UPROPERTY(EditAnyWhere)
 	float SpawnDelay = 3.0f;
 
-	FTimerHandle SpawnHandle;
+	UPROPERTY(EditAnyWhere)
+	float DropDelay = 2.5f;
 
+	FTimerHandle SpawnItemHandle;
+	FTimerHandle VisibleHandle;
+
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<AActor> StartPoint;
+	
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<AActor> EndPoint;
+
+	//UPROPERTY(VisibleAnywhere)
+	//TObjectPtr<AActor> DropPoint;
+
+	FVector MoveForce;
+
+	bool bIsActive = false;
 };

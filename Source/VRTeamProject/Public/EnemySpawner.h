@@ -37,8 +37,10 @@ private :
 	TArray<AEnemyCharacter*> EnemyPool;
 
 	UPROPERTY(EditAnywhere, category = "EnemyPool")
-	float CreateDelay = 0.1f;
+	float CreateDelay = 3.0f;
 
 	static int32 EnemyPoolSize;
+
+
 
 };

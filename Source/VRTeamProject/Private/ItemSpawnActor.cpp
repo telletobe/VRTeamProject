@@ -4,7 +4,8 @@
 #include "ItemSpawnActor.h"
 #include <GameItem.h>
 #include "Components/BoxComponent.h"
-
+#include <Kismet/GameplayStatics.h>
+#include "Engine/TargetPoint.h"
 // Sets default values
 AItemSpawnActor::AItemSpawnActor()
 {
@@ -20,49 +21,116 @@ AItemSpawnActor::AItemSpawnActor()
 
 	ItemSpawnerMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
+	MoveForce = FVector(-1200,0,0);
+
 }
 
 void AItemSpawnActor::SpawnItem()
 {
 	FVector SpawnPoint = FMath::RandPointInBox(ItemSpawnerCollision->Bounds.GetBox());
-	////////////////////////////////////////////////////////////////////////////////
-	// 임시 코드
 
-	bool bIsSpawn = true;
-
-	if (bIsSpawn)
+	TSubclassOf<AGameItem> Item = LoadClass<AGameItem>(nullptr, TEXT("/Script/Engine.Blueprint'/Game/Actor/Item/MyGameItem.MyGameItem_C'"));
+	if (Item)
 	{
-		TSubclassOf<AGameItem> Item = LoadClass<AGameItem>(nullptr, TEXT("/Script/Engine.Blueprint'/Game/Actor/Item/MyGameItem.MyGameItem_C'"));
-		if (Item)
-		{
-			AGameItem* SpawnedItem = GetWorld()->SpawnActor<AGameItem>(Item, SpawnPoint, FRotator(0));
-			if (SpawnedItem)
-			{
+		AGameItem* SpawnedItem = GetWorld()->SpawnActor<AGameItem>(Item, SpawnPoint, FRotator(0));
+	}
+	else
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Red, TEXT("InValid Item!"));
+	}
 
+}
+
+void AItemSpawnActor::MoveToEndPoint(float DeltaTime)
+{
+	if (IsValid(EndPoint))
+	{
+		float Distance = FVector::Dist2D(GetActorLocation(), EndPoint->GetActorLocation());
+		if (Distance < 100.0f)
+		{
+			if (IsValid(StartPoint))
+			{
+				SetActorLocation(StartPoint->GetActorLocation());
+				ChangeActiveState();
+				return;
 			}
 		}
-		else
+	}
+	FVector NewLocation = GetActorLocation() + MoveForce * DeltaTime;
+	SetActorLocation(NewLocation);
+}
+
+void AItemSpawnActor::FindTartgetPoint()
+{
+	TArray<AActor*> TargetPoint;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ATargetPoint::StaticClass(), TargetPoint);
+	for (auto ItemPoint : TargetPoint)
+	{
+		if (ATargetPoint* tempPoint = Cast<ATargetPoint>(ItemPoint))
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Red, TEXT("InValid Item!"));
+			if (tempPoint->ActorHasTag("StartPoint"))
+			{
+				StartPoint = tempPoint;
+			}
+			else if (tempPoint->ActorHasTag("EndPoint"))
+			{
+				EndPoint = tempPoint;
+			}
+		/*	else if (tempPoint->ActorHasTag("DropPoint"))
+			{
+				DropPoint = tempPoint;
+			}*/
 		}
 	}
-	//////////////////////////////////////////////////////////////////////////////////
+}
 
+void AItemSpawnActor::ChangeActiveState()
+{
+	if(!bIsActive)
+	{ 
+		bIsActive = true;
+		SetActorHiddenInGame(false);
+		PrimaryActorTick.bCanEverTick = true;
+		GetWorld()->GetTimerManager().ClearTimer(VisibleHandle);
+
+		GetWorld()->GetTimerManager().SetTimer(SpawnItemHandle,this,&AItemSpawnActor::SpawnItem,DropDelay,false);
+	}
+	else
+	{
+		bIsActive = false;
+		SetActorHiddenInGame(true);
+		PrimaryActorTick.bCanEverTick = false;
+		GetWorld()->GetTimerManager().SetTimer(VisibleHandle, this, &AItemSpawnActor::ChangeActiveState, SpawnDelay, true);
+
+		GetWorld()->GetTimerManager().ClearTimer(SpawnItemHandle);
+	}	
 }
 
 // Called when the game starts or when spawned
 void AItemSpawnActor::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	GetWorld()->GetTimerManager().SetTimer(SpawnHandle, this,  &AItemSpawnActor::SpawnItem, SpawnDelay, true);
-	
+	SetActorHiddenInGame(true);
+	PrimaryActorTick.bCanEverTick = false;
+	FindTartgetPoint();
+
+	if (!bIsActive)
+	{
+		GetWorld()->GetTimerManager().SetTimer(VisibleHandle, this, &AItemSpawnActor::ChangeActiveState, SpawnDelay, true);
+
+	}
 }
 
 // Called every frame
 void AItemSpawnActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if (bIsActive)
+	{
+		MoveToEndPoint(DeltaTime);
+	}
+
 
 }
 
