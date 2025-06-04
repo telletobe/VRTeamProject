@@ -5,7 +5,7 @@
 #include "Components/BoxComponent.h"
 #include <EnemyCharacter.h>
 
-float AEnemySpawner::SpawnDelay = 1.0f;
+int32 AEnemySpawner::EnemyPoolSize = 20;
 
 // Sets default values
 AEnemySpawner::AEnemySpawner()
@@ -18,30 +18,10 @@ AEnemySpawner::AEnemySpawner()
 
 }
 
-void AEnemySpawner::SpawnEnemy()
-{
-	bool bIsSpawn = true; 
-	////////////////////////////////////////////////////////////////////////////////
-	// 임시 코드
-
-	if(bIsSpawn)
-	{
-		for (AEnemyCharacter* Enemy : EnemyPool)
-		{
-			if (IsValid(Enemy) && !(Enemy->IsActive()))
-			{
-				Enemy->Spawn();
-			}
-		}
-	}
-	//////////////////////////////////////////////////////////////////////////////////
-}
 
 void AEnemySpawner::CreateEnemy()
 {
 	FVector SpawnPoint = FMath::RandPointInBox(SpawnBox->Bounds.GetBox());
-	////////////////////////////////////////////////////////////////////////////////
-	// 임시 코드
 
 	bool bIsSpawn = true;
 
@@ -51,7 +31,7 @@ void AEnemySpawner::CreateEnemy()
 		if (CommonEnemy)
 		{
 
-			if (EnemyPool.Num() < EnemyPooSize)
+			if (EnemyPool.Num() < EnemyPoolSize)
 			{
 				AEnemyCharacter* SpawnedEnemy = GetWorld()->SpawnActor<AEnemyCharacter>(CommonEnemy, SpawnPoint, FRotator(0));
 
@@ -68,9 +48,6 @@ void AEnemySpawner::CreateEnemy()
 				GetWorld()->GetTimerManager().ClearTimer(CreateHandle);
 				GEngine->AddOnScreenDebugMessage(-1,3.0f,FColor::Cyan,TEXT("Fin"));
 			}
-
-
-
 		}
 		else
 		{
@@ -84,12 +61,8 @@ void AEnemySpawner::CreateEnemy()
 void AEnemySpawner::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	float RandomOffset = FMath::RandRange(0.0f, SpawnDelay);
 
 	GetWorld()->GetTimerManager().SetTimer(CreateHandle,this,&AEnemySpawner::CreateEnemy,CreateDelay,true);
-	GetWorld()->GetTimerManager().SetTimer(SpawnHandle, this, &AEnemySpawner::SpawnEnemy, SpawnDelay, true);
-
 }
 
 // Called every frame

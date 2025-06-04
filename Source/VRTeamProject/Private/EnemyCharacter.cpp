@@ -16,6 +16,7 @@ AEnemyCharacter::AEnemyCharacter()
 	SetCurrentHp(GetMaxHp());
 	SetDef(1.0f);
 	SetAtk(3.0f);
+	SetSpawnDelay(2.0f);
 
 	NavInvoker = CreateDefaultSubobject<UNavigationInvokerComponent>(TEXT("NavInvoker"));
 
@@ -88,16 +89,21 @@ void AEnemyCharacter::DeSpawn()
 		SetActorLocation(DeSpawnPoint->GetActorLocation());
 	}
 
-	GetCapsuleComponent()->SetVisibility(false);
-	GetMesh()->SetVisibility(false);
+
+	SetActorHiddenInGame(false);
 	PrimaryActorTick.bCanEverTick = false;
 	bIsActive = false;
+
+
+	GetWorld()->GetTimerManager().SetTimer(SpawnHandle,this,&AEnemyCharacter::Spawn,GetSpawnDelay(), false);
+
 }
 
 void AEnemyCharacter::Spawn()
 {
 	bIsActive = true;
 
+	GetWorld()->GetTimerManager().ClearTimer(SpawnHandle);
 	GEngine->AddOnScreenDebugMessage(-1,3.0f,FColor::Red,TEXT("Spawn() called!"));
 
 	if (IsValid(SpawnPoint))
@@ -106,8 +112,7 @@ void AEnemyCharacter::Spawn()
 		SetActorLocation(SpawnPoint->GetActorLocation());
 	}
 
-	GetCapsuleComponent()->SetVisibility(true);
-	GetMesh()->SetVisibility(true);
+	SetActorHiddenInGame(true);
 	PrimaryActorTick.bCanEverTick = true;
 }
 
@@ -117,6 +122,7 @@ void AEnemyCharacter::BeginPlay()
 	Super::BeginPlay();
 	FindSpawnPoint();
 	FindDeSpawnPoint();
+	Spawn();
 }
 
 
@@ -153,4 +159,9 @@ void AEnemyCharacter::SetDef(float EnemyDef)
 void AEnemyCharacter::SetAtk(float EnemyAtk)
 {
 	Atk = EnemyAtk;
+}
+
+void AEnemyCharacter::SetSpawnDelay(float EnemySpawnDelay)
+{
+	SpawnDelay = EnemySpawnDelay;
 }

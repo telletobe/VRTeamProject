@@ -17,7 +17,6 @@ class VRTEAMPROJECT_API AEnemySpawner : public AActor
 public:	
 	// Sets default values for this actor's properties
 	AEnemySpawner();
-	void SpawnEnemy();
 	void CreateEnemy();
 protected:
 	// Called when the game starts or when spawned
@@ -38,11 +37,8 @@ private :
 	TArray<AEnemyCharacter*> EnemyPool;
 
 	UPROPERTY(EditAnywhere, category = "EnemyPool")
-	float CreateDelay = 1.0f;
+	float CreateDelay = 0.1f;
 
+	static int32 EnemyPoolSize;
 
-	UPROPERTY(EditAnywhere, category = "EnemyPool")
-	int32 EnemyPooSize = 20;
-
-	static float SpawnDelay;
 };

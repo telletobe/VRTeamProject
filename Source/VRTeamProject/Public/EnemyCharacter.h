@@ -23,16 +23,17 @@ public:
 	// NavInvoker Subobject return forcely
 	FORCEINLINE class UNavigationInvokerComponent* GetNavInvoker() const { return NavInvoker; }
 
-	
 	void SetCurrentHp(float EnemyHp);
 	void SetMaxHp(float EnemyHp);
 	void SetDef(float EnemyDef);
 	void SetAtk(float EnemyAtk);
+	void SetSpawnDelay(float EnemySpawnDelay);
 
 	float GetCurrentHp() const { return CurrentHp; }
 	float GetMaxHp() const { return MaxHp; }
 	float GetDef() const { return Def; }
 	float GetAtk() const { return Atk; }
+	float GetSpawnDelay() const { return SpawnDelay; }
 
 	bool IsActive() const { return bIsActive; }
 	void FindSpawnPoint();
@@ -81,6 +82,15 @@ private:
 	UPROPERTY(EditAnywhere)
 	float Atk;
 
+	
+	UPROPERTY(EditAnywhere)
+	float SpawnDelay;
+
+
 	bool bIsActive = false;
+
+	
+
+	FTimerHandle SpawnHandle;
 
 };
