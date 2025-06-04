@@ -70,4 +70,7 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	float Hp = 100.0f;
+
+	UPROPERTY(VisibleAnywhere)
+	float MaxHp = 100.0f;
 };

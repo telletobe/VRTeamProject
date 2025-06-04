@@ -5,7 +5,7 @@
 #include "Components/BoxComponent.h"
 #include <EnemyCharacter.h>
 
-int32 AEnemySpawner::EnemyPoolSize = 20;
+int32 AEnemySpawner::EnemyPoolSize = 5;
 
 // Sets default values
 AEnemySpawner::AEnemySpawner()

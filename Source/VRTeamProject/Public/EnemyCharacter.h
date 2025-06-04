@@ -74,14 +74,17 @@ private:
 	float CurrentHp;
 
 	UPROPERTY(EditAnywhere)
-	float MaxHp;
+	float MaxHp = 10.0f;
 
 	UPROPERTY(EditAnywhere)
 	float Def;
 
+	float DefaultDef = 1.0f;
+
 	UPROPERTY(EditAnywhere)
 	float Atk;
 
+	float DefaultAtk = 3.0f;
 	
 	UPROPERTY(EditAnywhere)
 	float SpawnDelay;

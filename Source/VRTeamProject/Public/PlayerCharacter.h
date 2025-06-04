@@ -30,6 +30,7 @@ public:
 	float GetAtk() const { return Atk; }
 	float GetDef() const { return Def; }
 	float GetExp() const { return Exp; }
+	float GetMaxHp() const { return MaxHp; }
 
 	void ApplyEffectItem(EItemEffectData Data);
 
@@ -58,16 +59,25 @@ private:
 	UPROPERTY(EditAnywhere)
 	float Hp;
 
+
+	UPROPERTY(VisibleAnywhere)
+	float MaxHp = 100.0f;
+
 	UPROPERTY(EditAnywhere)
 	float Atk;
 
+	float DefaultAtk = 5.0f;
+
 	UPROPERTY(EditAnywhere)
 	float Def;
+
+	float DefaultDef = 1.0f;
 
 	UPROPERTY(VisibleAnywhere)
 	float Exp;
 
 	bool bIsArrived;
+
 	
 	UPROPERTY()
 	TObjectPtr<UInputMappingContext> IMC_InputMappingContext;

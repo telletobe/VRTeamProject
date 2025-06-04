@@ -27,12 +27,17 @@ AGameItem::AGameItem()
 
 	ItemData = EItemEffectData::HEAL;
 
-
 }
 
 void AGameItem::SetHp(float ItemHp)
 {
-	Hp = ItemHp;
+	if (ItemHp < 0)
+	{
+		Hp = MaxHp;
+	} else
+	{
+		Hp = ItemHp;
+	}
 }
 
 void AGameItem::SetItemData(EItemEffectData EItemData)
@@ -56,7 +61,6 @@ void AGameItem::BeginPlay()
 //이벤트 발생자(EventInstigator)는 null값이 들어오니 사용하면 안됨.
 float AGameItem::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
-	
 	if (Player = Cast<APlayerCharacter>(DamageCauser->GetOwner()))
 	{
 		UE_LOG(LogTemp,Warning,TEXT("GameItem.cpp : TakeDamage Get Player Info!"));
@@ -73,7 +77,6 @@ void AGameItem::Destroyed()
 	{
 		Player->ApplyEffectItem(ItemData);
 	}
-
 }
 
 
@@ -83,6 +86,5 @@ void AGameItem::Destroyed()
 void AGameItem::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 

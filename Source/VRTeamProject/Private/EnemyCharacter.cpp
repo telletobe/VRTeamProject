@@ -137,22 +137,50 @@ void AEnemyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 
 void AEnemyCharacter::SetCurrentHp(float EnemyHp)
 {
-	CurrentHp = EnemyHp;
+	if (EnemyHp < 0)
+	{
+		CurrentHp = GetMaxHp();
+	}
+	else
+	{
+		CurrentHp = EnemyHp;
+	}
 }
 
 void AEnemyCharacter::SetMaxHp(float EnemyHp)
 {
-	MaxHp = EnemyHp;
+	if (EnemyHp < 0)
+	{
+		return;
+	}
+	else
+	{
+		MaxHp = EnemyHp;
+	}
 }
 
 void AEnemyCharacter::SetDef(float EnemyDef)
 {
-	Def = EnemyDef;
+	if (EnemyDef < 0)
+	{
+		Def = DefaultDef;
+	}
+	else
+	{
+		Def = EnemyDef;
+	}
 }
 
 void AEnemyCharacter::SetAtk(float EnemyAtk)
 {
-	Atk = EnemyAtk;
+	if (EnemyAtk < 0)
+	{
+
+	}
+	else
+	{
+		Atk = EnemyAtk;
+	}
 }
 
 void AEnemyCharacter::SetSpawnDelay(float EnemySpawnDelay)

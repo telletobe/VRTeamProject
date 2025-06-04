@@ -21,6 +21,7 @@ public:
 	void MoveToEndPoint(float DeltaTime);
 	void FindTartgetPoint();
 	void ChangeActiveState();
+	void SetDropTimer();
 
 protected:
 	// Called when the game starts or when spawned
@@ -45,7 +46,7 @@ private:
 	float DropDelay = 2.5f;
 
 	FTimerHandle SpawnItemHandle;
-	FTimerHandle VisibleHandle;
+	FTimerHandle ActorVisibleHandle;
 
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<AActor> StartPoint;

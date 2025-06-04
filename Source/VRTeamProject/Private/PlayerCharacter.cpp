@@ -45,10 +45,13 @@ APlayerCharacter::APlayerCharacter()
 
 	bIsArrived = false;
 
+	//----------------------------------------------
+
 	SetHp(10.0f);
 	SetAtk(5);
 	SetDef(1);
 
+	//---------------------------------------------
 	UCapsuleComponent* CharacterCollision = GetCapsuleComponent();
 	CharacterCollision->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 
@@ -76,13 +79,8 @@ void APlayerCharacter::BeginPlay()
 	if (IsValid(CharacterCollision))
 	{
 		CharacterCollision->OnComponentHit.AddDynamic(this,&APlayerCharacter::OnComponentHit);
-		GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Orange, TEXT("PlayerCharater BeginOverlap Binding succed"));
-
 	} 
-	else 
-	{
-		GEngine->AddOnScreenDebugMessage(-1,3.0f,FColor::Orange,TEXT("PlayerCharater BeginOverlap Binding Fail"));
-	}
+
 
 	//////////////////////////////////////////////////////////////////////////////////////
 	/*
@@ -107,6 +105,7 @@ void APlayerCharacter::BeginPlay()
 	}
 	*/
 	//////////////////////////////////////////////////////////////////////////////////////
+
 	if (!Weapon)
 	{
 		FActorSpawnParameters SpawnParams;
@@ -286,17 +285,38 @@ void APlayerCharacter::Attack(const FInputActionValue& Value)
 
 void APlayerCharacter::SetHp(float PlayerHp)
 {
-	Hp = PlayerHp;
+	if (PlayerHp < 0)
+	{
+		Hp = GetMaxHp();
+	}
+	else
+	{
+		Hp = PlayerHp;
+	}
 }
 
 void APlayerCharacter::SetAtk(float PlayerAtk)
 {
-	Atk = PlayerAtk;
+	if (PlayerAtk < 0)
+	{
+		Atk = DefaultAtk;
+	}
+	else
+	{
+		Atk = PlayerAtk;
+	}
 }
 
 void APlayerCharacter::SetDef(float PlayerDef)
 {
-	Def = PlayerDef;
+	if (PlayerDef < 0)
+	{
+		Def = DefaultDef;
+	}
+	else
+	{
+		Def = PlayerDef;
+	}
 }
 
 void APlayerCharacter::SetExp(float PlayerExp)

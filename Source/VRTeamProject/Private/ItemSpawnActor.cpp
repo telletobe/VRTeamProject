@@ -34,10 +34,6 @@ void AItemSpawnActor::SpawnItem()
 	{
 		AGameItem* SpawnedItem = GetWorld()->SpawnActor<AGameItem>(Item, SpawnPoint, FRotator(0));
 	}
-	else
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Red, TEXT("InValid Item!"));
-	}
 
 }
 
@@ -91,19 +87,29 @@ void AItemSpawnActor::ChangeActiveState()
 		bIsActive = true;
 		SetActorHiddenInGame(false);
 		PrimaryActorTick.bCanEverTick = true;
-		GetWorld()->GetTimerManager().ClearTimer(VisibleHandle);
-
-		GetWorld()->GetTimerManager().SetTimer(SpawnItemHandle,this,&AItemSpawnActor::SpawnItem,DropDelay,false);
+		GetWorld()->GetTimerManager().ClearTimer(ActorVisibleHandle);
+		SetDropTimer();
 	}
 	else
 	{
 		bIsActive = false;
 		SetActorHiddenInGame(true);
 		PrimaryActorTick.bCanEverTick = false;
-		GetWorld()->GetTimerManager().SetTimer(VisibleHandle, this, &AItemSpawnActor::ChangeActiveState, SpawnDelay, true);
-
-		GetWorld()->GetTimerManager().ClearTimer(SpawnItemHandle);
+		GetWorld()->GetTimerManager().SetTimer(ActorVisibleHandle, this, &AItemSpawnActor::ChangeActiveState, SpawnDelay, true);
+		SetDropTimer();
 	}	
+}
+
+void AItemSpawnActor::SetDropTimer()
+{
+	if (bIsActive)
+	{
+		GetWorld()->GetTimerManager().SetTimer(SpawnItemHandle, this, &AItemSpawnActor::SpawnItem, DropDelay, false);
+	}
+	else
+	{
+		GetWorld()->GetTimerManager().ClearTimer(SpawnItemHandle);
+	}
 }
 
 // Called when the game starts or when spawned
@@ -116,7 +122,7 @@ void AItemSpawnActor::BeginPlay()
 
 	if (!bIsActive)
 	{
-		GetWorld()->GetTimerManager().SetTimer(VisibleHandle, this, &AItemSpawnActor::ChangeActiveState, SpawnDelay, true);
+		GetWorld()->GetTimerManager().SetTimer(ActorVisibleHandle, this, &AItemSpawnActor::ChangeActiveState, SpawnDelay, true);
 
 	}
 }
