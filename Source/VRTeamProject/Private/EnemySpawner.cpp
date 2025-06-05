@@ -4,8 +4,9 @@
 #include "EnemySpawner.h"
 #include "Components/BoxComponent.h"
 #include <EnemyCharacter.h>
+#include <VRProjectGameModeBase.h>
 
-int32 AEnemySpawner::EnemyPoolSize = 5;
+int32 AEnemySpawner::EnemyPoolSize = 20;
 
 // Sets default values
 AEnemySpawner::AEnemySpawner()
@@ -38,6 +39,7 @@ void AEnemySpawner::CreateEnemy()
 				if (SpawnedEnemy)
 				{
 					SpawnedEnemy->SpawnDefaultController();
+					SpawnedEnemy->OnEnemyDied().AddDynamic(this, &AEnemySpawner::CheckGameClear);
 				}
 
 				EnemyPool.Add(SpawnedEnemy);
@@ -56,11 +58,29 @@ void AEnemySpawner::CreateEnemy()
 	}
 }
 
+void AEnemySpawner::CheckGameClear(AEnemyCharacter* Enemy)
+{
+	GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::MakeRandomColor(), TEXT("Spawner : CheckGameClear Call"));
+
+	if (CurrentKillCnt == RequiredKillCnt)
+	{
+		GameMode = Cast<AVRProjectGameModeBase>(GetWorld()->GetAuthGameMode());
+		GameMode->TriggerGameClear();
+	}
+	else
+	{
+		CurrentKillCnt++;
+	}
+}
+
+
 
 // Called when the game starts or when spawned
 void AEnemySpawner::BeginPlay()
 {
 	Super::BeginPlay();
+
+	CurrentKillCnt = 0;
 
 	GetWorld()->GetTimerManager().SetTimer(CreateHandle,this,&AEnemySpawner::CreateEnemy,CreateDelay,true);
 }

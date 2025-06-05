@@ -15,11 +15,13 @@ class VRTEAMPROJECT_API AVRProjectGameModeBase : public AGameModeBase
 	GENERATED_BODY()
 	
 	AVRProjectGameModeBase();
-
+public :
+	void TriggerGameClear();
+	bool IsClear() { return bIsClear; }
 protected:
 
 	virtual void BeginPlay() override;
 
 private:
-
+	bool bIsClear = false;
 };

@@ -8,6 +8,7 @@
 
 class UBoxComponent;
 class AEnemyCharacter;
+class AVRProjectGameModeBase;
 
 UCLASS()
 class VRTEAMPROJECT_API AEnemySpawner : public AActor
@@ -18,6 +19,8 @@ public:
 	// Sets default values for this actor's properties
 	AEnemySpawner();
 	void CreateEnemy();
+	void CheckGameClear(AEnemyCharacter* Enemy);
+	
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -41,6 +44,10 @@ private :
 
 	static int32 EnemyPoolSize;
 
+	int32 CurrentKillCnt = 0;
+	int32 RequiredKillCnt = 10;
+	bool bIsClear = false;
 
+	TObjectPtr<AVRProjectGameModeBase> GameMode;
 
 };

@@ -84,6 +84,11 @@ TArray<AActor*> FoundEndPoint;
 
 void AEnemyCharacter::DeSpawn()
 {
+	if (GetCurrentHp() <= 0)
+	{
+		Die();
+	}
+
 	if (IsValid(DeSpawnPoint))
 	{
 		SetActorLocation(DeSpawnPoint->GetActorLocation());
@@ -110,6 +115,12 @@ void AEnemyCharacter::Spawn()
 	}
 
 	PrimaryActorTick.bCanEverTick = true;
+}
+
+void AEnemyCharacter::Die()
+{
+	GEngine->AddOnScreenDebugMessage(-1,3.0f,FColor::MakeRandomColor(),TEXT("Enemy Die!"));
+	OnEnemyDied_Delegate.Broadcast(this);
 }
 
 // Called when the game starts or when spawned

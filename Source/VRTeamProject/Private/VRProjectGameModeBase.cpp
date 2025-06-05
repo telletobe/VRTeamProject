@@ -13,9 +13,16 @@ AVRProjectGameModeBase::AVRProjectGameModeBase()
 	
 }
 
+void AVRProjectGameModeBase::TriggerGameClear()
+{
+
+	GEngine->AddOnScreenDebugMessage(-1,3.0f,FColor::MakeRandomColor(), TEXT("Clear Game"));
+	bIsClear = true;
+
+}
+
 void AVRProjectGameModeBase::BeginPlay()
 {
 	Super::BeginPlay();
-
 
 }
