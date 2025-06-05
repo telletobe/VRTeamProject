@@ -3,11 +3,13 @@
 
 #include "VRProjectGameModeBase.h"
 #include "PlayerCharacter.h"
+#include "PlayerHUD.h"
 
 AVRProjectGameModeBase::AVRProjectGameModeBase()
 {
 
 	DefaultPawnClass = APlayerCharacter::StaticClass();
+	HUDClass = APlayerHUD::StaticClass();
 	
 }
 
