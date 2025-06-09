@@ -19,9 +19,10 @@ public:
 	// Sets default values for this actor's properties
 	AEnemySpawner();
 	void CreateEnemy();
+	void SpawnEnemy();
 
 	UFUNCTION()
-	void CheckGameClear(AEnemyCharacter* Enemy);
+	void CheckGameClear();
 	
 protected:
 	// Called when the game starts or when spawned
@@ -33,6 +34,8 @@ public:
 
 private :
 
+	static int32 EnemyPoolSize;
+
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UBoxComponent> SpawnBox;
 
@@ -42,12 +45,13 @@ private :
 	TArray<AEnemyCharacter*> EnemyPool;
 
 	UPROPERTY(EditAnywhere, category = "EnemyPool")
-	float CreateDelay = 3.0f;
+	float CreateDelay = 0.1f;
 
-	static int32 EnemyPoolSize;
-
-	int32 CurrentKillCnt = 0;
+	UPROPERTY(EditAnywhere, category = "EnemyPool")
+	float SpawnDelay = 1.0f;
+	int32 CurrentKillCnt = 1;
 	int32 RequiredKillCnt = 10;
+	int32 PoolIndex = 0;
 	bool bIsClear = false;
 
 	TObjectPtr<AVRProjectGameModeBase> GameMode;

@@ -6,7 +6,7 @@
 #include "GameFramework/Character.h"
 #include "EnemyCharacter.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnEnemyDeath, AEnemyCharacter*, Enemy);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnEnemyDeath);
 
 class AAIController;
 class UNavigationInvokerComponent;
@@ -45,7 +45,6 @@ public:
 	void Spawn();
 	void Die();
 
-	//FOnEnemyDeath& OnEnemyDied() { return OnEnemyDied_Delegate; }
 	UPROPERTY()
 	FOnEnemyDeath OnEnemyDied_Delegate;
 protected:
@@ -96,8 +95,6 @@ private:
 	float SpawnDelay;
 
 	bool bIsActive = false;
-
-	FTimerHandle SpawnHandle;
 
 
 };

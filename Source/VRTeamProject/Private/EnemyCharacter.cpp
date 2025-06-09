@@ -91,32 +91,27 @@ void AEnemyCharacter::DeSpawn()
 	}
 
 	SetActorHiddenInGame(true);
-	PrimaryActorTick.bCanEverTick = false;
 	bIsActive = false;
 
-	GetWorld()->GetTimerManager().SetTimer(SpawnHandle,this,&AEnemyCharacter::Spawn,GetSpawnDelay(), false);
 }
+
 
 void AEnemyCharacter::Spawn()
 {
 	SetActorHiddenInGame(false);
 	bIsActive = true;
 
-	GetWorld()->GetTimerManager().ClearTimer(SpawnHandle);
-
 	if (IsValid(SpawnPoint))
 	{
 		SetCurrentHp(GetMaxHp());
 		SetActorLocation(SpawnPoint->GetActorLocation());
 	}
-
-	PrimaryActorTick.bCanEverTick = true;
 }
 
 void AEnemyCharacter::Die()
 {
 	GEngine->AddOnScreenDebugMessage(-1,3.0f,FColor::MakeRandomColor(),TEXT("Enemy Die!"));
-	OnEnemyDied_Delegate.Broadcast(this);
+	OnEnemyDied_Delegate.Broadcast();
 }
 
 // Called when the game starts or when spawned
@@ -125,7 +120,6 @@ void AEnemyCharacter::BeginPlay()
 	Super::BeginPlay();
 	FindSpawnPoint();
 	FindDeSpawnPoint();
-	Spawn();
 }
 
 

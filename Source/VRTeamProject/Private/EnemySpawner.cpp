@@ -17,6 +17,11 @@ AEnemySpawner::AEnemySpawner()
 	SpawnBox = CreateDefaultSubobject<UBoxComponent>(TEXT("SpawnBox"));
 	SetRootComponent(SpawnBox);
 
+	CurrentKillCnt = 1;
+	RequiredKillCnt = 10;
+	CreateDelay = 0.1f;
+	SpawnDelay = 0.7f;
+	PoolIndex = EnemyPoolSize - 1;
 }
 
 
@@ -39,11 +44,11 @@ void AEnemySpawner::CreateEnemy()
 				if (SpawnedEnemy)
 				{
 					SpawnedEnemy->SpawnDefaultController();
+					SpawnedEnemy->DeSpawn();
 					SpawnedEnemy->OnEnemyDied_Delegate.AddDynamic(this, &AEnemySpawner::CheckGameClear);
 				}
 
 				EnemyPool.Add(SpawnedEnemy);
-
 			}
 			else
 			{
@@ -58,19 +63,68 @@ void AEnemySpawner::CreateEnemy()
 	}
 }
 
-void AEnemySpawner::CheckGameClear(AEnemyCharacter* Enemy)
+void AEnemySpawner::SpawnEnemy()
+{
+	if (EnemyPool.Num() == 0) return;
+
+	for (int32 i = 0; i < EnemyPool.Num(); ++i)
+	{
+		int32 Index = (PoolIndex + i) % EnemyPool.Num();
+
+		if (!EnemyPool[Index]->IsActive())
+		{
+			EnemyPool[Index]->Spawn();
+			PoolIndex = (Index + 1) % EnemyPool.Num();
+			return;
+		}
+	}
+}
+
+void AEnemySpawner::CheckGameClear()
 {
 	GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::MakeRandomColor(), TEXT("Spawner : CheckGameClear Call"));
 
-	if (CurrentKillCnt == RequiredKillCnt)
+	if (IsValid(GameMode))
 	{
-		GameMode = Cast<AVRProjectGameModeBase>(GetWorld()->GetAuthGameMode());
-		GameMode->TriggerGameClear();
+
+		if (!(GameMode->IsClear()))
+		{
+			if (CurrentKillCnt == RequiredKillCnt)
+			{
+				GameMode = Cast<AVRProjectGameModeBase>(GetWorld()->GetAuthGameMode());
+				GameMode->TriggerGameClear();
+				GetWorld()->GetTimerManager().ClearTimer(SpawnHandle);
+				CurrentKillCnt = 1;
+
+				if (EnemyPool.Num() != 0)
+				{
+					for (AEnemyCharacter* SpawnedEnemy : EnemyPool)
+					{
+						if (SpawnedEnemy->IsActive())
+						{
+							SpawnedEnemy->DeSpawn();
+						}
+					}
+				}
+
+			}
+			else
+			{
+				CurrentKillCnt++;
+			}
+		}
+		else
+		{
+			GameMode->TriggerGameStart();
+			GetWorld()->GetTimerManager().SetTimer(SpawnHandle, this, &AEnemySpawner::SpawnEnemy, SpawnDelay, true);
+		}
 	}
 	else
 	{
-		CurrentKillCnt++;
+		return;
 	}
+
+
 }
 
 
@@ -80,9 +134,12 @@ void AEnemySpawner::BeginPlay()
 {
 	Super::BeginPlay();
 
+	GameMode = Cast<AVRProjectGameModeBase>(GetWorld()->GetAuthGameMode());
+
 	CurrentKillCnt = 0;
 
 	GetWorld()->GetTimerManager().SetTimer(CreateHandle,this,&AEnemySpawner::CreateEnemy,CreateDelay,true);
+	GetWorld()->GetTimerManager().SetTimer(SpawnHandle, this, &AEnemySpawner::SpawnEnemy, SpawnDelay, true);
 }
 
 // Called every frame

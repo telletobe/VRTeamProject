@@ -128,18 +128,14 @@ void APlayerCharacter::OnComponentHit(UPrimitiveComponent* HitComponent, AActor*
 	AEnemyCharacter* Enemy = Cast<AEnemyCharacter>(OtherActor);
 	if (IsValid(Enemy))
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Emerald, TEXT("Enemy InComming!"));
 		float CurrentHp = this->GetHp();
 		float PlayerHp = CurrentHp - (Enemy->GetAtk() - this->GetDef());
-		GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Emerald, FString::Printf(TEXT("EnemyATk: %.1f"), Enemy->GetAtk()));
-		GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Emerald, FString::Printf(TEXT("PlayerHp: %.1f"),PlayerHp));
 		if (PlayerHp > 0)
 		{
 			SetHp(PlayerHp);
 		}
 		else
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Emerald, TEXT("Player Die!"));
 			Weapon->Destroy();
 			Destroy();
 		}
@@ -148,7 +144,6 @@ void APlayerCharacter::OnComponentHit(UPrimitiveComponent* HitComponent, AActor*
 	}
 	else
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Emerald, TEXT("PlayerCharacter OnBeginOverLap : Fail To Cast!"));
 		return;
 	}
 }

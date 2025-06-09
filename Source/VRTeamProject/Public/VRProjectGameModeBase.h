@@ -17,6 +17,7 @@ class VRTEAMPROJECT_API AVRProjectGameModeBase : public AGameModeBase
 	AVRProjectGameModeBase();
 public :
 	void TriggerGameClear();
+	void TriggerGameStart();
 	bool IsClear() { return bIsClear; }
 protected:
 

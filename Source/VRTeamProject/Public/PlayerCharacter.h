@@ -59,7 +59,6 @@ private:
 	UPROPERTY(EditAnywhere)
 	float Hp;
 
-
 	UPROPERTY(VisibleAnywhere)
 	float MaxHp = 100.0f;
 
