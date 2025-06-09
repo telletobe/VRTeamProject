@@ -82,8 +82,6 @@ void AEnemySpawner::SpawnEnemy()
 
 void AEnemySpawner::CheckGameClear()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::MakeRandomColor(), TEXT("Spawner : CheckGameClear Call"));
-
 	if (IsValid(GameMode))
 	{
 

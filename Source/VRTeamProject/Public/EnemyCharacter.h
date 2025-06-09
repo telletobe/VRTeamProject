@@ -43,7 +43,7 @@ public:
 
 	void DeSpawn();
 	void Spawn();
-	void Die();
+	void NotifyDeath();
 
 	UPROPERTY()
 	FOnEnemyDeath OnEnemyDied_Delegate;

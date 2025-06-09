@@ -108,9 +108,8 @@ void AEnemyCharacter::Spawn()
 	}
 }
 
-void AEnemyCharacter::Die()
+void AEnemyCharacter::NotifyDeath()
 {
-	GEngine->AddOnScreenDebugMessage(-1,3.0f,FColor::MakeRandomColor(),TEXT("Enemy Die!"));
 	OnEnemyDied_Delegate.Broadcast();
 }
 
