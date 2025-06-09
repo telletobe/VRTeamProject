@@ -45,8 +45,9 @@ public:
 	void Spawn();
 	void Die();
 
-	FOnEnemyDeath& OnEnemyDied() { return OnEnemyDied_Delegate; }
-
+	//FOnEnemyDeath& OnEnemyDied() { return OnEnemyDied_Delegate; }
+	UPROPERTY()
+	FOnEnemyDeath OnEnemyDied_Delegate;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -98,5 +99,5 @@ private:
 
 	FTimerHandle SpawnHandle;
 
-	FOnEnemyDeath OnEnemyDied_Delegate;
+
 };

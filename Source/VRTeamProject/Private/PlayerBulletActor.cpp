@@ -104,6 +104,7 @@ void APlayerBulletActor::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent
 			}
 			else
 			{
+				Enemy->Die();
 				Enemy->DeSpawn();
 			}
 

@@ -39,7 +39,7 @@ void AEnemySpawner::CreateEnemy()
 				if (SpawnedEnemy)
 				{
 					SpawnedEnemy->SpawnDefaultController();
-					SpawnedEnemy->OnEnemyDied().AddDynamic(this, &AEnemySpawner::CheckGameClear);
+					SpawnedEnemy->OnEnemyDied_Delegate.AddDynamic(this, &AEnemySpawner::CheckGameClear);
 				}
 
 				EnemyPool.Add(SpawnedEnemy);

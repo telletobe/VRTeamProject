@@ -7,6 +7,7 @@
 #include "PlayerStateWidget.generated.h"
 
 class UProgressBar;
+class UButton;
 /**
  * 
  */
@@ -17,12 +18,19 @@ class VRTEAMPROJECT_API UPlayerStateWidget : public UUserWidget
 	
 public:
 
+	UFUNCTION()
+	void UpdateHP();
+
+
 protected:
 	virtual void NativeConstruct() override;
 
 private:
 	UPROPERTY(meta = (Bindwidget))
 	TObjectPtr<UProgressBar> HPBar;
+
+	UPROPERTY(meta = (Bindwidget))
+	TObjectPtr<UButton> Button_0;
 
 
 };

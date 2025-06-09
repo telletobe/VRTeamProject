@@ -19,6 +19,8 @@ public:
 	// Sets default values for this actor's properties
 	AEnemySpawner();
 	void CreateEnemy();
+
+	UFUNCTION()
 	void CheckGameClear(AEnemyCharacter* Enemy);
 	
 protected:

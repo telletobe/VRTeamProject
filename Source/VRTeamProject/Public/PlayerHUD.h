@@ -23,10 +23,10 @@ protected:
 	virtual void BeginPlay() override;
 private:
 	TSubclassOf<UMapSelectWidget> MapSelect;
-
 	TObjectPtr<UMapSelectWidget> MapSelectInstance;
 
 	TSubclassOf<UPlayerStateWidget> PlayerState;
-
 	TObjectPtr<UPlayerStateWidget> PlayerStateInstance;
+
+
 };

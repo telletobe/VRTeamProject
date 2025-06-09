@@ -84,10 +84,6 @@ TArray<AActor*> FoundEndPoint;
 
 void AEnemyCharacter::DeSpawn()
 {
-	if (GetCurrentHp() <= 0)
-	{
-		Die();
-	}
 
 	if (IsValid(DeSpawnPoint))
 	{

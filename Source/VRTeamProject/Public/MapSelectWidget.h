@@ -19,6 +19,9 @@ class VRTEAMPROJECT_API UMapSelectWidget : public UUserWidget
 	
 public:
 
+	UFUNCTION()
+	void OnMyButtonClicked();
+
 protected:
 	virtual void NativeConstruct() override;
 
