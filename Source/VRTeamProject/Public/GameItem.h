@@ -59,9 +59,6 @@ private:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UStaticMeshComponent> ItemMesh;
 
-	UPROPERTY(EditAnywhere)
-	TObjectPtr<ATargetPoint> EndPoint;
-
 	UPROPERTY()
 	TObjectPtr<APlayerCharacter> Player;
 
