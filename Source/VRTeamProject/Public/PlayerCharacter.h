@@ -9,6 +9,8 @@
 #include "PlayerWeapon.h"
 #include "PlayerCharacter.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPlayerDeath);
+
 class APlayerController;
 
 
@@ -38,6 +40,13 @@ public:
 
 
 	void ApplyEffectItem(EItemEffectData Data);
+	void PlayerReSpawn();
+	void PlayerDeSpawn();
+	void NotifyPlayerDeath();
+
+
+	UPROPERTY()
+	FOnPlayerDeath OnPlayerDeath;
 
 	///////////////////////////////////////////////////
 	// 미사용 코드
@@ -80,8 +89,9 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	float Exp;
 
-	bool bIsArrived;
-
+	//bool bIsArrived;
+	bool bIsActive = true;
+	bool bMouseClickEnable = true;
 	
 	UPROPERTY()
 	TObjectPtr<UInputMappingContext> IMC_InputMappingContext;
@@ -103,5 +113,5 @@ private:
 	
 	UPROPERTY(EditAnywhere, Category = "Weapon")
 	TObjectPtr<APlayerWeapon> Weapon;
-	
+
 };

@@ -19,10 +19,15 @@ public :
 	void TriggerGameClear();
 	void TriggerGameStart();
 	bool IsClear() { return bIsClear; }
+	bool IsPlayerAlive() { return bPlayerAlive; }
+
+	UFUNCTION()
+	void ChangeIsPlayerDead();
 protected:
 
 	virtual void BeginPlay() override;
 
 private:
 	bool bIsClear = false;
+	bool bPlayerAlive = true;
 };

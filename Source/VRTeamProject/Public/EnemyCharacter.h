@@ -43,10 +43,11 @@ public:
 
 	void DeSpawn();
 	void Spawn();
-	void NotifyDeath();
+	void NotifyEnemyDeath();
 
 	UPROPERTY()
 	FOnEnemyDeath OnEnemyDied_Delegate;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -95,6 +96,7 @@ private:
 	float SpawnDelay;
 
 	bool bIsActive = false;
+
 
 
 };

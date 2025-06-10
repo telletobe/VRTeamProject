@@ -22,6 +22,7 @@ public:
 	void FindTartgetPoint();
 	void ChangeActiveState();
 	void SetDropTimer();
+	void ResetLocationToStartPoint();
 
 protected:
 	// Called when the game starts or when spawned
@@ -54,8 +55,8 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<AActor> EndPoint;
 
-	//UPROPERTY(VisibleAnywhere)
-	//TObjectPtr<AActor> DropPoint;
+	/*UPROPERTY(VisibleAnywhere)
+	TObjectPtr<AActor> DropPoint;*/
 
 	FVector MoveForce;
 

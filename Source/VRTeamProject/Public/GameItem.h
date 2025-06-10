@@ -59,6 +59,12 @@ private:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UStaticMeshComponent> ItemMesh;
 
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UStaticMeshComponent> ParachuteMesh;
+
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UStaticMeshComponent> BoxTopMesh;
+
 	UPROPERTY()
 	TObjectPtr<APlayerCharacter> Player;
 
@@ -70,4 +76,6 @@ private:
 
 	UPROPERTY(VisibleAnywhere)
 	float MaxHp = 100.0f;
+
+
 };

@@ -29,8 +29,22 @@ void AVRProjectGameModeBase::TriggerGameStart()
 	bIsClear = false;
 }
 
+void AVRProjectGameModeBase::ChangeIsPlayerDead()
+{
+	bPlayerAlive = !bPlayerAlive;
+	UE_LOG(LogTemp,Warning,TEXT("PlayerAlive : %s"), bPlayerAlive ? TEXT("true") : TEXT("false"));
+}
+
+
 void AVRProjectGameModeBase::BeginPlay()
 {
 	Super::BeginPlay();
 
+	APlayerCharacter* Player = Cast<APlayerCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn());
+	if (Player)
+	{
+		Player->OnPlayerDeath.AddDynamic(this, &AVRProjectGameModeBase::ChangeIsPlayerDead);
+	}
+
+	
 }

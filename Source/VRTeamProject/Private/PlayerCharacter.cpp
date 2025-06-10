@@ -43,13 +43,13 @@ APlayerCharacter::APlayerCharacter()
 		IA_Attack = AttackObject.Object;
 	}
 
-	bIsArrived = false;
-
 	//----------------------------------------------
 
 	SetHp(10.0f);
 	SetAtk(5);
 	SetDef(1);
+	bIsActive = false;
+	bMouseClickEnable = false;
 
 	//---------------------------------------------
 	UCapsuleComponent* CharacterCollision = GetCapsuleComponent();
@@ -81,6 +81,10 @@ void APlayerCharacter::BeginPlay()
 		CharacterCollision->OnComponentHit.AddDynamic(this,&APlayerCharacter::OnComponentHit);
 	} 
 
+	if (!bIsActive)
+	{
+		PlayerReSpawn();
+	}
 
 	//////////////////////////////////////////////////////////////////////////////////////
 	/*
@@ -118,8 +122,8 @@ void APlayerCharacter::BeginPlay()
 			Weapon = NewWeapon;
 			Weapon->AttachToActor(this,FAttachmentTransformRules::KeepRelativeTransform);
 		}
-
 	}
+
 }
 
 void APlayerCharacter::OnComponentHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
@@ -136,11 +140,12 @@ void APlayerCharacter::OnComponentHit(UPrimitiveComponent* HitComponent, AActor*
 		}
 		else
 		{
-			Weapon->Destroy();
-			Destroy();
+			PlayerDeSpawn();
+			NotifyPlayerDeath();
 		}
 
 		Enemy->DeSpawn();
+
 	}
 	else
 	{
@@ -245,6 +250,38 @@ void APlayerCharacter::ApplyEffectItem(EItemEffectData Data)
 
 }
 
+void APlayerCharacter::PlayerDeSpawn()
+{
+	if (PlayerController) 
+	{
+		PlayerController->SetIgnoreMoveInput(true);
+		bMouseClickEnable = false;
+	}
+	if (Weapon) Weapon->SetActorHiddenInGame(true);
+	bIsActive = false;
+	SetActorHiddenInGame(true);
+
+}
+
+void APlayerCharacter::NotifyPlayerDeath()
+{
+	OnPlayerDeath.Broadcast();
+	UE_LOG(LogTemp,Warning,TEXT("NotifyPlayerDeath"));
+}
+
+void APlayerCharacter::PlayerReSpawn()
+{
+	if (PlayerController)
+	{
+		PlayerController->SetIgnoreMoveInput(false);
+		bMouseClickEnable = true;
+	}
+
+	if (Weapon) Weapon->SetActorHiddenInGame(false);
+	bIsActive = true;
+	SetActorHiddenInGame(false);
+}
+
 void APlayerCharacter::Move(const FInputActionValue& Value)
 {
 	
@@ -274,7 +311,7 @@ void APlayerCharacter::Look(const FInputActionValue& Value)
 
 void APlayerCharacter::Attack(const FInputActionValue& Value)
 {
-	if (Weapon)
+	if (Weapon && bMouseClickEnable)
 	{
 		Weapon->Fire(GetAtk());
 	} 

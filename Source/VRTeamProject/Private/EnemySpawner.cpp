@@ -46,14 +46,12 @@ void AEnemySpawner::CreateEnemy()
 					SpawnedEnemy->SpawnDefaultController();
 					SpawnedEnemy->DeSpawn();
 					SpawnedEnemy->OnEnemyDied_Delegate.AddDynamic(this, &AEnemySpawner::CheckGameClear);
-				}
-
-				EnemyPool.Add(SpawnedEnemy);
+					EnemyPool.Add(SpawnedEnemy);
+				}				
 			}
 			else
 			{
 				GetWorld()->GetTimerManager().ClearTimer(CreateHandle);
-				GEngine->AddOnScreenDebugMessage(-1,3.0f,FColor::Cyan,TEXT("Fin"));
 			}
 		}
 		else
@@ -67,10 +65,10 @@ void AEnemySpawner::SpawnEnemy()
 {
 	if (EnemyPool.Num() == 0) return;
 
+
 	for (int32 i = 0; i < EnemyPool.Num(); ++i)
 	{
 		int32 Index = (PoolIndex + i) % EnemyPool.Num();
-
 		if (!EnemyPool[Index]->IsActive())
 		{
 			EnemyPool[Index]->Spawn();
@@ -78,7 +76,12 @@ void AEnemySpawner::SpawnEnemy()
 			return;
 		}
 	}
+
+
+
 }
+
+//CheckGameClear 조건 설정 필요 250610
 
 void AEnemySpawner::CheckGameClear()
 {
@@ -87,9 +90,10 @@ void AEnemySpawner::CheckGameClear()
 
 		if (!(GameMode->IsClear()))
 		{
+			UE_LOG(LogTemp,Warning,TEXT("first if"));
+			UE_LOG(LogTemp, Warning, TEXT("GameMode:Player Alive : %s"), GameMode->IsPlayerAlive() ? TEXT("true") : TEXT("False"));
 			if (CurrentKillCnt == RequiredKillCnt)
-			{
-				GameMode = Cast<AVRProjectGameModeBase>(GetWorld()->GetAuthGameMode());
+			{			
 				GameMode->TriggerGameClear();
 				GetWorld()->GetTimerManager().ClearTimer(SpawnHandle);
 				CurrentKillCnt = 1;
@@ -111,11 +115,34 @@ void AEnemySpawner::CheckGameClear()
 				CurrentKillCnt++;
 			}
 		}
+		else if (!(GameMode->IsPlayerAlive()))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("second if"));
+			GetWorld()->GetTimerManager().ClearTimer(SpawnHandle);
+			CurrentKillCnt = 1;
+			UE_LOG(LogTemp,Warning,TEXT("Player is Death!"));
+
+			if (EnemyPool.Num() != 0)
+			{
+				for (AEnemyCharacter* SpawnedEnemy : EnemyPool)
+				{
+					if (SpawnedEnemy->IsActive())
+					{
+						SpawnedEnemy->DeSpawn();
+					}
+				}
+			}
+
+		}
 		else
 		{
+			UE_LOG(LogTemp, Warning, TEXT("else"));
 			GameMode->TriggerGameStart();
 			GetWorld()->GetTimerManager().SetTimer(SpawnHandle, this, &AEnemySpawner::SpawnEnemy, SpawnDelay, true);
 		}
+
+
+
 	}
 	else
 	{

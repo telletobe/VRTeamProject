@@ -20,6 +20,12 @@ AGameItem::AGameItem()
 	ItemMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ItemMesh"));
 	ItemMesh->AttachToComponent(ItemCollision, FAttachmentTransformRules::KeepRelativeTransform);
 
+	ParachuteMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ParachuteMesh"));
+	ParachuteMesh->AttachToComponent(ItemMesh, FAttachmentTransformRules::KeepRelativeTransform);
+
+	BoxTopMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BoxTopMesh"));
+	BoxTopMesh->AttachToComponent(ItemMesh, FAttachmentTransformRules::KeepRelativeTransform);
+
 	ItemCollision->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 
 	ItemMesh->SetSimulatePhysics(true);

@@ -41,21 +41,9 @@ void AItemSpawnActor::SpawnItem()
 
 void AItemSpawnActor::MoveToEndPoint(float DeltaTime)
 {
-	if (IsValid(EndPoint))
-	{
-		float Distance = FVector::Dist2D(GetActorLocation(), EndPoint->GetActorLocation());
-		if (Distance < 100.0f)
-		{
-			if (IsValid(StartPoint))
-			{
-				SetActorLocation(StartPoint->GetActorLocation());
-				ChangeActiveState();
-				return;
-			}
-		}
-	}
 	FVector NewLocation = GetActorLocation() + MoveForce * DeltaTime;
 	SetActorLocation(NewLocation);
+	ResetLocationToStartPoint();
 }
 
 void AItemSpawnActor::FindTartgetPoint()
@@ -114,6 +102,26 @@ void AItemSpawnActor::SetDropTimer()
 	}
 }
 
+void AItemSpawnActor::ResetLocationToStartPoint()
+{
+
+	if (IsValid(EndPoint))
+	{
+		if (IsValid(StartPoint))
+		{
+			float EndDistance = FVector::Dist2D(GetActorLocation(), EndPoint->GetActorLocation());
+			if (EndDistance < 100.0f)
+			{
+				SetActorLocation(StartPoint->GetActorLocation());
+				ChangeActiveState();
+				return;
+			}
+
+		}
+	}
+
+}
+
 // Called when the game starts or when spawned
 void AItemSpawnActor::BeginPlay()
 {
@@ -127,6 +135,7 @@ void AItemSpawnActor::BeginPlay()
 		GetWorld()->GetTimerManager().SetTimer(ActorVisibleHandle, this, &AItemSpawnActor::ChangeActiveState, SpawnDelay, true);
 
 	}
+
 }
 
 // Called every frame
