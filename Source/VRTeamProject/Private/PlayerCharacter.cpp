@@ -224,15 +224,23 @@ void APlayerCharacter::ApplyEffectItem(EItemEffectData Data)
 	switch (Data)
 	{
 	case EItemEffectData::HEAL:
+
+
+
 		break;
 	case EItemEffectData::AtkUp:
+		//SetAtk(GetAtk()+1)
 		break;
 	case EItemEffectData::DefUp:
+
 		break;
-	case EItemEffectData::AppendWeapon:
+	case EItemEffectData::AttackSpeed:
+		/*APlayerWeapon* PlayerWeapon = GetWeapon();
+		PlayerWeapon->SetFireDelay(0.1f);
+		(지속시간 설정)
+		PlayerWeapon->SetFireDelay(PlayerWeapon->GetDefaultFireDelay());*/
 		break;
-	default:
-		break;
+
 	}
 
 }

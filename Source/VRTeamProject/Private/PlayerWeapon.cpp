@@ -55,6 +55,11 @@ void APlayerWeapon::ChangeFireState()
 	bIsFire = !bIsFire;
 }
 
+void APlayerWeapon::SetFireDelay(float AttackFireDelay)
+{
+	FireDelay = AttackFireDelay;
+}
+
 // Called when the game starts or when spawned
 void APlayerWeapon::BeginPlay()
 {

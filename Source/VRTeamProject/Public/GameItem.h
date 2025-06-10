@@ -16,7 +16,7 @@ enum class EItemEffectData : uint8
 	HEAL			UMETA(DisplayName = "HEAL"),
 	AtkUp			UMETA(DisplayName = "AtkUp"),
 	DefUp			UMETA(DisplayName = "DefUp"),
-	AppendWeapon	UMETA(DisplayName = "AppendWeapon")
+	AttackSpeed	UMETA(DisplayName = "AttackSpeed")
 
 };
 

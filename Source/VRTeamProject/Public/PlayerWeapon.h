@@ -19,6 +19,10 @@ public:
 	APlayerWeapon();
 	void Fire(float Damage);
 	void ChangeFireState();
+	void SetFireDelay(float AttackFireDelay);
+
+	float GetFireDelay() const { return FireDelay; }
+	float GetDefaultFireDelay() const { return DefaultFireDelay; }
 
 protected:
 	// Called when the game starts or when spawned
@@ -39,5 +43,8 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	float FireDelay = 0.2;
+
+	float DefaultFireDelay = 0.2f;
+
 
 };

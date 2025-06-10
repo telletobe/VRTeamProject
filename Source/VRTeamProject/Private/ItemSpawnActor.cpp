@@ -33,6 +33,8 @@ void AItemSpawnActor::SpawnItem()
 	if (Item)
 	{
 		AGameItem* SpawnedItem = GetWorld()->SpawnActor<AGameItem>(Item, SpawnPoint, FRotator(0));
+		//SpawnedItem->SetItemData(EItemEffectData::AttackSpeed);
+		return;
 	}
 
 }

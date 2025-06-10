@@ -6,9 +6,9 @@
 #include "GameItem.h"
 #include "GameFramework/Character.h"
 #include <InputMappingContext.h>
+#include "PlayerWeapon.h"
 #include "PlayerCharacter.generated.h"
 
-class APlayerWeapon;
 class APlayerController;
 
 
@@ -31,6 +31,11 @@ public:
 	float GetDef() const { return Def; }
 	float GetExp() const { return Exp; }
 	float GetMaxHp() const { return MaxHp; }
+	TObjectPtr<APlayerWeapon> GetWeapon() const { return Weapon; }
+
+	float GetDefaultAtk() const { return DefaultAtk; }
+	float GetDefaultDef () const { return DefaultDef; }
+
 
 	void ApplyEffectItem(EItemEffectData Data);
 
