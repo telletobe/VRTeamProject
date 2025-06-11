@@ -9,17 +9,48 @@ void UPlayerStateWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	if (btn_Pause)
+    if (APlayerController* PC = GetOwningPlayer())
+    {
+        PC->bShowMouseCursor = true;
+
+        FInputModeGameAndUI Mode;
+        Mode.SetHideCursorDuringCapture(false);
+        Mode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+        Mode.SetWidgetToFocus(TakeWidget());
+        PC->SetInputMode(Mode);
+
+    }
+
+	if (btn_Quit)
 	{
-		btn_Pause->OnClicked.AddDynamic(this, &UPlayerStateWidget::GamePause);
+		btn_Quit->OnClicked.AddDynamic(this, &UPlayerStateWidget::GameQuit);
 	}
+    if (btn_Option)
+    {
+        btn_Option->OnClicked.AddDynamic(this, &UPlayerStateWidget::Option);
+    }
 
 
 }
 
-void UPlayerStateWidget::GamePause()
+void UPlayerStateWidget::NativeDestruct()
 {
+    Super::NativeDestruct();
 
+    if (APlayerController* PC = GetOwningPlayer())
+    {
+        PC->bShowMouseCursor = false;
+        PC->SetInputMode(FInputModeGameOnly());
+    }
+}
+
+
+void UPlayerStateWidget::GameQuit()
+{
+}
+
+void UPlayerStateWidget::Option()
+{
 }
 
 void UPlayerStateWidget::UpdatePlayerStats()

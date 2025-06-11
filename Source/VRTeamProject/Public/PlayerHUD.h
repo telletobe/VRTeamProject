@@ -19,13 +19,24 @@ class VRTEAMPROJECT_API APlayerHUD : public AHUD
 	
 public :
 	APlayerHUD();
+
+	UFUNCTION(BlueprintCallable)
+	void ToggleMapSelect();
+
+	UFUNCTION(BlueprintCallable)
+	void PlayerStateShow();
+
 protected:
 	virtual void BeginPlay() override;
 private:
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<UMapSelectWidget> MapSelect;
+	UPROPERTY(Transient)
 	TObjectPtr<UMapSelectWidget> MapSelectInstance;
 
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<UPlayerStateWidget> PlayerState;
+	UPROPERTY(Transient)
 	TObjectPtr<UPlayerStateWidget> PlayerStateInstance;
 
 
