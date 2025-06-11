@@ -91,8 +91,6 @@ void APlayerBulletActor::BeginPlay()
 
 void APlayerBulletActor::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-
-
 	if (AEnemyCharacter* Enemy = Cast<AEnemyCharacter>(OtherActor))
 	{
 		if(Enemy->GetCurrentHp() > 0)
@@ -107,7 +105,6 @@ void APlayerBulletActor::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent
 				Enemy->DeSpawn();
 				Enemy->NotifyEnemyDeath();
 			}
-
 		}
 		Destroy();
 	}
@@ -130,10 +127,7 @@ void APlayerBulletActor::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent
 			}
 			Destroy();
 		}
-
 	}
-
-
 }
 
 // Called every frame
@@ -141,6 +135,3 @@ void APlayerBulletActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 }
-
-
-

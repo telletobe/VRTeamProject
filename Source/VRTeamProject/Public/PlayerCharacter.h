@@ -33,7 +33,7 @@ public:
 	float GetDef() const { return Def; }
 	float GetExp() const { return Exp; }
 	float GetMaxHp() const { return MaxHp; }
-	TObjectPtr<APlayerWeapon> GetWeapon() const { return Weapon; }
+	TObjectPtr<APlayerWeapon> GetWeapon() const { return *Weapon; }
 
 	float GetDefaultAtk() const { return DefaultAtk; }
 	float GetDefaultDef () const { return DefaultDef; }
