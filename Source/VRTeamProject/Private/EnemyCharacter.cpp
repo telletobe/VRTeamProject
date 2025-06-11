@@ -92,7 +92,7 @@ void AEnemyCharacter::DeSpawn()
 
 	SetActorHiddenInGame(true);
 	bIsActive = false;
-	NotifyEnemyDeath();
+	NotifyEnemyDespawn();
 }
 
 
@@ -108,9 +108,14 @@ void AEnemyCharacter::Spawn()
 	}
 }
 
+void AEnemyCharacter::NotifyEnemyDespawn()
+{
+	OnEnemyDespawned.Broadcast();
+}
+
 void AEnemyCharacter::NotifyEnemyDeath()
 {
-	OnEnemyDied_Delegate.Broadcast();
+	OnEnemyDeath.Broadcast();
 }
 
 // Called when the game starts or when spawned

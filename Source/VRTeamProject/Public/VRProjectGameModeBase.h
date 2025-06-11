@@ -22,7 +22,7 @@ public :
 	bool IsPlayerAlive() { return bPlayerAlive; }
 
 	UFUNCTION()
-	void ChangeIsPlayerDead();
+	void ChangePlayerAliveState();
 protected:
 
 	virtual void BeginPlay() override;

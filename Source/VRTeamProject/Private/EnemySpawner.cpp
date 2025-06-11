@@ -45,7 +45,8 @@ void AEnemySpawner::CreateEnemy()
 				{
 					SpawnedEnemy->SpawnDefaultController();
 					SpawnedEnemy->DeSpawn();
-					SpawnedEnemy->OnEnemyDied_Delegate.AddDynamic(this, &AEnemySpawner::CheckGameClear);
+					SpawnedEnemy->OnEnemyDespawned.AddDynamic(this, &AEnemySpawner::CheckGameClear);
+					SpawnedEnemy->OnEnemyDeath.AddDynamic(this,&AEnemySpawner::IncreaseKillCount);
 					EnemyPool.Add(SpawnedEnemy);
 				}				
 			}
@@ -76,12 +77,31 @@ void AEnemySpawner::SpawnEnemy()
 			return;
 		}
 	}
-
-
-
 }
 
-//CheckGameClear 조건 설정 필요 250610
+void AEnemySpawner::DeActivateEnemySpawner()
+{
+	GetWorld()->GetTimerManager().ClearTimer(SpawnHandle);
+
+	if (EnemyPool.Num() != 0)
+	{
+		for (AEnemyCharacter* SpawnedEnemy : EnemyPool)
+		{
+			if (SpawnedEnemy->IsActive())
+			{
+				SpawnedEnemy->DeSpawn();
+			}
+		}
+	}
+}
+
+void AEnemySpawner::ActivateEnemySpawner()
+{
+	GameMode->TriggerGameStart();
+	GetWorld()->GetTimerManager().SetTimer(SpawnHandle, this, &AEnemySpawner::SpawnEnemy, SpawnDelay, true);
+}
+
+
 
 void AEnemySpawner::CheckGameClear()
 {
@@ -90,66 +110,34 @@ void AEnemySpawner::CheckGameClear()
 
 		if (!(GameMode->IsClear()))
 		{
-			UE_LOG(LogTemp,Warning,TEXT("first if"));
 			UE_LOG(LogTemp, Warning, TEXT("GameMode:Player Alive : %s"), GameMode->IsPlayerAlive() ? TEXT("true") : TEXT("False"));
-			if (CurrentKillCnt == RequiredKillCnt)
+			if (CurrentKillCnt >= RequiredKillCnt)
 			{			
 				GameMode->TriggerGameClear();
-				GetWorld()->GetTimerManager().ClearTimer(SpawnHandle);
+				DeActivateEnemySpawner();
 				CurrentKillCnt = 1;
 
-				if (EnemyPool.Num() != 0)
-				{
-					for (AEnemyCharacter* SpawnedEnemy : EnemyPool)
-					{
-						if (SpawnedEnemy->IsActive())
-						{
-							SpawnedEnemy->DeSpawn();
-						}
-					}
-				}
-
-			}
-			else
-			{
-				CurrentKillCnt++;
-			}
-		}
-		else if (!(GameMode->IsPlayerAlive()))
-		{
-			UE_LOG(LogTemp, Warning, TEXT("second if"));
-			GetWorld()->GetTimerManager().ClearTimer(SpawnHandle);
-			CurrentKillCnt = 1;
-			UE_LOG(LogTemp,Warning,TEXT("Player is Death!"));
-
-			if (EnemyPool.Num() != 0)
-			{
-				for (AEnemyCharacter* SpawnedEnemy : EnemyPool)
-				{
-					if (SpawnedEnemy->IsActive())
-					{
-						SpawnedEnemy->DeSpawn();
-					}
-				}
 			}
 
+			 if (!(GameMode->IsPlayerAlive()))
+	  		 {
+				 DeActivateEnemySpawner();
+				 CurrentKillCnt = 1;
+
+			 }
 		}
-		else
-		{
-			UE_LOG(LogTemp, Warning, TEXT("else"));
-			GameMode->TriggerGameStart();
-			GetWorld()->GetTimerManager().SetTimer(SpawnHandle, this, &AEnemySpawner::SpawnEnemy, SpawnDelay, true);
-		}
-
-
-
 	}
 	else
 	{
+		UE_LOG(LogTemp, Warning, TEXT("GameMode Is not Valid"));
 		return;
 	}
 
+}
 
+void AEnemySpawner::IncreaseKillCount()
+{
+	CurrentKillCnt++;
 }
 
 

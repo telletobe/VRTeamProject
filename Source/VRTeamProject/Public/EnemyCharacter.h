@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "EnemyCharacter.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnEnemyDespawned);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnEnemyDeath);
 
 class AAIController;
@@ -38,21 +39,29 @@ public:
 	float GetSpawnDelay() const { return SpawnDelay; }
 
 	bool IsActive() const { return bIsActive; }
-	void FindSpawnPoint();
-	void FindDeSpawnPoint();
 
 	void DeSpawn();
 	void Spawn();
+
+	void NotifyEnemyDespawn();
 	void NotifyEnemyDeath();
 
 	UPROPERTY()
-	FOnEnemyDeath OnEnemyDied_Delegate;
+	FOnEnemyDespawned OnEnemyDespawned;
+
+	UPROPERTY()
+	FOnEnemyDeath OnEnemyDeath;
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:
+private :
+	void FindSpawnPoint();
+	void FindDeSpawnPoint();
+
+public :
+
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 

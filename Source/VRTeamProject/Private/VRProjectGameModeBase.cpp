@@ -20,19 +20,21 @@ void AVRProjectGameModeBase::TriggerGameClear()
 
 	GEngine->AddOnScreenDebugMessage(-1,3.0f,FColor::MakeRandomColor(), TEXT("Clear Game"));
 	bIsClear = true;
-
+	return;
 }
 
 void AVRProjectGameModeBase::TriggerGameStart()
 {
 	GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::MakeRandomColor(), TEXT("Start Game"));
 	bIsClear = false;
+	return;
 }
 
-void AVRProjectGameModeBase::ChangeIsPlayerDead()
+void AVRProjectGameModeBase::ChangePlayerAliveState()
 {
 	bPlayerAlive = !bPlayerAlive;
 	UE_LOG(LogTemp,Warning,TEXT("PlayerAlive : %s"), bPlayerAlive ? TEXT("true") : TEXT("false"));
+	return;
 }
 
 
@@ -43,7 +45,7 @@ void AVRProjectGameModeBase::BeginPlay()
 	APlayerCharacter* Player = Cast<APlayerCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn());
 	if (Player)
 	{
-		Player->OnPlayerDeath.AddDynamic(this, &AVRProjectGameModeBase::ChangeIsPlayerDead);
+		Player->OnPlayerDeath.AddDynamic(this, &AVRProjectGameModeBase::ChangePlayerAliveState);
 	}
 
 	
