@@ -19,7 +19,10 @@ class VRTEAMPROJECT_API UPlayerStateWidget : public UUserWidget
 public:
 
 	UFUNCTION()
-	void UpdateHP();
+	void GamePause();
+
+	UFUNCTION()
+	void UpdatePlayerStats();
 
 
 protected:
@@ -30,7 +33,17 @@ private:
 	TObjectPtr<UProgressBar> HPBar;
 
 	UPROPERTY(meta = (Bindwidget))
-	TObjectPtr<UButton> Button_0;
+	TObjectPtr<UProgressBar> DefBar;
+
+	UPROPERTY(meta = (Bindwidget))
+	TObjectPtr<UProgressBar> ExpBar;
+
+
+
+	UPROPERTY(meta = (Bindwidget))
+	TObjectPtr<UButton> btn_Pause;
+
+
 
 
 };

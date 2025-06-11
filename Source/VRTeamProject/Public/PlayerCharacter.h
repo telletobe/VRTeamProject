@@ -55,6 +55,9 @@ private:
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
 	void Attack(const FInputActionValue& Value);
+	void ToggleMap(const FInputActionValue& Value);
+	void PlayerStat(const FInputActionValue& Value);
+	void Click(const FInputActionValue& Value);
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -104,6 +107,15 @@ private:
 
 	UPROPERTY()
 	TObjectPtr<UInputAction> IA_Attack;
+
+	UPROPERTY()
+	TObjectPtr<UInputAction> IA_ToggleMap;
+
+	UPROPERTY()
+	TObjectPtr<UInputAction> IA_PlayerStat;
+
+	UPROPERTY()
+	TObjectPtr<UInputAction> IA_Click;
 
 	UPROPERTY()
 	TObjectPtr<APlayerController> PlayerController;

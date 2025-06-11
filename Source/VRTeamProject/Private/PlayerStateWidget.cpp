@@ -4,19 +4,26 @@
 #include "PlayerStateWidget.h"
 #include "Components/Button.h"
 
-void UPlayerStateWidget::UpdateHP()
-{
-	UE_LOG(LogTemp, Warning, TEXT("버튼이 눌렸습니다!"));
-}
 
 void UPlayerStateWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	if (Button_0)
+	if (btn_Pause)
 	{
-		Button_0->OnClicked.AddDynamic(this, &UPlayerStateWidget::UpdateHP);
+		btn_Pause->OnClicked.AddDynamic(this, &UPlayerStateWidget::GamePause);
 	}
+
+
+}
+
+void UPlayerStateWidget::GamePause()
+{
+
+}
+
+void UPlayerStateWidget::UpdatePlayerStats()
+{
 }
 
 
