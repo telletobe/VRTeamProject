@@ -108,8 +108,8 @@ private:
 	UPROPERTY()
 	TObjectPtr<APlayerController> PlayerController;
 
-	UPROPERTY(EditAnywhere)
-	TObjectPtr<AActor> EndPoint;
+	/*UPROPERTY(EditAnywhere)
+	TObjectPtr<AActor> EndPoint;*/
 	
 	UPROPERTY(EditAnywhere, Category = "Weapon")
 	TObjectPtr<APlayerWeapon> Weapon;
