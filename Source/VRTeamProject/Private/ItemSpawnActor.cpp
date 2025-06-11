@@ -19,7 +19,9 @@ AItemSpawnActor::AItemSpawnActor()
 	ItemSpawnerMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ItemSpawnerMesh"));
 	ItemSpawnerMesh->AttachToComponent(ItemSpawnerCollision, FAttachmentTransformRules::KeepRelativeTransform);
 
+	ItemSpawnerCollision->SetCollisionObjectType(ECollisionChannel::ECC_WorldDynamic);
 	ItemSpawnerMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	ItemSpawnerCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	MoveForce = FVector(-1200,0,0);
 

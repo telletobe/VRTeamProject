@@ -5,6 +5,7 @@
 #include "Components/BoxComponent.h"
 #include <PlayerCharacter.h>
 #include "PlayerBulletActor.h"
+#include "Engine/StaticMeshActor.h"
 
 
 // Sets default values
@@ -27,9 +28,15 @@ AGameItem::AGameItem()
 	BoxTopMesh->AttachToComponent(ItemMesh, FAttachmentTransformRules::KeepRelativeTransform);
 
 	ItemCollision->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	ItemCollision->SetCollisionObjectType(ECC_WorldDynamic);
+	ItemCollision->SetCollisionResponseToChannel(ECollisionChannel::ECC_WorldStatic,ECollisionResponse::ECR_Overlap);
 
 	ItemMesh->SetSimulatePhysics(true);
 	ItemMesh->SetMassOverrideInKg(NAME_None,10000.0f,true);
+	ItemMesh->SetNotifyRigidBodyCollision(true);
+	ItemMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	ItemMesh->SetCollisionResponseToChannel(ECC_WorldStatic,ECR_Block);
+	ItemMesh->SetLinearDamping(5.0f);
 
 	ItemData = EItemEffectData::HEAL;
 
@@ -59,9 +66,8 @@ void AGameItem::BeginPlay()
 	if (ItemMesh)
 	{
 		ItemMesh->SetMassOverrideInKg(NAME_None, 10000.0f, true);
+		ItemMesh->OnComponentHit.AddDynamic(this,&AGameItem::OnHit);
 	}
-
-
 }
 
 //이벤트 발생자(EventInstigator)는 null값이 들어오니 사용하면 안됨.
@@ -85,7 +91,18 @@ void AGameItem::Destroyed()
 	}
 }
 
+void AGameItem::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+{
+	UE_LOG(LogTemp, Warning, TEXT("OnGroundHit"));
 
+	if (OtherActor)
+	{
+		ParachuteMesh->SetVisibility(false);
+		ItemMesh->OnComponentHit.RemoveDynamic(this,&AGameItem::OnHit);
+	}
+
+	return;
+}
 
 
 // Called every frame
