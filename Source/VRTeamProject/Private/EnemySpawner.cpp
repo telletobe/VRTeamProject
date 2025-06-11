@@ -18,7 +18,7 @@ AEnemySpawner::AEnemySpawner()
 	SetRootComponent(SpawnBox);
 
 	CurrentKillCnt = 1;
-	RequiredKillCnt = 10;
+	RequiredKillCnt = 1000;
 	CreateDelay = 0.1f;
 	SpawnDelay = 0.7f;
 	PoolIndex = EnemyPoolSize - 1;
