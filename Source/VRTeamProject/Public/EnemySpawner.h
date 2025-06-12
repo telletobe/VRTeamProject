@@ -51,12 +51,12 @@ private :
 	TArray<AEnemyCharacter*> EnemyPool;
 
 	UPROPERTY(EditAnywhere, category = "EnemyPool")
-	float CreateDelay = 0.1f;
+	float CreateDelay;
 
 	UPROPERTY(EditAnywhere, category = "EnemyPool")
-	float SpawnDelay = 1.0f;
-	int32 CurrentKillCnt = 1;
-	int32 RequiredKillCnt = 10;
+	float SpawnDelay;
+	int32 CurrentKillCnt;
+	int32 RequiredKillCnt;
 	int32 PoolIndex = 0;
 	bool bIsClear = false;
 
