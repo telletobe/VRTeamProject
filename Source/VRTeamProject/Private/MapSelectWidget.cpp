@@ -5,6 +5,8 @@
 #include "Components/Button.h"
 #include "GameFramework/PlayerController.h"
 
+
+
 void UMapSelectWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
@@ -21,6 +23,11 @@ void UMapSelectWidget::NativeConstruct()
 
         
     }
+
+    if (SelectButton_1)
+    {
+        SelectButton_1->OnClicked.AddDynamic(this, &UMapSelectWidget::EntertoStage);
+    }
 	
 }
 
@@ -33,5 +40,10 @@ void UMapSelectWidget::NativeDestruct()
         PC->bShowMouseCursor = false;
         PC->SetInputMode(FInputModeGameOnly());
     }
+
+}
+
+void UMapSelectWidget::EntertoStage()
+{
 
 }
