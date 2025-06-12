@@ -7,7 +7,6 @@
 #include "MapSelectWidget.generated.h"
 
 class UButton;
-	
 
 /**
  * 
@@ -23,7 +22,6 @@ public:
 
 protected:
 	virtual void NativeConstruct() override;
-	virtual void NativeDestruct()  override;  
 
 private:
 	UPROPERTY(meta = (Bindwidget))

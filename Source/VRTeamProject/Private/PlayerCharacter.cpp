@@ -85,7 +85,11 @@ void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	PlayerController = Cast<APlayerController>(GetController());
+	if (PlayerController == nullptr)
+	{
+		PlayerController = Cast<APlayerController>(GetController());
+	}
+
 
 	//if exist Controller, Use SubSystem with EnhancedInputLocalPlayerSubSystem.  and MappingContext.
 	if (PlayerController)
@@ -174,7 +178,6 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 		EnhancedInputComponent->BindAction(IA_PlayerStat, ETriggerEvent::Started, this, &APlayerCharacter::PlayerStat);
 		EnhancedInputComponent->BindAction(IA_Click, ETriggerEvent::Started, this, &APlayerCharacter::Click);
 	}
-
 }
 
 void APlayerCharacter::ApplyEffectItem(EItemEffectData Data)
@@ -186,8 +189,6 @@ void APlayerCharacter::ApplyEffectItem(EItemEffectData Data)
 	switch (Data)
 	{
 	case EItemEffectData::HEAL:
-
-
 
 		break;
 	case EItemEffectData::AtkUp:
@@ -236,6 +237,9 @@ void APlayerCharacter::PlayerReSpawn()
 	SetActorHiddenInGame(false);
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//컨트롤러 매핑 함수
+
 void APlayerCharacter::Move(const FInputActionValue& Value)
 {
 	
@@ -280,7 +284,8 @@ void APlayerCharacter::ToggleMap(const FInputActionValue& Value)
 {
 	if (PlayerController != nullptr)
 	{
-		if (APlayerHUD* MyHUD = Cast<APlayerHUD>(PlayerController->GetHUD()))
+		APlayerHUD* MyHUD = Cast<APlayerHUD>(PlayerController->GetHUD());
+		if (MyHUD != nullptr)
 		{
 			MyHUD->ToggleMapSelect();         // HUD 쪽 함수 호출
 
@@ -290,11 +295,13 @@ void APlayerCharacter::ToggleMap(const FInputActionValue& Value)
 
 void APlayerCharacter::PlayerStat(const FInputActionValue& Value)
 {
+
 	if (GetWorld()->GetMapName().Contains("Map"))
 	{
 		if (PlayerController != nullptr)
 		{
-			if (APlayerHUD* MyHUD = Cast<APlayerHUD>(PlayerController->GetHUD()))
+			APlayerHUD* MyHUD = Cast<APlayerHUD>(PlayerController->GetHUD());
+			if (MyHUD != nullptr)
 			{
 				MyHUD->PlayerStateShow();         // HUD 쪽 함수 호출
 			}
@@ -307,6 +314,8 @@ void APlayerCharacter::Click(const FInputActionValue& Value)
 {
 
 }
+
+//////////////////////////////////////////////////////////////////////////////
 
 
 void APlayerCharacter::SetHp(float PlayerHp)
