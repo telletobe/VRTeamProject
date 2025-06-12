@@ -85,7 +85,11 @@ void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	PlayerController = Cast<APlayerController>(GetController());
+	if (PlayerController == nullptr)
+	{
+		PlayerController = Cast<APlayerController>(GetController());
+	}
+
 
 	//if exist Controller, Use SubSystem with EnhancedInputLocalPlayerSubSystem.  and MappingContext.
 	if (PlayerController)
@@ -108,30 +112,6 @@ void APlayerCharacter::BeginPlay()
 	{
 		PlayerReSpawn();
 	}
-
-	//////////////////////////////////////////////////////////////////////////////////////
-	/*
-	//* 게임 시작 시, TargetPoint를 찾아서 플레이어에게 등록 해줌.
-	//* 
-	TArray<AActor*> FoundEndPoint;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(),ATargetPoint::StaticClass(),FoundEndPoint);
-
-	for (auto PlayerPoint : FoundEndPoint)
-	{
-		if (Cast<ATargetPoint>(PlayerPoint))
-		{
-			if (!EndPoint)
-			{
-				if (PlayerPoint->ActorHasTag(TEXT("PlayerEndPoint")))
-				{
-					EndPoint = PlayerPoint;
-				}
-
-			}
-		}	
-	}
-	*/
-	//////////////////////////////////////////////////////////////////////////////////////
 
 	if (!Weapon)
 	{
@@ -180,13 +160,6 @@ void APlayerCharacter::OnComponentHit(UPrimitiveComponent* HitComponent, AActor*
 void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	////////////////////////////////////////////////////////////////
-	/*
-	설정된 TargetPoint가 존재할 경우 TargetPoint로 이동합니다. 
-	if(!bIsArrived) MoveTargetPoint(EndPoint);
-	*/
-	////////////////////////////////////////////////////////////////
 }
 
 // Called to bind functionality to input
@@ -205,46 +178,7 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 		EnhancedInputComponent->BindAction(IA_PlayerStat, ETriggerEvent::Started, this, &APlayerCharacter::PlayerStat);
 		EnhancedInputComponent->BindAction(IA_Click, ETriggerEvent::Started, this, &APlayerCharacter::Click);
 	}
-
 }
-
-//////////////////////////////////////////////////////////////////////////////////////
-/*
-* 플레이어 캐릭터에게 TargetPoint가 있다면 TargetPoint로 이동합니다.
-* 
-void APlayerCharacter::MoveTargetPoint(AActor* TargetPoint)
-{
-	if (!TargetPoint)
-	{
-		//UE_LOG(LogTemp, Warning, TEXT("Playercharacter.cpp : TargetPoint Doesn't exist!"));
-		return;
-	}
-
-	FVector TargetPointLocation = TargetPoint->GetActorLocation();
-	FVector CurrentLocation = GetActorLocation();
-
-	if (!PlayerController)
-	{
-		PlayerController = Cast<APlayerController>(GetController());
-	}
-
-	FVector Direction = TargetPointLocation - CurrentLocation;
-	Direction.Normalize();
-
-	float Distance = FVector::Dist2D(CurrentLocation, TargetPointLocation);
-	if (Distance < 50.0f)
-	{
-		UE_LOG(LogTemp,Warning,TEXT("Arrived Target!"));
-		bIsArrived = true;
-		return;
-	}
-
-	AddMovementInput(Direction, 1.0f,true);
-
-}
-*/
-
-//////////////////////////////////////////////////////////////////////////////////////////////
 
 void APlayerCharacter::ApplyEffectItem(EItemEffectData Data)
 {
@@ -256,20 +190,15 @@ void APlayerCharacter::ApplyEffectItem(EItemEffectData Data)
 	{
 	case EItemEffectData::HEAL:
 
-
-
 		break;
 	case EItemEffectData::AtkUp:
-		//SetAtk(GetAtk()+1)
+
 		break;
 	case EItemEffectData::DefUp:
 
 		break;
 	case EItemEffectData::AttackSpeed:
-		/*APlayerWeapon* PlayerWeapon = GetWeapon();
-		PlayerWeapon->SetFireDelay(0.1f);
-		(지속시간 설정)
-		PlayerWeapon->SetFireDelay(PlayerWeapon->GetDefaultFireDelay());*/
+
 		break;
 
 	}
@@ -307,6 +236,9 @@ void APlayerCharacter::PlayerReSpawn()
 	bIsActive = true;
 	SetActorHiddenInGame(false);
 }
+
+//////////////////////////////////////////////////////////////////////////////
+//컨트롤러 매핑 함수
 
 void APlayerCharacter::Move(const FInputActionValue& Value)
 {
@@ -350,25 +282,26 @@ void APlayerCharacter::Attack(const FInputActionValue& Value)
 
 void APlayerCharacter::ToggleMap(const FInputActionValue& Value)
 {
-	if (GetWorld()->GetMapName().Contains("Lobby"))
+	if (PlayerController != nullptr)
 	{
-		if (APlayerController* PC = Cast<APlayerController>(GetController()))
+		APlayerHUD* MyHUD = Cast<APlayerHUD>(PlayerController->GetHUD());
+		if (MyHUD != nullptr)
 		{
-			if (APlayerHUD* MyHUD = Cast<APlayerHUD>(PC->GetHUD()))
-			{
-				MyHUD->ToggleMapSelect();         // HUD 쪽 함수 호출
-			}
+			MyHUD->ToggleMapSelect();         // HUD 쪽 함수 호출
+
 		}
 	}
 }
 
 void APlayerCharacter::PlayerStat(const FInputActionValue& Value)
 {
+
 	if (GetWorld()->GetMapName().Contains("Map"))
 	{
-		if (APlayerController* PC = Cast<APlayerController>(GetController()))
+		if (PlayerController != nullptr)
 		{
-			if (APlayerHUD* MyHUD = Cast<APlayerHUD>(PC->GetHUD()))
+			APlayerHUD* MyHUD = Cast<APlayerHUD>(PlayerController->GetHUD());
+			if (MyHUD != nullptr)
 			{
 				MyHUD->PlayerStateShow();         // HUD 쪽 함수 호출
 			}
@@ -381,6 +314,8 @@ void APlayerCharacter::Click(const FInputActionValue& Value)
 {
 
 }
+
+//////////////////////////////////////////////////////////////////////////////
 
 
 void APlayerCharacter::SetHp(float PlayerHp)

@@ -9,6 +9,7 @@
 
 class UMapSelectWidget;
 class UPlayerStateWidget;
+class APlayerController;
 /**
  * 
  */
@@ -39,5 +40,8 @@ private:
 	UPROPERTY(Transient)
 	TObjectPtr<UPlayerStateWidget> PlayerStateInstance;
 
+	UPROPERTY()
+	TObjectPtr<APlayerController> PC;
 
+	FInputModeGameAndUI Mode;
 };

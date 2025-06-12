@@ -30,7 +30,6 @@ public:
 
 protected:
 	virtual void NativeConstruct() override;
-	virtual void NativeDestruct()  override;
 
 private:
 	UPROPERTY(meta = (Bindwidget))
@@ -47,6 +46,5 @@ private:
 
 	UPROPERTY(meta = (Bindwidget))
 	TObjectPtr<UButton> btn_Option;
-
 
 };

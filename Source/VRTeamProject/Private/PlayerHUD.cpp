@@ -25,44 +25,75 @@ APlayerHUD::APlayerHUD()
 
 }
 
-void APlayerHUD::ToggleMapSelect()
+
+void APlayerHUD::BeginPlay()
 {
-	if (!MapSelectInstance)
+
+	if (PC == nullptr)
+	{
+		PC = GetOwningPlayerController();
+	}
+
+	if (MapSelect && !MapSelectInstance)
 	{
 		MapSelectInstance = CreateWidget<UMapSelectWidget>(GetWorld(), MapSelect);
 	}
 
-	if (MapSelectInstance->IsInViewport())
+	if (PlayerState && !PlayerStateInstance)
 	{
-		MapSelectInstance->RemoveFromParent();      // 目辑 OFF
+		PlayerStateInstance = CreateWidget<UPlayerStateWidget>(GetWorld(), PlayerState);
 	}
-	else
+
+	Mode.SetHideCursorDuringCapture(false);
+	Mode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+
+}
+
+void APlayerHUD::ToggleMapSelect()
+{
+	
+	if (IsValid(MapSelectInstance))
 	{
-		MapSelectInstance->AddToViewport();      // 目辑 ON
-		
+		if (MapSelectInstance->IsInViewport())
+		{
+			MapSelectInstance->RemoveFromParent();      // 目辑 OFF
+			PC->bShowMouseCursor = false;
+			if (PC) PC->SetInputMode(FInputModeGameOnly());
+		}
+		else
+		{
+			if (PlayerStateInstance->IsInViewport())
+			{
+				PlayerStateInstance->RemoveFromParent();
+			}
+			MapSelectInstance->AddToViewport();      // 目辑 ON
+			PC->bShowMouseCursor = true;
+			if (PC) PC->SetInputMode(Mode);
+		}
 	}
 }
 
 void APlayerHUD::PlayerStateShow()
 {
-	if (!PlayerStateInstance)
+	if (IsValid(PlayerStateInstance))
 	{
-		PlayerStateInstance = CreateWidget<UPlayerStateWidget>(GetWorld(), PlayerState);
+		if (PlayerStateInstance->IsInViewport())
+		{
+			PlayerStateInstance->RemoveFromParent();
+			PC->bShowMouseCursor = false;
+			if (PC) PC->SetInputMode(FInputModeGameOnly());
+		}
+		else
+		{
+			if (MapSelectInstance->IsInViewport())
+			{
+				MapSelectInstance->RemoveFromParent();
+			}
+			PlayerStateInstance->AddToViewport();
+			PC->bShowMouseCursor = true;
+			if (PC) PC->SetInputMode(Mode);
+		}
+	
 	}
-	if (PlayerStateInstance->IsInViewport())
-	{
-		PlayerStateInstance->RemoveFromParent();
-	}
-	else
-	{
-		PlayerStateInstance->AddToViewport();
-		
-	}
-}
-
-void APlayerHUD::BeginPlay()
-{	
-
-
-
+	
 }

@@ -120,4 +120,5 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Weapon")
 	TObjectPtr<APlayerWeapon> Weapon;
 
+
 };
