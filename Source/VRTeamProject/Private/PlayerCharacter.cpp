@@ -11,6 +11,7 @@
 #include "Components/CapsuleComponent.h"
 #include <EnemyCharacter.h>
 #include <PlayerHUD.h>
+#include "InputManager.h"
 
 #include "GameFramework/PlayerController.h"
 
@@ -20,61 +21,12 @@ APlayerCharacter::APlayerCharacter()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	//Data Asset
-	static ConstructorHelpers::FObjectFinder<UInputMappingContext> IMCObject(TEXT("'/Game/Map/System/Input/IMC_InputMappingContext.IMC_InputMappingContext'"));
-	static ConstructorHelpers::FObjectFinder<UInputAction> MoveObject(TEXT("'/Game/Map/System/Input/IA_Move.IA_Move'"));
-	static ConstructorHelpers::FObjectFinder<UInputAction> LookObject(TEXT("'/Game/Map/System/Input/IA_Look.IA_Look'"));
-	static ConstructorHelpers::FObjectFinder<UInputAction> AttackObject(TEXT("'/Game/Map/System/Input/IA_Attack.IA_Attack'"));
-	static ConstructorHelpers::FObjectFinder<UInputAction> ToggleMapObject(TEXT("'/Game/Map/System/Input/IA_ToggleMap.IA_ToggleMap'"));
-	static ConstructorHelpers::FObjectFinder<UInputAction> PlayerStatObject(TEXT("'/Game/Map/System/Input/IA_PlayerStat.IA_PlayerStat'"));
-	static ConstructorHelpers::FObjectFinder<UInputAction> ClickObject(TEXT("'/Game/Map/System/Input/IA_Click.IA_Click'"));
-
-	if (IMCObject.Succeeded())
-	{
-		IMC_InputMappingContext = IMCObject.Object;
-	}
-
-	if (MoveObject.Succeeded())
-	{
-		IA_Move = MoveObject.Object;
-	}
-
-	if (LookObject.Succeeded())
-	{
-		IA_Look = LookObject.Object;
-	}
-
-	if (AttackObject.Succeeded())
-	{
-		IA_Attack = AttackObject.Object;
-	}
-
-	if (ToggleMapObject.Succeeded())
-	{
-		IA_ToggleMap = ToggleMapObject.Object;
-	}
-
-	if (PlayerStatObject.Succeeded())
-	{
-		IA_PlayerStat = PlayerStatObject.Object;
-	}
-
-	if (ClickObject.Succeeded())
-	{
-		IA_Click = ClickObject.Object;
-	}
-	
-
-
-	//----------------------------------------------
-
 	SetHp(10.0f);
 	SetAtk(5);
 	SetDef(1);
 	bIsActive = false;
 	bMouseClickEnable = false;
 
-	//---------------------------------------------
 	UCapsuleComponent* CharacterCollision = GetCapsuleComponent();
 	CharacterCollision->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 
@@ -88,17 +40,13 @@ void APlayerCharacter::BeginPlay()
 	if (PlayerController == nullptr)
 	{
 		PlayerController = Cast<APlayerController>(GetController());
-	}
+		UInputComponent* InputComp = PlayerController->InputComponent;
 
-
-	//if exist Controller, Use SubSystem with EnhancedInputLocalPlayerSubSystem.  and MappingContext.
-	if (PlayerController)
-	{
-		if (UEnhancedInputLocalPlayerSubsystem* Subsystem =
-			ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
+		if (!InputManager)
 		{
-			Subsystem->AddMappingContext(IMC_InputMappingContext, 0);
-			UE_LOG(LogTemp, Warning, TEXT("Input Mapping Context Added!"));
+			InputManager = InputManager->GetInstance();
+			InputManager->Initialize(this, PlayerController);
+			InputManager->BindAction(Cast<UEnhancedInputComponent>(InputComp));
 		}
 	}
 
@@ -126,7 +74,6 @@ void APlayerCharacter::BeginPlay()
 			Weapon->AttachToActor(this,FAttachmentTransformRules::KeepRelativeTransform);
 		}
 	}
-
 }
 
 void APlayerCharacter::OnComponentHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
@@ -166,18 +113,6 @@ void APlayerCharacter::Tick(float DeltaTime)
 void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
-	//use EnhancedInputComponent, And Binding Action
-
-	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent))
-	{
-		EnhancedInputComponent->BindAction(IA_Move, ETriggerEvent::Triggered, this, &APlayerCharacter::Move);
-		EnhancedInputComponent->BindAction(IA_Look, ETriggerEvent::Triggered, this, &APlayerCharacter::Look);
-		EnhancedInputComponent->BindAction(IA_Attack, ETriggerEvent::Triggered, this, &APlayerCharacter::Attack);
-		EnhancedInputComponent->BindAction(IA_ToggleMap, ETriggerEvent::Started, this, &APlayerCharacter::ToggleMap);
-		EnhancedInputComponent->BindAction(IA_PlayerStat, ETriggerEvent::Started, this, &APlayerCharacter::PlayerStat);
-		EnhancedInputComponent->BindAction(IA_Click, ETriggerEvent::Started, this, &APlayerCharacter::Click);
-	}
 }
 
 void APlayerCharacter::ApplyEffectItem(EItemEffectData Data)
@@ -239,7 +174,7 @@ void APlayerCharacter::PlayerReSpawn()
 
 //////////////////////////////////////////////////////////////////////////////
 //컨트롤러 매핑 함수
-
+/*
 void APlayerCharacter::Move(const FInputActionValue& Value)
 {
 	
@@ -314,7 +249,7 @@ void APlayerCharacter::Click(const FInputActionValue& Value)
 {
 
 }
-
+*/
 //////////////////////////////////////////////////////////////////////////////
 
 
