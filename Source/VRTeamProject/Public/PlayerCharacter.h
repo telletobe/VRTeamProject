@@ -48,9 +48,6 @@ public:
 	UPROPERTY()
 	FOnPlayerDeath OnPlayerDeath;
 
-	///////////////////////////////////////////////////
-	// 미사용 코드
-	//void MoveTargetPoint(AActor* TargetPoint);
 private:
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
@@ -119,9 +116,6 @@ private:
 
 	UPROPERTY()
 	TObjectPtr<APlayerController> PlayerController;
-
-	/*UPROPERTY(EditAnywhere)
-	TObjectPtr<AActor> EndPoint;*/
 	
 	UPROPERTY(EditAnywhere, Category = "Weapon")
 	TObjectPtr<APlayerWeapon> Weapon;
