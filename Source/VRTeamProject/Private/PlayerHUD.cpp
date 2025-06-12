@@ -8,7 +8,7 @@
 
 APlayerHUD::APlayerHUD()
 {
-	static ConstructorHelpers::FClassFinder<UMapSelectWidget> Selectwidget(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UMG/WBP_MapSelectWidget.WBP_MapSelectWidget_C'"));
+	static ConstructorHelpers::FClassFinder<UMapSelectWidget> Selectwidget(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UMG/MapUI/WBP_MapSelectWidget.WBP_MapSelectWidget_C'"));
 
 	if (Selectwidget.Succeeded())
 	{
@@ -25,20 +25,34 @@ APlayerHUD::APlayerHUD()
 
 }
 
-void APlayerHUD::BeginPlay()
+void APlayerHUD::ToggleMapSelect()
 {
-	//
-	//if (isvalid(mapselect))
-	//{
-	//	mapselectinstance = createwidget<umapselectwidget>(getworld(), mapselect);
-	//	mapselectinstance->addtoviewport();
-	//}
+	if (!MapSelectInstance)
+	{
+		MapSelectInstance = CreateWidget<UMapSelectWidget>(GetWorld(), MapSelect);
+	}
 
-	//if (IsValid(PlayerState))
-	//{
-	//	PlayerStateInstance = CreateWidget<UPlayerStateWidget>(GetWorld(), PlayerState);
-	//	PlayerStateInstance->AddToViewport();
-	//}
+	if (MapSelectInstance->IsInViewport())
+	{
+		MapSelectInstance->RemoveFromParent();      // 커서 OFF
+	}
+	else
+	{
+		MapSelectInstance->AddToViewport();      // 커서 ON
+	}
+}
+
+void APlayerHUD::PlayerStateShow()
+{
+	if (IsValid(PlayerState))
+	{
+		PlayerStateInstance = CreateWidget<UPlayerStateWidget>(GetWorld(), PlayerState);
+		PlayerStateInstance->AddToViewport();
+	}
+}
+
+void APlayerHUD::BeginPlay()
+{	
 
 
 

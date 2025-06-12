@@ -10,6 +10,9 @@
 #include <PlayerWeapon.h>
 #include "Components/CapsuleComponent.h"
 #include <EnemyCharacter.h>
+#include <PlayerHUD.h>
+
+#include "GameFramework/PlayerController.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -347,10 +350,28 @@ void APlayerCharacter::Attack(const FInputActionValue& Value)
 
 void APlayerCharacter::ToggleMap(const FInputActionValue& Value)
 {
+	if (APlayerController* PC = Cast<APlayerController>(GetController()))
+	{
+		if (APlayerHUD* MyHUD = Cast<APlayerHUD>(PC->GetHUD()))
+		{
+			MyHUD->ToggleMapSelect();         // HUD 쪽 함수 호출
+		}
+	}
 }
 
 void APlayerCharacter::PlayerStat(const FInputActionValue& Value)
 {
+	if (GetWorld()->GetMapName().Contains("Map"))
+	{
+		if (APlayerController* PC = Cast<APlayerController>(GetController()))
+		{
+			if (APlayerHUD* MyHUD = Cast<APlayerHUD>(PC->GetHUD()))
+			{
+				MyHUD->PlayerStateShow();         // HUD 쪽 함수 호출
+			}
+		}
+	}	
+	
 }
 
 void APlayerCharacter::Click(const FInputActionValue& Value)

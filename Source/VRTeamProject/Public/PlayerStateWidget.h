@@ -19,7 +19,10 @@ class VRTEAMPROJECT_API UPlayerStateWidget : public UUserWidget
 public:
 
 	UFUNCTION()
-	void GamePause();
+	void GameQuit();
+
+	UFUNCTION()
+	void Option();
 
 	UFUNCTION()
 	void UpdatePlayerStats();
@@ -27,6 +30,7 @@ public:
 
 protected:
 	virtual void NativeConstruct() override;
+	virtual void NativeDestruct()  override;
 
 private:
 	UPROPERTY(meta = (Bindwidget))
@@ -38,12 +42,11 @@ private:
 	UPROPERTY(meta = (Bindwidget))
 	TObjectPtr<UProgressBar> ExpBar;
 
-
+	UPROPERTY(meta = (Bindwidget))
+	TObjectPtr<UButton> btn_Quit;
 
 	UPROPERTY(meta = (Bindwidget))
-	TObjectPtr<UButton> btn_Pause;
-
-
+	TObjectPtr<UButton> btn_Option;
 
 
 };

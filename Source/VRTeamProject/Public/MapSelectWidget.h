@@ -18,12 +18,12 @@ class VRTEAMPROJECT_API UMapSelectWidget : public UUserWidget
 	GENERATED_BODY()
 	
 public:
-
 	UFUNCTION()
-	void OnMyButtonClicked();
+	void EntertoStage();
 
 protected:
 	virtual void NativeConstruct() override;
+	virtual void NativeDestruct()  override;  
 
 private:
 	UPROPERTY(meta = (Bindwidget))
@@ -34,5 +34,6 @@ private:
 
 	UPROPERTY(meta = (Bindwidget))
 	TObjectPtr<UButton> SelectButton_3;
+
 
 };
