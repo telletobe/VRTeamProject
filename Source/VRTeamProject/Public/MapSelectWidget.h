@@ -21,6 +21,7 @@ public:
 	UFUNCTION()
 	void EntertoStage();
 
+
 protected:
 	virtual void NativeConstruct() override;
 	virtual void NativeDestruct()  override;  

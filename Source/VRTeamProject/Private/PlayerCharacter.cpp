@@ -201,9 +201,9 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 		EnhancedInputComponent->BindAction(IA_Move, ETriggerEvent::Triggered, this, &APlayerCharacter::Move);
 		EnhancedInputComponent->BindAction(IA_Look, ETriggerEvent::Triggered, this, &APlayerCharacter::Look);
 		EnhancedInputComponent->BindAction(IA_Attack, ETriggerEvent::Triggered, this, &APlayerCharacter::Attack);
-		EnhancedInputComponent->BindAction(IA_ToggleMap, ETriggerEvent::Triggered, this, &APlayerCharacter::ToggleMap);
-		EnhancedInputComponent->BindAction(IA_PlayerStat, ETriggerEvent::Triggered, this, &APlayerCharacter::PlayerStat);
-		EnhancedInputComponent->BindAction(IA_Click, ETriggerEvent::Triggered, this, &APlayerCharacter::Click);
+		EnhancedInputComponent->BindAction(IA_ToggleMap, ETriggerEvent::Started, this, &APlayerCharacter::ToggleMap);
+		EnhancedInputComponent->BindAction(IA_PlayerStat, ETriggerEvent::Started, this, &APlayerCharacter::PlayerStat);
+		EnhancedInputComponent->BindAction(IA_Click, ETriggerEvent::Started, this, &APlayerCharacter::Click);
 	}
 
 }
@@ -350,11 +350,14 @@ void APlayerCharacter::Attack(const FInputActionValue& Value)
 
 void APlayerCharacter::ToggleMap(const FInputActionValue& Value)
 {
-	if (APlayerController* PC = Cast<APlayerController>(GetController()))
+	if (GetWorld()->GetMapName().Contains("Lobby"))
 	{
-		if (APlayerHUD* MyHUD = Cast<APlayerHUD>(PC->GetHUD()))
+		if (APlayerController* PC = Cast<APlayerController>(GetController()))
 		{
-			MyHUD->ToggleMapSelect();         // HUD 쪽 함수 호출
+			if (APlayerHUD* MyHUD = Cast<APlayerHUD>(PC->GetHUD()))
+			{
+				MyHUD->ToggleMapSelect();         // HUD 쪽 함수 호출
+			}
 		}
 	}
 }

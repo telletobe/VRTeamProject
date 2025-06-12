@@ -3,6 +3,7 @@
 
 #include "PlayerStateWidget.h"
 #include "Components/Button.h"
+#include "PlayerCharacter.h"
 
 
 void UPlayerStateWidget::NativeConstruct()
@@ -55,6 +56,7 @@ void UPlayerStateWidget::Option()
 
 void UPlayerStateWidget::UpdatePlayerStats()
 {
+
 }
 
 

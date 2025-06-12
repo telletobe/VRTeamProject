@@ -39,15 +39,24 @@ void APlayerHUD::ToggleMapSelect()
 	else
 	{
 		MapSelectInstance->AddToViewport();      // Ä¿¼­ ON
+		
 	}
 }
 
 void APlayerHUD::PlayerStateShow()
 {
-	if (IsValid(PlayerState))
+	if (!PlayerStateInstance)
 	{
 		PlayerStateInstance = CreateWidget<UPlayerStateWidget>(GetWorld(), PlayerState);
+	}
+	if (PlayerStateInstance->IsInViewport())
+	{
+		PlayerStateInstance->RemoveFromParent();
+	}
+	else
+	{
 		PlayerStateInstance->AddToViewport();
+		
 	}
 }
 
