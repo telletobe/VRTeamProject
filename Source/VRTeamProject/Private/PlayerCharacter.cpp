@@ -22,6 +22,9 @@ APlayerCharacter::APlayerCharacter()
 	static ConstructorHelpers::FObjectFinder<UInputAction> MoveObject(TEXT("'/Game/Map/System/Input/IA_Move.IA_Move'"));
 	static ConstructorHelpers::FObjectFinder<UInputAction> LookObject(TEXT("'/Game/Map/System/Input/IA_Look.IA_Look'"));
 	static ConstructorHelpers::FObjectFinder<UInputAction> AttackObject(TEXT("'/Game/Map/System/Input/IA_Attack.IA_Attack'"));
+	static ConstructorHelpers::FObjectFinder<UInputAction> ToggleMapObject(TEXT("'/Game/Map/System/Input/IA_ToggleMap.IA_ToggleMap'"));
+	static ConstructorHelpers::FObjectFinder<UInputAction> PlayerStatObject(TEXT("'/Game/Map/System/Input/IA_PlayerStat.IA_PlayerStat'"));
+	static ConstructorHelpers::FObjectFinder<UInputAction> ClickObject(TEXT("'/Game/Map/System/Input/IA_Click.IA_Click'"));
 
 	if (IMCObject.Succeeded())
 	{
@@ -42,6 +45,23 @@ APlayerCharacter::APlayerCharacter()
 	{
 		IA_Attack = AttackObject.Object;
 	}
+
+	if (ToggleMapObject.Succeeded())
+	{
+		IA_ToggleMap = ToggleMapObject.Object;
+	}
+
+	if (PlayerStatObject.Succeeded())
+	{
+		IA_PlayerStat = PlayerStatObject.Object;
+	}
+
+	if (ClickObject.Succeeded())
+	{
+		IA_Click = ClickObject.Object;
+	}
+	
+
 
 	//----------------------------------------------
 
@@ -178,6 +198,9 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 		EnhancedInputComponent->BindAction(IA_Move, ETriggerEvent::Triggered, this, &APlayerCharacter::Move);
 		EnhancedInputComponent->BindAction(IA_Look, ETriggerEvent::Triggered, this, &APlayerCharacter::Look);
 		EnhancedInputComponent->BindAction(IA_Attack, ETriggerEvent::Triggered, this, &APlayerCharacter::Attack);
+		EnhancedInputComponent->BindAction(IA_ToggleMap, ETriggerEvent::Triggered, this, &APlayerCharacter::ToggleMap);
+		EnhancedInputComponent->BindAction(IA_PlayerStat, ETriggerEvent::Triggered, this, &APlayerCharacter::PlayerStat);
+		EnhancedInputComponent->BindAction(IA_Click, ETriggerEvent::Triggered, this, &APlayerCharacter::Click);
 	}
 
 }
@@ -320,6 +343,19 @@ void APlayerCharacter::Attack(const FInputActionValue& Value)
 		UE_LOG(LogTemp,Warning,TEXT("Player Weapon inValid"));
 		return;
 	}
+}
+
+void APlayerCharacter::ToggleMap(const FInputActionValue& Value)
+{
+}
+
+void APlayerCharacter::PlayerStat(const FInputActionValue& Value)
+{
+}
+
+void APlayerCharacter::Click(const FInputActionValue& Value)
+{
+
 }
 
 
