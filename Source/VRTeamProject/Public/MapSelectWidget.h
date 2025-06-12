@@ -6,7 +6,11 @@
 #include "Blueprint/UserWidget.h"
 #include "MapSelectWidget.generated.h"
 
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnRegionSelected, FName, RegionID);
+
 class UButton;
+class UStageInfoWidget;
 
 /**
  * 
@@ -17,16 +21,16 @@ class VRTEAMPROJECT_API UMapSelectWidget : public UUserWidget
 	GENERATED_BODY()
 	
 public:
-	UFUNCTION()
-	void EntertoStage();
 
+	UPROPERTY() 
+	FOnRegionSelected OnRegionSelected;
 
 protected:
 	virtual void NativeConstruct() override;
 
 private:
 	UPROPERTY(meta = (Bindwidget))
-	TObjectPtr<UButton> SelectButton_1;
+	TObjectPtr<UButton> Button_KyoungGi;
 
 	UPROPERTY(meta = (Bindwidget))
 	TObjectPtr<UButton> SelectButton_2;
@@ -34,5 +38,7 @@ private:
 	UPROPERTY(meta = (Bindwidget))
 	TObjectPtr<UButton> SelectButton_3;
 
+	UFUNCTION()
+	void HandleRegionClicked();
 
 };

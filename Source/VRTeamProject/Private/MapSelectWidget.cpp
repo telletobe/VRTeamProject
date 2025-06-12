@@ -6,18 +6,27 @@
 #include "GameFramework/PlayerController.h"
 
 
-
 void UMapSelectWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-    if (SelectButton_1)
+    if (Button_KyoungGi)
     {
-        SelectButton_1->OnClicked.AddDynamic(this, &UMapSelectWidget::EntertoStage);
+        Button_KyoungGi->OnClicked.AddDynamic(this, &UMapSelectWidget::HandleRegionClicked);
     }
+
 }
 
-void UMapSelectWidget::EntertoStage()
+void UMapSelectWidget::HandleRegionClicked()
 {
+    /* 어떤 버튼인지 이름(FName)으로 구분 */
+    //if (const UButton* Sender = Cast<UButton>(GetSender()))
+    //{
+    //    const FName BtnName = Sender->GetFName();        // ex) "Button_Busan"
+    //    /* 필요하면 "Button_" 접두어 제거 → "Busan" */
+    //    const FString Clean = BtnName.ToString().RightChop(7);
+    //    OnRegionSelected.Broadcast(FName(*Clean));       // 델리게이트 전파
+    //}
 
+    
 }

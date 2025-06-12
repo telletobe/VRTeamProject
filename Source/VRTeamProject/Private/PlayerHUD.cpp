@@ -4,6 +4,8 @@
 #include "PlayerHUD.h"
 #include "MapselectWidget.h"
 #include "PlayerStateWidget.h"
+
+#include "StageInfoWidget.h"
 #include "Blueprint/UserWidget.h"
 
 APlayerHUD::APlayerHUD()
@@ -22,6 +24,12 @@ APlayerHUD::APlayerHUD()
 		PlayerState = PlayerStateWidget.Class;
 	}
 
+	static ConstructorHelpers::FClassFinder<UStageInfoWidget> StageInfoWidget(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UMG/MapUI/WBP_MapSelectWidget.WBP_MapSelectWidget_C'"));
+
+	if (StageInfoWidget.Succeeded())
+	{
+		StageInfo = StageInfoWidget.Class;
+	}
 
 }
 
@@ -42,6 +50,11 @@ void APlayerHUD::BeginPlay()
 	if (PlayerState && !PlayerStateInstance)
 	{
 		PlayerStateInstance = CreateWidget<UPlayerStateWidget>(GetWorld(), PlayerState);
+	}
+
+	if (StageInfo && !StageInfoInstance)
+	{
+		StageInfoInstance = CreateWidget<UStageInfoWidget>(GetWorld(), StageInfo);
 	}
 
 	Mode.SetHideCursorDuringCapture(false);

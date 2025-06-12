@@ -282,15 +282,19 @@ void APlayerCharacter::Attack(const FInputActionValue& Value)
 
 void APlayerCharacter::ToggleMap(const FInputActionValue& Value)
 {
-	if (PlayerController != nullptr)
+	if (GetWorld()->GetMapName().Contains(TEXT("Lobby")))
 	{
-		APlayerHUD* MyHUD = Cast<APlayerHUD>(PlayerController->GetHUD());
-		if (MyHUD != nullptr)
+		if (PlayerController != nullptr)
 		{
-			MyHUD->ToggleMapSelect();         // HUD 쪽 함수 호출
+			APlayerHUD* MyHUD = Cast<APlayerHUD>(PlayerController->GetHUD());
+			if (MyHUD != nullptr)
+			{
+				MyHUD->ToggleMapSelect();         // HUD 쪽 함수 호출
 
+			}
 		}
 	}
+	
 }
 
 void APlayerCharacter::PlayerStat(const FInputActionValue& Value)
