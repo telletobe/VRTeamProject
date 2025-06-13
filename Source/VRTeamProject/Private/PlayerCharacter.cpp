@@ -2,18 +2,18 @@
 
 
 #include "PlayerCharacter.h"
-#include "NavigationSystem.h"
-#include "Engine/TargetPoint.h"
 #include "Kismet/GameplayStatics.h"
 #include <EnhancedInputComponent.h>
-#include <EnhancedInputSubsystems.h>
 #include <PlayerWeapon.h>
 #include "Components/CapsuleComponent.h"
 #include <EnemyCharacter.h>
 #include <PlayerHUD.h>
 #include "InputManager.h"
-
+#include "MotionControllerComponent.h"
 #include "GameFramework/PlayerController.h"
+#include "Components/WidgetInteractionComponent.h"
+#include "Components/WidgetComponent.h"
+#include "Camera/CameraComponent.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -27,8 +27,42 @@ APlayerCharacter::APlayerCharacter()
 	bIsActive = false;
 	bMouseClickEnable = false;
 
-	UCapsuleComponent* CharacterCollision = GetCapsuleComponent();
-	CharacterCollision->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+
+
+	//VR
+
+	VRCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("VRCamera"));
+	VRCamera->SetupAttachment(RootComponent);
+	VRCamera->bLockToHmd = true;
+	VRCamera->SetRelativeLocation(FVector(5.0f, 0.0f, 64.f)); // 머리 위치쯤
+	VRCamera->SetRelativeScale3D(FVector(0.25f,0.5f,0.5f));
+
+	MotionControllerLeft = CreateDefaultSubobject<UMotionControllerComponent>(TEXT("MotionControllerLeft"));
+	MotionControllerLeft->SetupAttachment(RootComponent);
+	MotionControllerLeft->SetTrackingSource(EControllerHand::Left);
+
+	WidgetInteractionLeft = CreateDefaultSubobject<UWidgetInteractionComponent>(TEXT("WidgetInteractionLeft"));
+	WidgetInteractionLeft->SetupAttachment(MotionControllerLeft);
+	WidgetInteractionLeft->InteractionDistance = 5000.0f; // 위젯 반응거리
+	WidgetInteractionLeft->PointerIndex = 0; //왼쪽 입력 구분
+	WidgetInteractionLeft->bShowDebug = true;
+
+	MotionControllerRight = CreateDefaultSubobject<UMotionControllerComponent>(TEXT("MotionControllerRight"));
+	MotionControllerRight->SetupAttachment(RootComponent);
+	MotionControllerRight->SetTrackingSource(EControllerHand::Right);
+	
+	WidgetInteractionRight = CreateDefaultSubobject<UWidgetInteractionComponent>(TEXT("WidgetInteractionRight"));
+	WidgetInteractionRight->SetupAttachment(MotionControllerRight);
+	WidgetInteractionRight->InteractionDistance = 5000.0f;
+	WidgetInteractionRight->PointerIndex = 1; //오른쪽 입력 구분
+	WidgetInteractionRight->bShowDebug = true;
+
+	WidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("WidgetComponent"));
+	WidgetComponent->SetupAttachment(MotionControllerLeft);
+	WidgetComponent->SetWidgetSpace(EWidgetSpace::World);
+	WidgetComponent->SetDrawSize(FVector2D(500.0f,500.0f));
+	WidgetComponent->SetRelativeLocation(FVector(10.0f,0.0f,0.0f));
+
 
 }
 
@@ -36,6 +70,9 @@ APlayerCharacter::APlayerCharacter()
 void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	UCapsuleComponent* CharacterCollision = GetCapsuleComponent();
+	CharacterCollision->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 
 	if (PlayerController == nullptr)
 	{
@@ -50,7 +87,6 @@ void APlayerCharacter::BeginPlay()
 		}
 	}
 
-	UCapsuleComponent* CharacterCollision = GetCapsuleComponent();
 	if (IsValid(CharacterCollision))
 	{
 		CharacterCollision->OnComponentHit.AddDynamic(this,&APlayerCharacter::OnComponentHit);
@@ -171,87 +207,6 @@ void APlayerCharacter::PlayerReSpawn()
 	bIsActive = true;
 	SetActorHiddenInGame(false);
 }
-
-//////////////////////////////////////////////////////////////////////////////
-//컨트롤러 매핑 함수
-/*
-void APlayerCharacter::Move(const FInputActionValue& Value)
-{
-	
-	FVector2D MovementVector = Value.Get<FVector2D>();
-	//if exist Controller, is bound inputMappingContext
-	if (PlayerController != nullptr)
-	{
-		// add movement 
-		AddMovementInput(GetActorForwardVector(), MovementVector.Y);
-		AddMovementInput(GetActorRightVector(), MovementVector.X);
-	}
-	
-}
-
-void APlayerCharacter::Look(const FInputActionValue& Value)
-{
-	// input is a Vector2D
-	FVector2D LookAxisVector = Value.Get<FVector2D>();
-
-	if (PlayerController != nullptr)
-	{
-		// add yaw and pitch input to controller
-		AddControllerYawInput((LookAxisVector.X)*-1);
-		AddControllerPitchInput(LookAxisVector.Y);
-	}
-}
-
-void APlayerCharacter::Attack(const FInputActionValue& Value)
-{
-	if (Weapon && bMouseClickEnable)
-	{
-		Weapon->Fire(GetAtk());
-	} 
-	else
-	{
-		UE_LOG(LogTemp,Warning,TEXT("Player Weapon inValid"));
-		return;
-	}
-}
-
-void APlayerCharacter::ToggleMap(const FInputActionValue& Value)
-{
-	if (PlayerController != nullptr)
-	{
-		APlayerHUD* MyHUD = Cast<APlayerHUD>(PlayerController->GetHUD());
-		if (MyHUD != nullptr)
-		{
-			MyHUD->ToggleMapSelect();         // HUD 쪽 함수 호출
-
-		}
-	}
-}
-
-void APlayerCharacter::PlayerStat(const FInputActionValue& Value)
-{
-
-	if (GetWorld()->GetMapName().Contains("Map"))
-	{
-		if (PlayerController != nullptr)
-		{
-			APlayerHUD* MyHUD = Cast<APlayerHUD>(PlayerController->GetHUD());
-			if (MyHUD != nullptr)
-			{
-				MyHUD->PlayerStateShow();         // HUD 쪽 함수 호출
-			}
-		}
-	}	
-	
-}
-
-void APlayerCharacter::Click(const FInputActionValue& Value)
-{
-
-}
-*/
-//////////////////////////////////////////////////////////////////////////////
-
 
 void APlayerCharacter::SetHp(float PlayerHp)
 {

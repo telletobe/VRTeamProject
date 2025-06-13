@@ -9,6 +9,7 @@
 class UInputMappingContext;
 class UInputAction;
 class APlayerCharacter;
+class UEnhancedInputComponent;
 struct FInputActionValue;
 class APlayerHUD;
 

@@ -38,6 +38,12 @@ private :
 	UPROPERTY()
 	TObjectPtr<UStaticMeshComponent> BulletMesh;
 
+	UPROPERTY()
+	TObjectPtr<UStaticMesh> BulletMeshAsset;
+
+	UPROPERTY()
+	TObjectPtr<UMaterial> BulletMeshMaterial;
+
 	float BulletSpeed = 1500.0f;
 	float MoveInterval = 0.01f;
 	float Damage = 0.0f;

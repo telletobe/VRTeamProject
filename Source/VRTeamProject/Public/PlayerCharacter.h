@@ -13,6 +13,10 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPlayerDeath);
 
 class APlayerController;
 class UInputManager;
+class UMotionControllerComponent;
+class UWidgetInteractionComponent;
+class UCameraComponent;
+class UWidgetComponent;
 
 UCLASS()
 class VRTEAMPROJECT_API APlayerCharacter : public ACharacter
@@ -101,4 +105,24 @@ private:
 	UPROPERTY()
 	TObjectPtr<UInputManager> InputManager;
 
+
+	//////// VR
+
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UMotionControllerComponent> MotionControllerLeft;
+
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UWidgetInteractionComponent> WidgetInteractionLeft;
+
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UMotionControllerComponent> MotionControllerRight;
+
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UWidgetInteractionComponent> WidgetInteractionRight;
+
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UCameraComponent> VRCamera;
+
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UWidgetComponent> WidgetComponent;
 };

@@ -26,20 +26,6 @@ AGameItem::AGameItem()
 
 	BoxTopMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BoxTopMesh"));
 	BoxTopMesh->AttachToComponent(ItemMesh, FAttachmentTransformRules::KeepRelativeTransform);
-
-	ItemCollision->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-	ItemCollision->SetCollisionObjectType(ECC_WorldDynamic);
-	ItemCollision->SetCollisionResponseToChannel(ECollisionChannel::ECC_WorldStatic,ECollisionResponse::ECR_Overlap);
-
-	ItemMesh->SetSimulatePhysics(true);
-	ItemMesh->SetMassOverrideInKg(NAME_None,10000.0f,true);
-	ItemMesh->SetNotifyRigidBodyCollision(true);
-	ItemMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-	ItemMesh->SetCollisionResponseToChannel(ECC_WorldStatic,ECR_Block);
-	ItemMesh->SetLinearDamping(5.0f);
-
-	ItemData = EItemEffectData::HEAL;
-
 }
 
 void AGameItem::SetHp(float ItemHp)
@@ -63,6 +49,19 @@ void AGameItem::BeginPlay()
 {
 	Super::BeginPlay();
 
+	ItemCollision->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	ItemCollision->SetCollisionObjectType(ECC_WorldDynamic);
+	ItemCollision->SetCollisionResponseToChannel(ECollisionChannel::ECC_WorldStatic, ECollisionResponse::ECR_Overlap);
+
+	ItemMesh->SetSimulatePhysics(true);
+	ItemMesh->SetMassOverrideInKg(NAME_None, 10000.0f, true);
+	ItemMesh->SetNotifyRigidBodyCollision(true);
+	ItemMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	ItemMesh->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
+	ItemMesh->SetLinearDamping(5.0f);
+
+	ItemData = EItemEffectData::HEAL;
+
 	if (ItemMesh)
 	{
 		ItemMesh->SetMassOverrideInKg(NAME_None, 10000.0f, true);
@@ -73,7 +72,7 @@ void AGameItem::BeginPlay()
 //이벤트 발생자(EventInstigator)는 null값이 들어오니 사용하면 안됨.
 float AGameItem::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
-	if (Player = Cast<APlayerCharacter>(DamageCauser->GetOwner()))
+	if ((Player = Cast<APlayerCharacter>(DamageCauser->GetOwner())))
 	{
 		UE_LOG(LogTemp,Warning,TEXT("GameItem.cpp : TakeDamage Get Player Info!"));
 	}
