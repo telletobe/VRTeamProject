@@ -80,6 +80,10 @@ void UInputManager::Initialize(APlayerCharacter* PlayerCharacter, APlayerControl
 			Subsystem->AddMappingContext(IMC_InputMappingContext, 0);
 			UE_LOG(LogTemp, Warning, TEXT("Input Mapping Context Added!"));
 		}
+
+		if(!IsValid(MyHUD.Get())) MyHUD = Cast<APlayerHUD>(PC->GetHUD());
+
+		
 	}
 
 }
@@ -132,11 +136,11 @@ void UInputManager::Look(const FInputActionValue& Value)
 
 void UInputManager::Attack(const FInputActionValue& Value)
 {
-	APlayerWeapon* Weapon = Player->GetWeapon();
+	
 
-	if (Weapon && Player->IsMouseClickedEnable())
+	if (Player->GetWeapon() && Player->IsMouseClickedEnable())
 	{
-		Weapon->Fire(Player->GetAtk());
+		Player->GetWeapon()->Fire(Player->GetAtk());
 	}
 	else
 	{
@@ -151,10 +155,9 @@ void UInputManager::ToggleMap(const FInputActionValue& Value)
 
 	if (PlayerController != nullptr)
 	{
-		APlayerHUD* MyHUD = Cast<APlayerHUD>(PlayerController->GetHUD());
-		if (MyHUD != nullptr)
+		if (IsValid(MyHUD.Get()))
 		{
-			MyHUD->ToggleMapSelect();         // HUD 쪽 함수 호출
+			MyHUD.Get()->ToggleMapSelect();       
 
 		}
 	}
@@ -164,17 +167,15 @@ void UInputManager::PlayerStat(const FInputActionValue& Value)
 {
 	APlayerController* PlayerController = Cast<APlayerController>(Player->GetController());
 
-	if (GetWorld()->GetMapName().Contains("Map"))
+	if (PlayerController != nullptr)
 	{
-		if (PlayerController != nullptr)
+		if (IsValid(MyHUD.Get()))
 		{
-			APlayerHUD* MyHUD = Cast<APlayerHUD>(PlayerController->GetHUD());
-			if (MyHUD != nullptr)
-			{
-				MyHUD->PlayerStateShow();         // HUD 쪽 함수 호출
-			}
+			MyHUD.Get()->PlayerStateShow();         // HUD 쪽 함수 호출
+
 		}
 	}
+	
 
 }
 

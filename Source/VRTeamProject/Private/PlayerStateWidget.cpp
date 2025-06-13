@@ -11,14 +11,16 @@ void UPlayerStateWidget::NativeConstruct()
 
 	if (btn_Quit)
 	{
-		btn_Quit->OnClicked.AddDynamic(this, &UPlayerStateWidget::GameQuit);
+
+		btn_Quit->OnClicked.AddUniqueDynamic(this, &UPlayerStateWidget::GameQuit);
+		
+		
 	}
     if (btn_Option)
     {
-        btn_Option->OnClicked.AddDynamic(this, &UPlayerStateWidget::Option);
+		btn_Option->OnClicked.AddUniqueDynamic(this, &UPlayerStateWidget::Option);
+
     }
-
-
 }
 
 

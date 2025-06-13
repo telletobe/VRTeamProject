@@ -10,6 +10,7 @@ class UInputMappingContext;
 class UInputAction;
 class APlayerCharacter;
 struct FInputActionValue;
+class APlayerHUD;
 
 /**
  * 
@@ -61,6 +62,7 @@ private:
 	UPROPERTY()
 	TObjectPtr<APlayerCharacter> Player;
 
-
+	UPROPERTY()
+	TObjectPtr<APlayerHUD> MyHUD;
 
 };

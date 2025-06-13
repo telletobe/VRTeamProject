@@ -13,7 +13,7 @@ void UMapSelectWidget::NativeConstruct()
 
     if (SelectButton_1)
     {
-        SelectButton_1->OnClicked.AddDynamic(this, &UMapSelectWidget::EntertoStage);
+        SelectButton_1->OnClicked.AddUniqueDynamic(this, &UMapSelectWidget::EntertoStage);
     }
 }
 
