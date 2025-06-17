@@ -17,6 +17,7 @@ class UMotionControllerComponent;
 class UWidgetInteractionComponent;
 class UCameraComponent;
 class UWidgetComponent;
+class UMapSelectWidget;
 
 UCLASS()
 class VRTEAMPROJECT_API APlayerCharacter : public ACharacter
@@ -37,6 +38,9 @@ public:
 	float GetDef() const { return Def; }
 	float GetExp() const { return Exp; }
 	float GetMaxHp() const { return MaxHp; }
+
+	TObjectPtr<UWidgetComponent> GetWidget() const { return *WidgetComponent; }
+
 	TObjectPtr<APlayerWeapon> GetWeapon() const { return *Weapon; }
 	bool IsMouseClickedEnable() const {	return bMouseClickEnable;}
 
@@ -123,6 +127,10 @@ private:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UCameraComponent> VRCamera;
 
+	/// //
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UWidgetComponent> WidgetComponent;
+
+	UPROPERTY()
+	TSubclassOf<UMapSelectWidget> MapSelectWidgetClass;
 };
