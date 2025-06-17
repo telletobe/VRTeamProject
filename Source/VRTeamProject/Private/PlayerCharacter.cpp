@@ -70,7 +70,7 @@ APlayerCharacter::APlayerCharacter()
 	WidgetInteractionRight->bShowDebug = true;
 
 	WidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("WidgetComponent"));
-	WidgetComponent->SetupAttachment(MotionControllerLeft);
+	WidgetComponent->SetupAttachment(GetCapsuleComponent());
 	WidgetComponent->SetWidgetSpace(EWidgetSpace::World);
 	WidgetComponent->SetDrawSize(FVector2D(500.0f,500.0f));
 	WidgetComponent->SetRelativeLocation(FVector(200.0f,0.0f,0.0f));
@@ -86,12 +86,13 @@ void APlayerCharacter::BeginPlay()
 	if (MapSelectWidgetClass)
 	{
 		WidgetComponent->SetWidgetClass(MapSelectWidgetClass.Get());
+		WidgetComponent->SetVisibility(false);
 	}
 
 	UCapsuleComponent* CharacterCollision = GetCapsuleComponent();
 	CharacterCollision->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 
-	if (PlayerController == nullptr)
+	if (!PlayerController)
 	{
 		PlayerController = Cast<APlayerController>(GetController());
 		UInputComponent* InputComp = PlayerController->InputComponent;

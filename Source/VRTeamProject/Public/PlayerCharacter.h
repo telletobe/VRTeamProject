@@ -56,12 +56,6 @@ public:
 	UPROPERTY()
 	FOnPlayerDeath OnPlayerDeath;
 
-	//void Move(const FInputActionValue& Value);
-	//void Look(const FInputActionValue& Value);
-	//void Attack(const FInputActionValue& Value);
-	//void ToggleMap(const FInputActionValue& Value);
-	//void PlayerStat(const FInputActionValue& Value);
-	//void Click(const FInputActionValue& Value);
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -96,7 +90,6 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	float Exp;
 
-	//bool bIsArrived;
 	bool bIsActive = true;
 	bool bMouseClickEnable = true;
 	
@@ -127,7 +120,6 @@ private:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UCameraComponent> VRCamera;
 
-	/// //
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UWidgetComponent> WidgetComponent;
 

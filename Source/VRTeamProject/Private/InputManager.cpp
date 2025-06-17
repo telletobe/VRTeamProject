@@ -153,7 +153,7 @@ void UInputManager::Attack(const FInputActionValue& Value)
 
 void UInputManager::ToggleMap(const FInputActionValue& Value)
 {
-	//
+	
 	// PC
 	/*APlayerController* PlayerController = Cast<APlayerController>(Player->GetController());
 
@@ -171,19 +171,15 @@ void UInputManager::ToggleMap(const FInputActionValue& Value)
 	if (IsValid(Player))
 	{
 		UWidgetComponent* Widget = Player->GetWidget();
-		if (!IsValid(Widget)) return;
-		
-		UUserWidget* UserWidget = Widget->GetUserWidgetObject();
-		if (!IsValid(UserWidget)) return;
 
-		if (UMapSelectWidget* MapWidget = Cast<UMapSelectWidget>(UserWidget))
+		if (Widget->IsVisible())
 		{
-			MapWidget->AddToViewport();
-			MapWidget->SetVisibility(ESlateVisibility::Hidden);
+			Widget->SetVisibility(false);
 		}
-		/*
-		* SetVisibility 값 조절로 토글예상
-		*/
+		else
+		{
+			Widget->SetVisibility(true);
+		}
 
 	}
 }

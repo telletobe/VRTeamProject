@@ -7,7 +7,7 @@
 #include "ItemSpawnActor.generated.h"
 
 class UBoxComponent;
-
+class AVRProjectGameModeBase;
 
 UCLASS()
 class VRTEAMPROJECT_API AItemSpawnActor : public AActor
@@ -23,6 +23,7 @@ public:
 	void ChangeActiveState();
 	void SetDropTimer();
 	void ResetLocationToStartPoint();
+
 
 protected:
 	// Called when the game starts or when spawned
@@ -61,4 +62,7 @@ private:
 	FVector MoveForce;
 
 	bool bIsActive = false;
+
+	TObjectPtr<AVRProjectGameModeBase> GameMode;
+
 };

@@ -6,6 +6,7 @@
 #include "Components/BoxComponent.h"
 #include <Kismet/GameplayStatics.h>
 #include "Engine/TargetPoint.h"
+#include "VRProjectGameModeBase.h"
 // Sets default values
 AItemSpawnActor::AItemSpawnActor()
 {
@@ -68,22 +69,33 @@ void AItemSpawnActor::FindTartgetPoint()
 
 void AItemSpawnActor::ChangeActiveState()
 {
-	if(!bIsActive)
-	{ 
-		bIsActive = true;
-		SetActorHiddenInGame(false);
-		PrimaryActorTick.bCanEverTick = true;
-		GetWorld()->GetTimerManager().ClearTimer(ActorVisibleHandle);
-		SetDropTimer();
+	if (!GameMode->IsClear())
+	{
+		if (!bIsActive)
+		{
+			bIsActive = true;
+			SetActorHiddenInGame(false);
+			PrimaryActorTick.bCanEverTick = true;
+			GetWorld()->GetTimerManager().ClearTimer(ActorVisibleHandle);
+			SetDropTimer();
+		}
+		else
+		{
+			bIsActive = false;
+			SetActorHiddenInGame(true);
+			PrimaryActorTick.bCanEverTick = false;
+			GetWorld()->GetTimerManager().SetTimer(ActorVisibleHandle, this, &AItemSpawnActor::ChangeActiveState, SpawnDelay, true);
+			SetDropTimer();
+		}
 	}
 	else
 	{
 		bIsActive = false;
 		SetActorHiddenInGame(true);
 		PrimaryActorTick.bCanEverTick = false;
-		GetWorld()->GetTimerManager().SetTimer(ActorVisibleHandle, this, &AItemSpawnActor::ChangeActiveState, SpawnDelay, true);
-		SetDropTimer();
-	}	
+		GetWorldTimerManager().ClearTimer(ActorVisibleHandle);
+	}
+	
 }
 
 void AItemSpawnActor::SetDropTimer()
@@ -122,6 +134,12 @@ void AItemSpawnActor::ResetLocationToStartPoint()
 void AItemSpawnActor::BeginPlay()
 {
 	Super::BeginPlay();
+
+	if (GameMode == nullptr)
+	{
+		GameMode = Cast<AVRProjectGameModeBase>(GetWorld()->GetAuthGameMode());
+	}
+
 
 	ItemSpawnerCollision->SetCollisionObjectType(ECollisionChannel::ECC_WorldDynamic);
 	ItemSpawnerMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
