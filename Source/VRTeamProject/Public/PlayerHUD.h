@@ -9,6 +9,7 @@
 
 class UMapSelectWidget;
 class UPlayerStateWidget;
+class UStageInfoWidget;
 class APlayerController;
 /**
  * 
@@ -27,6 +28,8 @@ public :
 	UFUNCTION(BlueprintCallable)
 	void PlayerStateShow();
 
+
+
 protected:
 	virtual void BeginPlay() override;
 private:
@@ -39,6 +42,12 @@ private:
 	TSubclassOf<UPlayerStateWidget> PlayerState;
 	UPROPERTY(Transient)
 	TObjectPtr<UPlayerStateWidget> PlayerStateInstance;
+
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<UStageInfoWidget> StageInfo;
+	UPROPERTY(Transient)
+	TObjectPtr<UStageInfoWidget> StageInfoInstance;
+	
 
 	UPROPERTY()
 	TObjectPtr<APlayerController> PC;
