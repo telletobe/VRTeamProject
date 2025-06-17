@@ -14,12 +14,24 @@
 #include "Components/WidgetInteractionComponent.h"
 #include "Components/WidgetComponent.h"
 #include "Camera/CameraComponent.h"
+#include "MapSelectWidget.h"
+
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	/////
+	//static ConstructorHelpers::FClassFinder<UMapSelectWidget> WidgetClass(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UMG/MapUI/WBP_MapSelectWidget.WBP_MapSelectWidget_C'"));
+
+	//if (WidgetClass.Succeeded())
+	//{
+	//	MapSelectWidgetClass = WidgetClass.Class;
+	//}
+	////
+
 
 	SetHp(10.0f);
 	SetAtk(5);
@@ -61,7 +73,7 @@ APlayerCharacter::APlayerCharacter()
 	WidgetComponent->SetupAttachment(MotionControllerLeft);
 	WidgetComponent->SetWidgetSpace(EWidgetSpace::World);
 	WidgetComponent->SetDrawSize(FVector2D(500.0f,500.0f));
-	WidgetComponent->SetRelativeLocation(FVector(10.0f,0.0f,0.0f));
+	WidgetComponent->SetRelativeLocation(FVector(200.0f,0.0f,0.0f));
 
 
 }
@@ -70,6 +82,11 @@ APlayerCharacter::APlayerCharacter()
 void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	if (MapSelectWidgetClass)
+	{
+		WidgetComponent->SetWidgetClass(MapSelectWidgetClass.Get());
+	}
 
 	UCapsuleComponent* CharacterCollision = GetCapsuleComponent();
 	CharacterCollision->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);

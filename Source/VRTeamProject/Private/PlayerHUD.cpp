@@ -57,8 +57,13 @@ void APlayerHUD::ToggleMapSelect()
 		if (MapSelectInstance->IsInViewport())
 		{
 			MapSelectInstance->RemoveFromParent();      // 커서 OFF
-			PC->bShowMouseCursor = false;
-			if (PC) PC->SetInputMode(FInputModeGameOnly());
+			if (PC)
+			{
+				PC->bShowMouseCursor = false;
+				PC->SetInputMode(FInputModeGameOnly());
+				
+			}
+			
 		}
 		else
 		{
@@ -67,8 +72,12 @@ void APlayerHUD::ToggleMapSelect()
 				PlayerStateInstance->RemoveFromParent();
 			}
 			MapSelectInstance->AddToViewport();      // 커서 ON
-			PC->bShowMouseCursor = true;
-			if (PC) PC->SetInputMode(Mode);
+			if (PC) 
+			{
+				PC->bShowMouseCursor = true;
+				PC->SetInputMode(Mode);
+			}
+			
 		}
 	}
 }

@@ -8,6 +8,8 @@
 #include "PlayerCharacter.h"
 #include <PlayerHUD.h>
 #include "InputActionValue.h"
+#include "Components/WidgetComponent.h"
+#include "MapSelectWidget.h"
 
 
 UInputManager* UInputManager::Instance = nullptr;
@@ -151,7 +153,9 @@ void UInputManager::Attack(const FInputActionValue& Value)
 
 void UInputManager::ToggleMap(const FInputActionValue& Value)
 {
-	APlayerController* PlayerController = Cast<APlayerController>(Player->GetController());
+	//
+	// PC
+	/*APlayerController* PlayerController = Cast<APlayerController>(Player->GetController());
 
 	if (PlayerController != nullptr)
 	{
@@ -160,6 +164,27 @@ void UInputManager::ToggleMap(const FInputActionValue& Value)
 			MyHUD.Get()->ToggleMapSelect();       
 
 		}
+	}*/
+
+	// VR
+
+	if (IsValid(Player))
+	{
+		UWidgetComponent* Widget = Player->GetWidget();
+		if (!IsValid(Widget)) return;
+		
+		UUserWidget* UserWidget = Widget->GetUserWidgetObject();
+		if (!IsValid(UserWidget)) return;
+
+		if (UMapSelectWidget* MapWidget = Cast<UMapSelectWidget>(UserWidget))
+		{
+			MapWidget->AddToViewport();
+			MapWidget->SetVisibility(ESlateVisibility::Hidden);
+		}
+		/*
+		* SetVisibility 값 조절로 토글예상
+		*/
+
 	}
 }
 
