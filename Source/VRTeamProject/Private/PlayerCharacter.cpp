@@ -2,17 +2,18 @@
 
 
 #include "PlayerCharacter.h"
-#include "NavigationSystem.h"
-#include "Engine/TargetPoint.h"
 #include "Kismet/GameplayStatics.h"
 #include <EnhancedInputComponent.h>
-#include <EnhancedInputSubsystems.h>
 #include <PlayerWeapon.h>
 #include "Components/CapsuleComponent.h"
 #include <EnemyCharacter.h>
 #include <PlayerHUD.h>
-
+#include "InputManager.h"
+#include "MotionControllerComponent.h"
 #include "GameFramework/PlayerController.h"
+#include "Components/WidgetInteractionComponent.h"
+#include "Components/WidgetComponent.h"
+#include "Camera/CameraComponent.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -20,63 +21,48 @@ APlayerCharacter::APlayerCharacter()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	//Data Asset
-	static ConstructorHelpers::FObjectFinder<UInputMappingContext> IMCObject(TEXT("'/Game/Map/System/Input/IMC_InputMappingContext.IMC_InputMappingContext'"));
-	static ConstructorHelpers::FObjectFinder<UInputAction> MoveObject(TEXT("'/Game/Map/System/Input/IA_Move.IA_Move'"));
-	static ConstructorHelpers::FObjectFinder<UInputAction> LookObject(TEXT("'/Game/Map/System/Input/IA_Look.IA_Look'"));
-	static ConstructorHelpers::FObjectFinder<UInputAction> AttackObject(TEXT("'/Game/Map/System/Input/IA_Attack.IA_Attack'"));
-	static ConstructorHelpers::FObjectFinder<UInputAction> ToggleMapObject(TEXT("'/Game/Map/System/Input/IA_ToggleMap.IA_ToggleMap'"));
-	static ConstructorHelpers::FObjectFinder<UInputAction> PlayerStatObject(TEXT("'/Game/Map/System/Input/IA_PlayerStat.IA_PlayerStat'"));
-	static ConstructorHelpers::FObjectFinder<UInputAction> ClickObject(TEXT("'/Game/Map/System/Input/IA_Click.IA_Click'"));
-
-	if (IMCObject.Succeeded())
-	{
-		IMC_InputMappingContext = IMCObject.Object;
-	}
-
-	if (MoveObject.Succeeded())
-	{
-		IA_Move = MoveObject.Object;
-	}
-
-	if (LookObject.Succeeded())
-	{
-		IA_Look = LookObject.Object;
-	}
-
-	if (AttackObject.Succeeded())
-	{
-		IA_Attack = AttackObject.Object;
-	}
-
-	if (ToggleMapObject.Succeeded())
-	{
-		IA_ToggleMap = ToggleMapObject.Object;
-	}
-
-	if (PlayerStatObject.Succeeded())
-	{
-		IA_PlayerStat = PlayerStatObject.Object;
-	}
-
-	if (ClickObject.Succeeded())
-	{
-		IA_Click = ClickObject.Object;
-	}
-	
-
-
-	//----------------------------------------------
-
 	SetHp(10.0f);
 	SetAtk(5);
 	SetDef(1);
 	bIsActive = false;
 	bMouseClickEnable = false;
 
-	//---------------------------------------------
-	UCapsuleComponent* CharacterCollision = GetCapsuleComponent();
-	CharacterCollision->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+
+
+	//VR
+
+	VRCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("VRCamera"));
+	VRCamera->SetupAttachment(RootComponent);
+	VRCamera->bLockToHmd = true;
+	VRCamera->SetRelativeLocation(FVector(5.0f, 0.0f, 64.f)); // 머리 위치쯤
+	VRCamera->SetRelativeScale3D(FVector(0.25f,0.5f,0.5f));
+
+	MotionControllerLeft = CreateDefaultSubobject<UMotionControllerComponent>(TEXT("MotionControllerLeft"));
+	MotionControllerLeft->SetupAttachment(RootComponent);
+	MotionControllerLeft->SetTrackingSource(EControllerHand::Left);
+
+	WidgetInteractionLeft = CreateDefaultSubobject<UWidgetInteractionComponent>(TEXT("WidgetInteractionLeft"));
+	WidgetInteractionLeft->SetupAttachment(MotionControllerLeft);
+	WidgetInteractionLeft->InteractionDistance = 5000.0f; // 위젯 반응거리
+	WidgetInteractionLeft->PointerIndex = 0; //왼쪽 입력 구분
+	WidgetInteractionLeft->bShowDebug = true;
+
+	MotionControllerRight = CreateDefaultSubobject<UMotionControllerComponent>(TEXT("MotionControllerRight"));
+	MotionControllerRight->SetupAttachment(RootComponent);
+	MotionControllerRight->SetTrackingSource(EControllerHand::Right);
+	
+	WidgetInteractionRight = CreateDefaultSubobject<UWidgetInteractionComponent>(TEXT("WidgetInteractionRight"));
+	WidgetInteractionRight->SetupAttachment(MotionControllerRight);
+	WidgetInteractionRight->InteractionDistance = 5000.0f;
+	WidgetInteractionRight->PointerIndex = 1; //오른쪽 입력 구분
+	WidgetInteractionRight->bShowDebug = true;
+
+	WidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("WidgetComponent"));
+	WidgetComponent->SetupAttachment(MotionControllerLeft);
+	WidgetComponent->SetWidgetSpace(EWidgetSpace::World);
+	WidgetComponent->SetDrawSize(FVector2D(500.0f,500.0f));
+	WidgetComponent->SetRelativeLocation(FVector(10.0f,0.0f,0.0f));
+
 
 }
 
@@ -85,24 +71,22 @@ void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
+	UCapsuleComponent* CharacterCollision = GetCapsuleComponent();
+	CharacterCollision->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+
 	if (PlayerController == nullptr)
 	{
 		PlayerController = Cast<APlayerController>(GetController());
-	}
+		UInputComponent* InputComp = PlayerController->InputComponent;
 
-
-	//if exist Controller, Use SubSystem with EnhancedInputLocalPlayerSubSystem.  and MappingContext.
-	if (PlayerController)
-	{
-		if (UEnhancedInputLocalPlayerSubsystem* Subsystem =
-			ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
+		if (!InputManager)
 		{
-			Subsystem->AddMappingContext(IMC_InputMappingContext, 0);
-			UE_LOG(LogTemp, Warning, TEXT("Input Mapping Context Added!"));
+			InputManager = InputManager->GetInstance();
+			InputManager->Initialize(this, PlayerController);
+			InputManager->BindAction(Cast<UEnhancedInputComponent>(InputComp));
 		}
 	}
 
-	UCapsuleComponent* CharacterCollision = GetCapsuleComponent();
 	if (IsValid(CharacterCollision))
 	{
 		CharacterCollision->OnComponentHit.AddDynamic(this,&APlayerCharacter::OnComponentHit);
@@ -126,7 +110,6 @@ void APlayerCharacter::BeginPlay()
 			Weapon->AttachToActor(this,FAttachmentTransformRules::KeepRelativeTransform);
 		}
 	}
-
 }
 
 void APlayerCharacter::OnComponentHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
@@ -166,18 +149,6 @@ void APlayerCharacter::Tick(float DeltaTime)
 void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
-	//use EnhancedInputComponent, And Binding Action
-
-	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent))
-	{
-		EnhancedInputComponent->BindAction(IA_Move, ETriggerEvent::Triggered, this, &APlayerCharacter::Move);
-		EnhancedInputComponent->BindAction(IA_Look, ETriggerEvent::Triggered, this, &APlayerCharacter::Look);
-		EnhancedInputComponent->BindAction(IA_Attack, ETriggerEvent::Triggered, this, &APlayerCharacter::Attack);
-		EnhancedInputComponent->BindAction(IA_ToggleMap, ETriggerEvent::Started, this, &APlayerCharacter::ToggleMap);
-		EnhancedInputComponent->BindAction(IA_PlayerStat, ETriggerEvent::Started, this, &APlayerCharacter::PlayerStat);
-		EnhancedInputComponent->BindAction(IA_Click, ETriggerEvent::Started, this, &APlayerCharacter::Click);
-	}
 }
 
 void APlayerCharacter::ApplyEffectItem(EItemEffectData Data)
@@ -236,91 +207,6 @@ void APlayerCharacter::PlayerReSpawn()
 	bIsActive = true;
 	SetActorHiddenInGame(false);
 }
-
-//////////////////////////////////////////////////////////////////////////////
-//컨트롤러 매핑 함수
-
-void APlayerCharacter::Move(const FInputActionValue& Value)
-{
-	
-	FVector2D MovementVector = Value.Get<FVector2D>();
-	//if exist Controller, is bound inputMappingContext
-	if (PlayerController != nullptr)
-	{
-		// add movement 
-		AddMovementInput(GetActorForwardVector(), MovementVector.Y);
-		AddMovementInput(GetActorRightVector(), MovementVector.X);
-	}
-	
-}
-
-void APlayerCharacter::Look(const FInputActionValue& Value)
-{
-	// input is a Vector2D
-	FVector2D LookAxisVector = Value.Get<FVector2D>();
-
-	if (PlayerController != nullptr)
-	{
-		// add yaw and pitch input to controller
-		AddControllerYawInput((LookAxisVector.X)*-1);
-		AddControllerPitchInput(LookAxisVector.Y);
-	}
-}
-
-void APlayerCharacter::Attack(const FInputActionValue& Value)
-{
-	if (Weapon && bMouseClickEnable)
-	{
-		Weapon->Fire(GetAtk());
-	} 
-	else
-	{
-		UE_LOG(LogTemp,Warning,TEXT("Player Weapon inValid"));
-		return;
-	}
-}
-
-void APlayerCharacter::ToggleMap(const FInputActionValue& Value)
-{
-	if (GetWorld()->GetMapName().Contains(TEXT("Lobby")))
-	{
-		if (PlayerController != nullptr)
-		{
-			APlayerHUD* MyHUD = Cast<APlayerHUD>(PlayerController->GetHUD());
-			if (MyHUD != nullptr)
-			{
-				MyHUD->ToggleMapSelect();         // HUD 쪽 함수 호출
-
-			}
-		}
-	}
-	
-}
-
-void APlayerCharacter::PlayerStat(const FInputActionValue& Value)
-{
-
-	if (GetWorld()->GetMapName().Contains("Map"))
-	{
-		if (PlayerController != nullptr)
-		{
-			APlayerHUD* MyHUD = Cast<APlayerHUD>(PlayerController->GetHUD());
-			if (MyHUD != nullptr)
-			{
-				MyHUD->PlayerStateShow();         // HUD 쪽 함수 호출
-			}
-		}
-	}	
-	
-}
-
-void APlayerCharacter::Click(const FInputActionValue& Value)
-{
-
-}
-
-//////////////////////////////////////////////////////////////////////////////
-
 
 void APlayerCharacter::SetHp(float PlayerHp)
 {

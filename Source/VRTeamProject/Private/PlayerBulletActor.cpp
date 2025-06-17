@@ -14,7 +14,7 @@ APlayerBulletActor::APlayerBulletActor()
 	PrimaryActorTick.bCanEverTick = true;
 
 	//Asset Data Load
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> BulletMeshData(TEXT("'/Engine/EditorMeshes/EditorSphere.EditorSphere'"));
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> BulletMeshData(TEXT("/Script/Engine.StaticMesh'/Engine/EngineMeshes/MaterialSphere.MaterialSphere'"));
 	static ConstructorHelpers::FObjectFinder<UMaterial> BulletMaterialData(TEXT("'/Engine/MapTemplates/Materials/BasicAsset03.BasicAsset03'"));
 
 	BulletCollision = CreateDefaultSubobject<USphereComponent>(TEXT("BulletCollision"));
@@ -25,16 +25,35 @@ APlayerBulletActor::APlayerBulletActor()
 
 	if (BulletMeshData.Succeeded())
 	{
-		BulletMesh->SetStaticMesh(BulletMeshData.Object);
+		BulletMeshAsset = BulletMeshData.Object;
 	}
 
 	if (BulletMaterialData.Succeeded())
 	{
-		BulletMesh->SetMaterial(0,BulletMaterialData.Object);
+		BulletMeshMaterial = BulletMaterialData.Object;
 	}
 
 	BulletCollision->SetRelativeScale3D(FVector(0.25f));
 	BulletMesh->SetRelativeScale3D(FVector(0.25f));
+
+}
+
+
+// Called when the game starts or when spawned
+void APlayerBulletActor::BeginPlay()
+{
+	Super::BeginPlay();
+
+	if (IsValid(BulletMeshAsset))
+	{
+		BulletMesh->SetStaticMesh(BulletMeshAsset);
+	}
+
+	if (IsValid(BulletMeshMaterial))
+	{
+		BulletMesh->SetMaterial(0, BulletMeshMaterial);
+	}
+
 
 	//총알 메쉬의 충돌을 무시
 	BulletMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
@@ -42,10 +61,24 @@ APlayerBulletActor::APlayerBulletActor()
 	//총알 콜리전 충돌 활성화
 	BulletCollision->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 
+	if (IsValid(BulletCollision))
+	{
+		BulletCollision->OnComponentBeginOverlap.AddDynamic(this, &APlayerBulletActor::OnBeginOverlap);
+	}
 
+	FTimerHandle MoveTimerHandle;
+	FTimerHandle DestroyTimerHandle;
 
+	GetWorld()->GetTimerManager().SetTimer(MoveTimerHandle, this, &APlayerBulletActor::BulletMove, MoveInterval, true);
+
+	GetWorld()->GetTimerManager().SetTimer(DestroyTimerHandle, FTimerDelegate::CreateLambda([this]() {
+		if (IsValid(this))
+		{
+			Destroy();
+		}
+		}),
+		2.0F, false);
 }
-
 
 void APlayerBulletActor::BulletMove()
 {
@@ -57,36 +90,6 @@ void APlayerBulletActor::BulletMove()
 void APlayerBulletActor::SetDamage(float BulletDamage)
 {
 	Damage = BulletDamage;
-}
-
-
-
-
-// Called when the game starts or when spawned
-void APlayerBulletActor::BeginPlay()
-{
-	Super::BeginPlay();
-
-	if (IsValid(BulletCollision))
-	{
-		BulletCollision->OnComponentBeginOverlap.AddDynamic(this,&APlayerBulletActor::OnBeginOverlap);
-	}
-
-	FTimerHandle MoveTimerHandle;
-	FTimerHandle DestroyTimerHandle;
-
-	GetWorld()->GetTimerManager().SetTimer(MoveTimerHandle,this,&APlayerBulletActor::BulletMove, MoveInterval,true);
-
-	GetWorld()->GetTimerManager().SetTimer(DestroyTimerHandle, FTimerDelegate::CreateLambda([this]() {
-		if (IsValid(this))
-		{
-			Destroy();
-		}
-		}),
-		2.0F,false);
-
-	
-
 }
 
 void APlayerBulletActor::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)

@@ -19,15 +19,31 @@ APlayerWeapon::APlayerWeapon()
 
 	WeaponMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WeaponMesh"));
 
+	
 	if (WeaponMeshData.Succeeded())
 	{
-		WeaponMesh->SetStaticMesh(WeaponMeshData.Object);
+		WeaponMeshAsset = WeaponMeshData.Object;
+	}
+
+}
+
+
+// Called when the game starts or when spawned
+void APlayerWeapon::BeginPlay()
+{
+	Super::BeginPlay();
+
+	if (IsValid(WeaponMeshAsset))
+	{
+		WeaponMesh->SetStaticMesh(WeaponMeshAsset);
 	}
 
 	WeaponMesh->AttachToComponent(WeaponCollision, FAttachmentTransformRules::KeepRelativeTransform);
 	WeaponMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	WeaponMesh->SetSimulatePhysics(false);
+
 }
+
 
 void APlayerWeapon::Fire(float Damage)
 {
@@ -58,13 +74,6 @@ void APlayerWeapon::ChangeFireState()
 void APlayerWeapon::SetFireDelay(float AttackFireDelay)
 {
 	FireDelay = AttackFireDelay;
-}
-
-// Called when the game starts or when spawned
-void APlayerWeapon::BeginPlay()
-{
-	Super::BeginPlay();
-
 }
 
 // Called every frame

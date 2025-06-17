@@ -12,7 +12,11 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPlayerDeath);
 
 class APlayerController;
-
+class UInputManager;
+class UMotionControllerComponent;
+class UWidgetInteractionComponent;
+class UCameraComponent;
+class UWidgetComponent;
 
 UCLASS()
 class VRTEAMPROJECT_API APlayerCharacter : public ACharacter
@@ -34,10 +38,10 @@ public:
 	float GetExp() const { return Exp; }
 	float GetMaxHp() const { return MaxHp; }
 	TObjectPtr<APlayerWeapon> GetWeapon() const { return *Weapon; }
+	bool IsMouseClickedEnable() const {	return bMouseClickEnable;}
 
 	float GetDefaultAtk() const { return DefaultAtk; }
 	float GetDefaultDef () const { return DefaultDef; }
-
 
 	void ApplyEffectItem(EItemEffectData Data);
 	void PlayerReSpawn();
@@ -48,13 +52,12 @@ public:
 	UPROPERTY()
 	FOnPlayerDeath OnPlayerDeath;
 
-private:
-	void Move(const FInputActionValue& Value);
-	void Look(const FInputActionValue& Value);
-	void Attack(const FInputActionValue& Value);
-	void ToggleMap(const FInputActionValue& Value);
-	void PlayerStat(const FInputActionValue& Value);
-	void Click(const FInputActionValue& Value);
+	//void Move(const FInputActionValue& Value);
+	//void Look(const FInputActionValue& Value);
+	//void Attack(const FInputActionValue& Value);
+	//void ToggleMap(const FInputActionValue& Value);
+	//void PlayerStat(const FInputActionValue& Value);
+	//void Click(const FInputActionValue& Value);
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -94,31 +97,32 @@ private:
 	bool bMouseClickEnable = true;
 	
 	UPROPERTY()
-	TObjectPtr<UInputMappingContext> IMC_InputMappingContext;
-
-	UPROPERTY()
-	TObjectPtr<UInputAction> IA_Move;
-
-	UPROPERTY()
-	TObjectPtr<UInputAction> IA_Look;
-
-	UPROPERTY()
-	TObjectPtr<UInputAction> IA_Attack;
-
-	UPROPERTY()
-	TObjectPtr<UInputAction> IA_ToggleMap;
-
-	UPROPERTY()
-	TObjectPtr<UInputAction> IA_PlayerStat;
-
-	UPROPERTY()
-	TObjectPtr<UInputAction> IA_Click;
-
-	UPROPERTY()
 	TObjectPtr<APlayerController> PlayerController;
 	
 	UPROPERTY(EditAnywhere, Category = "Weapon")
 	TObjectPtr<APlayerWeapon> Weapon;
 
+	UPROPERTY()
+	TObjectPtr<UInputManager> InputManager;
 
+
+	//////// VR
+
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UMotionControllerComponent> MotionControllerLeft;
+
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UWidgetInteractionComponent> WidgetInteractionLeft;
+
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UMotionControllerComponent> MotionControllerRight;
+
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UWidgetInteractionComponent> WidgetInteractionRight;
+
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UCameraComponent> VRCamera;
+
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UWidgetComponent> WidgetComponent;
 };

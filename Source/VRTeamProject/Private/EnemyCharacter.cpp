@@ -20,18 +20,6 @@ AEnemyCharacter::AEnemyCharacter()
 
 	NavInvoker = CreateDefaultSubobject<UNavigationInvokerComponent>(TEXT("NavInvoker"));
 
-	// NavInvoker 관련 생성,삭제 변수값 설정
-	NavGenerationRadius = 2000.0f;
-	NavRemovalRadius = 500.0f;
-	NavInvoker->SetGenerationRadii(NavGenerationRadius, NavRemovalRadius);
-
-
-	UCapsuleComponent* EnemyCollision = GetCapsuleComponent();
-	EnemyCollision->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-
-	USkeletalMeshComponent* EnemyMesh = GetMesh();
-	EnemyMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-
 }
 
 
@@ -122,6 +110,19 @@ void AEnemyCharacter::NotifyEnemyDeath()
 void AEnemyCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	// NavInvoker 관련 생성,삭제 변수값 설정
+	NavGenerationRadius = 2000.0f;
+	NavRemovalRadius = 500.0f;
+	NavInvoker->SetGenerationRadii(NavGenerationRadius, NavRemovalRadius);
+
+
+	UCapsuleComponent* EnemyCollision = GetCapsuleComponent();
+	EnemyCollision->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+
+	USkeletalMeshComponent* EnemyMesh = GetMesh();
+	EnemyMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
 	FindSpawnPoint();
 	FindDeSpawnPoint();
 }

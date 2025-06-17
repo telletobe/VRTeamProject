@@ -90,23 +90,26 @@ void APlayerHUD::PlayerStateShow()
 {
 	if (IsValid(PlayerStateInstance))
 	{
-		if (PlayerStateInstance->IsInViewport())
+		if (GetWorld()->GetMapName().Contains("Map"))
 		{
-			PlayerStateInstance->RemoveFromParent();
-			PC->bShowMouseCursor = false;
-			if (PC) PC->SetInputMode(FInputModeGameOnly());
-		}
-		else
-		{
-			if (MapSelectInstance->IsInViewport())
+			if (PlayerStateInstance->IsInViewport())
 			{
-				MapSelectInstance->RemoveFromParent();
+				PlayerStateInstance->RemoveFromParent();
+				PC->bShowMouseCursor = false;
+				if (PC) PC->SetInputMode(FInputModeGameOnly());
 			}
-			PlayerStateInstance->AddToViewport();
-			PC->bShowMouseCursor = true;
-			if (PC) PC->SetInputMode(Mode);
-		}
-	
+			else
+			{
+				if (MapSelectInstance->IsInViewport())
+				{
+					MapSelectInstance->RemoveFromParent();
+				}
+				PlayerStateInstance->AddToViewport();
+				PC->bShowMouseCursor = true;
+				if (PC) PC->SetInputMode(Mode);
+			}
+		}	
 	}
 	
+	return;
 }

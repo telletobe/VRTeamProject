@@ -23,7 +23,6 @@ ABulidingBaseActor::ABulidingBaseActor()
 	BulidLeft->AttachToComponent(BulidingCollision, FAttachmentTransformRules::KeepRelativeTransform);
 	BulidMiddle->AttachToComponent(BulidingCollision, FAttachmentTransformRules::KeepRelativeTransform);
 
-	MoveForce = FVector(-1200, 0, 0);
 
 }
 
@@ -36,6 +35,7 @@ void ABulidingBaseActor::SetIsArrive(bool IsArrive)
 void ABulidingBaseActor::BeginPlay()
 {
 	Super::BeginPlay();
+	MoveForce = FVector(-1200, 0, 0);
 	
 	if (!EndPoint)
 	{
@@ -44,6 +44,7 @@ void ABulidingBaseActor::BeginPlay()
 	}
 
 	StartLocation = GetActorLocation();
+
 
 }
 
