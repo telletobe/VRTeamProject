@@ -16,6 +16,7 @@
 #include "Camera/CameraComponent.h"
 
 
+
 // Sets default values
 APlayerCharacter::APlayerCharacter()
 {
@@ -122,6 +123,7 @@ void APlayerCharacter::BeginPlay()
 			Weapon->AttachToActor(this,FAttachmentTransformRules::KeepRelativeTransform);
 		}
 	}
+
 }
 
 void APlayerCharacter::OnComponentHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)

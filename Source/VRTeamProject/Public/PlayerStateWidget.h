@@ -35,6 +35,13 @@ private:
 	UPROPERTY(meta = (Bindwidget))
 	TObjectPtr<UProgressBar> ExpBar;
 
+	UFUNCTION(BlueprintCallable)
+	void SetHealthPercent(float Percent);
+
+	UFUNCTION(BlueprintCallable)
+	void SetDefensePercent(float Percent);
+
+
 
 
 };

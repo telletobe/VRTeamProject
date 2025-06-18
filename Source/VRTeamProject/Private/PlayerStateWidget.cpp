@@ -13,6 +13,16 @@ void UPlayerStateWidget::NativeConstruct()
 	
 }
 
+void UPlayerStateWidget::SetHealthPercent(float Percent)
+{
+	if (HealthBar) HealthBar->SetPercent(Percent);
+}
+
+void UPlayerStateWidget::SetDefensePercent(float Percent)
+{
+	if (DefenseBar) DefenseBar->SetPercent(Percent);
+}
+
 
 void UPlayerStateWidget::UpdatePlayerStats()
 {
