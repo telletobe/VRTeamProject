@@ -10,6 +10,7 @@
 #include "PlayerCharacter.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPlayerDeath);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnHealthChange,float,CurrentHp,float,MaxHp);
 
 class APlayerController;
 class UInputManager;
@@ -51,10 +52,13 @@ public:
 	void PlayerReSpawn();
 	void PlayerDeSpawn();
 	void NotifyPlayerDeath();
-
+	void NotifyPlayerChangeHealth();
 
 	UPROPERTY()
 	FOnPlayerDeath OnPlayerDeath;
+
+	UPROPERTY()
+	FOnHealthChange OnHealthChange;
 
 protected:
 	// Called when the game starts or when spawned
@@ -122,6 +126,12 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UWidgetComponent> WidgetComponent;
+
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UStaticMeshComponent> MotionControllerLeftLazerMesh;
+
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UStaticMeshComponent> MotionControllerRightLazerMesh;
 
 	UPROPERTY()
 	TSubclassOf<UMapSelectWidget> MapSelectWidgetClass;

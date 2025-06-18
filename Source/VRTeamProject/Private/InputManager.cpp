@@ -241,7 +241,7 @@ void UInputManager::PlayerStat(const FInputActionValue& Value)
 			}
 		}
 	}
-
+	UE_LOG(LogTemp,Warning,TEXT("PlayerStat"));
 }
 
 void UInputManager::Click(const FInputActionValue& Value)

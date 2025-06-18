@@ -22,16 +22,6 @@ APlayerCharacter::APlayerCharacter()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	/////
-	//static ConstructorHelpers::FClassFinder<UMapSelectWidget> WidgetClass(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UMG/MapUI/WBP_MapSelectWidget.WBP_MapSelectWidget_C'"));
-
-	//if (WidgetClass.Succeeded())
-	//{
-	//	MapSelectWidgetClass = WidgetClass.Class;
-	//}
-	////
-
-
 	SetHp(10.0f);
 	SetAtk(5);
 	SetDef(1);
@@ -130,11 +120,12 @@ void APlayerCharacter::OnComponentHit(UPrimitiveComponent* HitComponent, AActor*
 	AEnemyCharacter* Enemy = Cast<AEnemyCharacter>(OtherActor);
 	if (IsValid(Enemy))
 	{
-		float CurrentHp = this->GetHp();
+		float CurrentHp = GetHp();
 		float PlayerHp = CurrentHp - (Enemy->GetAtk() - this->GetDef());
 		if (PlayerHp > 0)
 		{
 			SetHp(PlayerHp);
+			NotifyPlayerChangeHealth();
 		}
 		else
 		{
@@ -205,6 +196,11 @@ void APlayerCharacter::NotifyPlayerDeath()
 {
 	OnPlayerDeath.Broadcast();
 	UE_LOG(LogTemp,Warning,TEXT("NotifyPlayerDeath"));
+}
+
+void APlayerCharacter::NotifyPlayerChangeHealth()
+{
+	OnHealthChange.Broadcast(GetHp(),GetMaxHp());
 }
 
 void APlayerCharacter::PlayerReSpawn()
