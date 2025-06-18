@@ -24,7 +24,7 @@ class VRTEAMPROJECT_API UInputManager : public UObject
 private:
 	static UInputManager* Instance;
 	UInputManager();
-
+	void ToggleWidgetVisibility();
 
 public:
 	static UInputManager* GetInstance();

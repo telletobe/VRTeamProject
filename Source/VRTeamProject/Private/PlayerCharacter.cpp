@@ -14,7 +14,6 @@
 #include "Components/WidgetInteractionComponent.h"
 #include "Components/WidgetComponent.h"
 #include "Camera/CameraComponent.h"
-#include "MapSelectWidget.h"
 
 
 // Sets default values
@@ -83,11 +82,6 @@ void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (MapSelectWidgetClass)
-	{
-		WidgetComponent->SetWidgetClass(MapSelectWidgetClass.Get());
-		WidgetComponent->SetVisibility(false);
-	}
 
 	UCapsuleComponent* CharacterCollision = GetCapsuleComponent();
 	CharacterCollision->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);

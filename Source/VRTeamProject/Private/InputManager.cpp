@@ -10,6 +10,8 @@
 #include "InputActionValue.h"
 #include "Components/WidgetComponent.h"
 #include "MapSelectWidget.h"
+#include "PlayerStateWidget.h"
+#include "StageInfoWidget.h"
 
 
 UInputManager* UInputManager::Instance = nullptr;
@@ -59,6 +61,20 @@ UInputManager::UInputManager()
 	if (ClickObject.Succeeded())
 	{
 		IA_Click = ClickObject.Object;
+	}
+}
+
+void UInputManager::ToggleWidgetVisibility()
+{
+	UWidgetComponent* Widget = Player->GetWidget();
+	if (Widget->IsVisible())
+	{
+		Widget->SetVisibility(false);
+
+	}
+	else
+	{
+		Widget->SetVisibility(true);
 	}
 }
 
@@ -172,31 +188,59 @@ void UInputManager::ToggleMap(const FInputActionValue& Value)
 	{
 		UWidgetComponent* Widget = Player->GetWidget();
 
-		if (Widget->IsVisible())
+		if (!(Widget->GetWidgetClass())) return;
+
+		if (Widget->GetWidgetClass() == MyHUD->GetMapSelectInstance()->GetClass())
 		{
-			Widget->SetVisibility(false);
+			ToggleWidgetVisibility();
 		}
 		else
 		{
-			Widget->SetVisibility(true);
+			Widget->SetWidgetClass(MyHUD->GetMapSelectInstance().GetClass());
+			if (!(Widget->IsVisible()))
+			{
+				Widget->SetVisibility(true);
+
+			}
 		}
+		
 
 	}
 }
 
 void UInputManager::PlayerStat(const FInputActionValue& Value)
 {
-	APlayerController* PlayerController = Cast<APlayerController>(Player->GetController());
+	//APlayerController* PlayerController = Cast<APlayerController>(Player->GetController());
 
-	if (PlayerController != nullptr)
+	//if (PlayerController != nullptr)
+	//{
+	//	if (IsValid(MyHUD.Get()))
+	//	{
+	//		MyHUD.Get()->PlayerStateShow();         // HUD 쪽 함수 호출
+
+	//	}
+	//}
+	
+
+	if (IsValid(Player))
 	{
-		if (IsValid(MyHUD.Get()))
-		{
-			MyHUD.Get()->PlayerStateShow();         // HUD 쪽 함수 호출
+		UWidgetComponent* Widget = Player->GetWidget();
 
+		if (!(Widget->GetWidgetClass())) return;
+
+		if (Widget->GetWidgetClass() == MyHUD->GetPlayerStateInstance().GetClass()) {
+			ToggleWidgetVisibility();
+		}
+		else
+		{
+			Widget->SetWidgetClass(MyHUD->GetPlayerStateInstance().GetClass());
+			if (!(Widget->IsVisible()))
+			{
+				Widget->SetVisibility(true);
+
+			}
 		}
 	}
-	
 
 }
 

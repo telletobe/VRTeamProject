@@ -6,7 +6,6 @@
 #include "GameFramework/HUD.h"
 #include "PlayerHUD.generated.h"
 
-
 class UMapSelectWidget;
 class UPlayerStateWidget;
 class UStageInfoWidget;
@@ -28,7 +27,9 @@ public :
 	UFUNCTION(BlueprintCallable)
 	void PlayerStateShow();
 
-
+	TObjectPtr<UMapSelectWidget> GetMapSelectInstance() const;
+	TObjectPtr<UPlayerStateWidget> GetPlayerStateInstance() const;
+	TObjectPtr<UStageInfoWidget> GetStageInfoInstance() const;
 
 protected:
 	virtual void BeginPlay() override;

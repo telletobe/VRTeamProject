@@ -4,7 +4,6 @@
 #include "PlayerHUD.h"
 #include "MapselectWidget.h"
 #include "PlayerStateWidget.h"
-
 #include "StageInfoWidget.h"
 #include "Blueprint/UserWidget.h"
 
@@ -121,4 +120,24 @@ void APlayerHUD::PlayerStateShow()
 	}
 	
 	return;
+}
+
+TObjectPtr<UMapSelectWidget> APlayerHUD::GetMapSelectInstance() const
+{
+	if(MapSelectInstance) return MapSelectInstance;
+
+	return nullptr;
+}
+
+TObjectPtr<UPlayerStateWidget> APlayerHUD::GetPlayerStateInstance() const
+{
+	if (PlayerStateInstance) return PlayerStateInstance;
+	
+	return nullptr;
+}
+
+TObjectPtr<UStageInfoWidget> APlayerHUD::GetStageInfoInstance() const
+{
+	if (StageInfoInstance) return StageInfoInstance;
+	return nullptr;
 }
