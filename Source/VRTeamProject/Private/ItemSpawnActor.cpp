@@ -131,13 +131,13 @@ void AItemSpawnActor::ResetLocationToStartPoint()
 
 }
 
-void AItemSpawnActor::CreateItemSpawnActor()
-{
-	if (BPItemSpawner)
-	{
-		AItemSpawnActor* ItemSpawner = GetWorld()->SpawnActor<AItemSpawnActor>(BPItemSpawner, FVector(0, 0, 0),FRotator(0,90.0f,0));
-	}
-}
+//void AItemSpawnActor::CreateItemSpawnActor()
+//{
+//	if (BPItemSpawner)
+//	{
+//		AItemSpawnActor* ItemSpawner = GetWorld()->SpawnActor<AItemSpawnActor>(BPItemSpawner, FVector(0, 0, 0),FRotator(0,90.0f,0));
+//	}
+//}
 
 // Called when the game starts or when spawned
 void AItemSpawnActor::BeginPlay()

@@ -9,6 +9,7 @@
 class UBoxComponent;
 class AEnemyCharacter;
 class AVRProjectGameModeBase;
+class ATargetPoint;
 
 UCLASS()
 class VRTEAMPROJECT_API AEnemySpawner : public AActor
@@ -18,7 +19,7 @@ class VRTEAMPROJECT_API AEnemySpawner : public AActor
 public:	
 	// Sets default values for this actor's properties
 	AEnemySpawner();
-	void CreateEnemySpawner();
+	//void CreateEnemySpawner();
 	void CreateEnemy();
 	void SpawnEnemy();
 	TArray<AEnemyCharacter*>& GetEnemyPool() { return EnemyPool; }
@@ -65,7 +66,7 @@ private :
 
 	TObjectPtr<AVRProjectGameModeBase> GameMode;
 
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<AEnemySpawner> BPEnemySpawner;
+	//UPROPERTY(EditAnywhere)
+	//TSubclassOf<AEnemySpawner> BPEnemySpawner;
 
 };

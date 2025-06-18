@@ -5,6 +5,7 @@
 #include "Components/BoxComponent.h"
 #include <EnemyCharacter.h>
 #include <VRProjectGameModeBase.h>
+#include "Engine/TargetPoint.h"
 
 int32 AEnemySpawner::EnemyPoolSize = 20;
 
@@ -24,13 +25,14 @@ AEnemySpawner::AEnemySpawner()
 	PoolIndex = EnemyPoolSize - 1;
 }
 
-void AEnemySpawner::CreateEnemySpawner()
-{
-	if (BPEnemySpawner)
-	{
-		AEnemySpawner* Spanwer = GetWorld()->SpawnActor<AEnemySpawner>(BPEnemySpawner,FVector(-1350.0f,3200.0f,350.0f),FRotator(0,0,0));
-	}
-}
+
+//void AEnemySpawner::CreateEnemySpawner()
+//{
+//	if (BPEnemySpawner)
+//	{
+//		AEnemySpawner* Spanwer = GetWorld()->SpawnActor<AEnemySpawner>(BPEnemySpawner,FVector(-1350.0f,3200.0f,350.0f),FRotator(0,0,0));
+//	}
+//}
 
 
 void AEnemySpawner::CreateEnemy()
@@ -107,7 +109,6 @@ void AEnemySpawner::ActivateEnemySpawner()
 	GameMode->TriggerGameStart();
 	GetWorld()->GetTimerManager().SetTimer(SpawnHandle, this, &AEnemySpawner::SpawnEnemy, SpawnDelay, true);
 }
-
 
 
 void AEnemySpawner::CheckGameClear()

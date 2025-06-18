@@ -23,7 +23,7 @@ public:
 	void ChangeActiveState();
 	void SetDropTimer();
 	void ResetLocationToStartPoint();
-	void CreateItemSpawnActor();
+	//void CreateItemSpawnActor();
 
 protected:
 	// Called when the game starts or when spawned
@@ -65,7 +65,7 @@ private:
 
 	TObjectPtr<AVRProjectGameModeBase> GameMode;
 
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<AItemSpawnActor> BPItemSpawner;
+	//UPROPERTY(EditAnywhere)
+	//TSubclassOf<AItemSpawnActor> BPItemSpawner;
 
 };
