@@ -77,15 +77,17 @@ void AEnemyCharacter::DeSpawn()
 	{
 		SetActorLocation(DeSpawnPoint->GetActorLocation());
 	}
-
+	
 	SetActorHiddenInGame(true);
 	bIsActive = false;
 	NotifyEnemyDespawn();
+	SetActorTickEnabled(false);
 }
 
 
 void AEnemyCharacter::Spawn()
 {
+	SetActorTickEnabled(true);
 	SetActorHiddenInGame(false);
 	bIsActive = true;
 
