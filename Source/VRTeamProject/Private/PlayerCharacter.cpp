@@ -42,6 +42,9 @@ APlayerCharacter::APlayerCharacter()
 	MotionControllerLeft->SetupAttachment(RootComponent);
 	MotionControllerLeft->SetTrackingSource(EControllerHand::Left);
 
+	MotionControllerLeftLazerMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MotionControllerLeftLazerMesh"));
+	MotionControllerLeftLazerMesh->SetupAttachment(MotionControllerLeft);
+
 	WidgetInteractionLeft = CreateDefaultSubobject<UWidgetInteractionComponent>(TEXT("WidgetInteractionLeft"));
 	WidgetInteractionLeft->SetupAttachment(MotionControllerLeft);
 	WidgetInteractionLeft->InteractionDistance = 5000.0f; // 위젯 반응거리
@@ -52,6 +55,9 @@ APlayerCharacter::APlayerCharacter()
 	MotionControllerRight->SetupAttachment(RootComponent);
 	MotionControllerRight->SetTrackingSource(EControllerHand::Right);
 	
+	MotionControllerRightLazerMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MotionControllerRightLazerMesh"));
+	MotionControllerRightLazerMesh->SetupAttachment(MotionControllerRight);
+
 	WidgetInteractionRight = CreateDefaultSubobject<UWidgetInteractionComponent>(TEXT("WidgetInteractionRight"));
 	WidgetInteractionRight->SetupAttachment(MotionControllerRight);
 	WidgetInteractionRight->InteractionDistance = 5000.0f;

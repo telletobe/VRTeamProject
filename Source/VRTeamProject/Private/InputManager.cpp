@@ -70,11 +70,15 @@ void UInputManager::ToggleWidgetVisibility()
 	if (Widget->IsVisible())
 	{
 		Widget->SetVisibility(false);
+		Player->GetMotionControllerLeftLazerMesh()->SetVisibility(false);
+		Player->GetMotionControllerRightLazerMesh()->SetVisibility(false);
 
 	}
 	else
 	{
 		Widget->SetVisibility(true);
+		Player->GetMotionControllerLeftLazerMesh()->SetVisibility(true);
+		Player->GetMotionControllerRightLazerMesh()->SetVisibility(true);
 	}
 }
 
@@ -200,7 +204,8 @@ void UInputManager::ToggleMap(const FInputActionValue& Value)
 			if (!(Widget->IsVisible()))
 			{
 				Widget->SetVisibility(true);
-
+				Player->GetMotionControllerLeftLazerMesh()->SetVisibility(true);
+				Player->GetMotionControllerRightLazerMesh()->SetVisibility(true);
 			}
 		}
 		
@@ -237,6 +242,8 @@ void UInputManager::PlayerStat(const FInputActionValue& Value)
 			if (!(Widget->IsVisible()))
 			{
 				Widget->SetVisibility(true);
+				Player->GetMotionControllerLeftLazerMesh()->SetVisibility(true);
+				Player->GetMotionControllerRightLazerMesh()->SetVisibility(true);
 
 			}
 		}
