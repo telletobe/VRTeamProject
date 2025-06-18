@@ -43,6 +43,19 @@ void AVRProjectGameModeBase::TriggerGameClear()
 		{
 			if (IsValid(ItemSpanwer)) ItemSpanwer->Destroy();
 		}
+		else if (AEnemySpawner* EnemySpanwer = Cast<AEnemySpawner>(AllActor)) {
+			TArray<AEnemyCharacter*> EnemyPool = EnemySpanwer->GetEnemyPool();
+			for (auto Enemy : EnemyPool)
+			{
+				if (IsValid(Enemy))
+				{
+					Enemy->OnEnemyDespawned.RemoveDynamic(EnemySpanwer, &AEnemySpawner::CheckGameClear);
+					Enemy->OnEnemyDeath.RemoveDynamic(EnemySpanwer, &AEnemySpawner::IncreaseKillCount);
+					Enemy->Destroy();
+				}
+			}
+			if (IsValid(EnemySpanwer)) EnemySpanwer->Destroy();
+		}
 	}
 
 	return;
@@ -53,9 +66,22 @@ void AVRProjectGameModeBase::TriggerGameStart()
 	GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::MakeRandomColor(), TEXT("Start Game"));
 	bIsClear = false;
 
-	/*Create Actor GetWorld()->SpawnActor<>()*/
+	InitializeGameObjects();
 
 	return;
+}
+
+void AVRProjectGameModeBase::InitializeGameObjects()
+{
+	if (BPEnemySpawner)
+	{
+		AEnemySpawner* Spanwer = GetWorld()->SpawnActor<AEnemySpawner>(BPEnemySpawner, FVector(-1350.0f, 3200.0f, 350.0f), FRotator(0, 0, 0));
+	}
+
+	if (BPItemSpawner)
+	{
+		AItemSpawnActor* ItemSpawner = GetWorld()->SpawnActor<AItemSpawnActor>(BPItemSpawner, FVector(0, 0, 0), FRotator(0, 90.0f, 0));
+	}
 }
 
 void AVRProjectGameModeBase::ChangePlayerAliveState()
@@ -70,10 +96,14 @@ void AVRProjectGameModeBase::BeginPlay()
 {
 	Super::BeginPlay();
 
+	InitializeGameObjects();
+
 	APlayerCharacter* Player = Cast<APlayerCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn());
 	if (Player)
 	{
 		Player->OnPlayerDeath.AddDynamic(this, &AVRProjectGameModeBase::ChangePlayerAliveState);
 	}
+
+	
 
 }

@@ -18,8 +18,11 @@ class VRTEAMPROJECT_API AEnemySpawner : public AActor
 public:	
 	// Sets default values for this actor's properties
 	AEnemySpawner();
+	void CreateEnemySpawner();
 	void CreateEnemy();
 	void SpawnEnemy();
+	TArray<AEnemyCharacter*>& GetEnemyPool() { return EnemyPool; }
+
 
 	UFUNCTION()
 	void CheckGameClear();
@@ -61,5 +64,8 @@ private :
 	bool bIsClear = false;
 
 	TObjectPtr<AVRProjectGameModeBase> GameMode;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<AEnemySpawner> BPEnemySpawner;
 
 };

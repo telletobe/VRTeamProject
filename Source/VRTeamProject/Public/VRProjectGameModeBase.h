@@ -6,6 +6,9 @@
 #include "GameFramework/GameModeBase.h"
 #include "VRProjectGameModeBase.generated.h"
 
+class AItemSpawnActor;
+class AEnemySpawner;
+
 /**
  * 
  */
@@ -20,6 +23,7 @@ public :
 	void TriggerGameStart();
 	bool IsClear() { return bIsClear; }
 	bool IsPlayerAlive() { return bPlayerAlive; }
+	void InitializeGameObjects();
 
 	UFUNCTION()
 	void ChangePlayerAliveState();
@@ -30,4 +34,12 @@ protected:
 private:
 	bool bIsClear = false;
 	bool bPlayerAlive = true;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<AItemSpawnActor> BPItemSpawner;
+
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<AEnemySpawner> BPEnemySpawner;
+
 };

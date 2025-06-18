@@ -18,10 +18,18 @@ AEnemySpawner::AEnemySpawner()
 	SetRootComponent(SpawnBox);
 
 	CurrentKillCnt = 1;
-	RequiredKillCnt = 1;
+	RequiredKillCnt = 10;
 	CreateDelay = 0.1f;
 	SpawnDelay = 0.7f;
 	PoolIndex = EnemyPoolSize - 1;
+}
+
+void AEnemySpawner::CreateEnemySpawner()
+{
+	if (BPEnemySpawner)
+	{
+		AEnemySpawner* Spanwer = GetWorld()->SpawnActor<AEnemySpawner>(BPEnemySpawner,FVector(-1350.0f,3200.0f,350.0f),FRotator(0,0,0));
+	}
 }
 
 
@@ -112,19 +120,7 @@ void AEnemySpawner::CheckGameClear()
 			UE_LOG(LogTemp, Warning, TEXT("GameMode:Player Alive : %s"), GameMode->IsPlayerAlive() ? TEXT("true") : TEXT("False"));
 			if (CurrentKillCnt >= RequiredKillCnt)
 			{			
-				for (auto Enemy : EnemyPool)
-				{
-					if (IsValid(Enemy))
-					{
-						Enemy->OnEnemyDespawned.RemoveDynamic(this, &AEnemySpawner::CheckGameClear);
-						Enemy->OnEnemyDeath.RemoveDynamic(this, &AEnemySpawner::IncreaseKillCount);
-						Enemy->Destroy();
-					}					
-				}
 				GameMode->TriggerGameClear();
-
-				if(IsValid(this)) Destroy();
-
 				CurrentKillCnt = 1;
 
 			}
