@@ -52,6 +52,7 @@ public:
 	// 공격 중 상태
 	void SetIsAttacking(bool bNewState) { bIsAttacking = bNewState; }
 
+	
 	UPROPERTY()
 	FOnEnemyDespawned OnEnemyDespawned;
 
