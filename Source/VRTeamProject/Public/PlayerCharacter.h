@@ -64,9 +64,10 @@ public:
 
 	TObjectPtr<UStaticMeshComponent> GetMotionControllerLeftLazerMesh() const { return MotionControllerLeftLazerMesh.Get(); }
 	TObjectPtr<UStaticMeshComponent> GetMotionControllerRightLazerMesh() const { return MotionControllerRightLazerMesh.Get(); }
-
 	TObjectPtr<UMotionControllerComponent> GetMotionControllerLeft() const { return *MotionControllerLeft; }
 	TObjectPtr<UMotionControllerComponent> GetMotionControllerRight() const { return *MotionControllerRight; }
+	TObjectPtr<UWidgetInteractionComponent> GetWidgetInteractionLeft() const { return *WidgetInteractionLeft; }
+	TObjectPtr<UWidgetInteractionComponent> GetWidgetInteractionRight() const { return *WidgetInteractionRight; }
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

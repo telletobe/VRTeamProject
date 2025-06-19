@@ -60,12 +60,12 @@ void APlayerWeapon::Fire(float Damage)
 	//FRotator StartRotation = GetOwner()->GetInstigatorController()->GetControlRotation();
 	 
 	//VR
+	//const FRotator StartLeftRotation = Player->GetMotionControllerLeft()->GetRelativeRotation();
 	const APlayerCharacter* Player = Cast<APlayerCharacter>(GetOwner()->GetInstigatorController()->GetPawn());
-	const FRotator StartLeftRotation = Player->GetMotionControllerLeft()->GetRelativeRotation();
 	const FRotator StartRightRotation = Player->GetMotionControllerRight()->GetRelativeRotation();
 	 
 	/////////////////////////////////////////////////////////////////////////////////////////
-	APlayerBulletActor* NewBullet = GetWorld()->SpawnActor<APlayerBulletActor>(APlayerBulletActor::StaticClass(),GetActorLocation(), StartLeftRotation);
+	APlayerBulletActor* NewBullet = GetWorld()->SpawnActor<APlayerBulletActor>(APlayerBulletActor::StaticClass(),GetActorLocation(), StartRightRotation);
 	NewBullet->SetOwner(this);
 	NewBullet->SetDamage(Damage);
 

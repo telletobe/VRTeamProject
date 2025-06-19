@@ -12,6 +12,7 @@
 #include "MapSelectWidget.h"
 #include "PlayerStateWidget.h"
 #include "StageInfoWidget.h"
+#include "Components/WidgetInteractionComponent.h"
 
 
 UInputManager* UInputManager::Instance = nullptr;
@@ -123,7 +124,8 @@ void UInputManager::BindAction(UEnhancedInputComponent* InputComponent)
 	InputComponent->BindAction(IA_Attack, ETriggerEvent::Triggered, this, &UInputManager::Attack);
 	InputComponent->BindAction(IA_ToggleMap, ETriggerEvent::Started, this, &UInputManager::ToggleMap);
 	InputComponent->BindAction(IA_PlayerStat, ETriggerEvent::Started, this, &UInputManager::PlayerStat);
-	InputComponent->BindAction(IA_Click, ETriggerEvent::Started, this, &UInputManager::Click);
+	InputComponent->BindAction(IA_Click, ETriggerEvent::Started, this, &UInputManager::onRightTriggerPressed);
+	InputComponent->BindAction(IA_Click, ETriggerEvent::Completed, this, &UInputManager::onRightTriggerReleased);
 
 	UE_LOG(LogTemp, Warning, TEXT("BindAction Call"));
 }
@@ -136,7 +138,6 @@ void UInputManager::Move(const FInputActionValue& Value)
 	if (PlayerController != nullptr)
 	{
 		// add movement 
-		PlayerController->GetPawn()->AddMovementInput(PlayerController->GetPawn()->GetActorForwardVector(), MovementVector.Y);
 		PlayerController->GetPawn()->AddMovementInput(PlayerController->GetPawn()->GetActorRightVector(), MovementVector.X);
 	}
 
@@ -249,7 +250,27 @@ void UInputManager::PlayerStat(const FInputActionValue& Value)
 	UE_LOG(LogTemp,Warning,TEXT("PlayerStat"));
 }
 
-void UInputManager::Click(const FInputActionValue& Value)
+void UInputManager::onRightTriggerPressed()
 {
-
+	if (IsValid(Player))
+	{
+		UWidgetInteractionComponent* WidgetInteractionRight = Player->GetWidgetInteractionRight();
+		if (WidgetInteractionRight && WidgetInteractionRight->IsOverFocusableWidget())
+		{
+			WidgetInteractionRight->PressPointerKey(EKeys::LeftMouseButton);
+		}
+	}
 }
+
+void UInputManager::onRightTriggerReleased()
+{
+	if (IsValid(Player))
+	{
+		UWidgetInteractionComponent* WidgetInteractionRight = Player->GetWidgetInteractionRight();
+		if (WidgetInteractionRight && WidgetInteractionRight->IsOverFocusableWidget())
+		{
+			WidgetInteractionRight->ReleasePointerKey(EKeys::LeftMouseButton);
+		}
+	}
+}
+
