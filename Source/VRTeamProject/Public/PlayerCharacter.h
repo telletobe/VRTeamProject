@@ -19,6 +19,7 @@ class UWidgetInteractionComponent;
 class UCameraComponent;
 class UWidgetComponent;
 class UMapSelectWidget;
+class USpringArmComponent;
 
 UCLASS()
 class VRTEAMPROJECT_API APlayerCharacter : public ACharacter
@@ -143,7 +144,6 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UStaticMeshComponent> MotionControllerRightLazerMesh;
-
-	UPROPERTY()
-	TSubclassOf<UMapSelectWidget> MapSelectWidgetClass;
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<USpringArmComponent> SpringArmComp;
 };

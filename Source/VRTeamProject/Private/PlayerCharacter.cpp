@@ -4,16 +4,16 @@
 #include "PlayerCharacter.h"
 #include "Kismet/GameplayStatics.h"
 #include <EnhancedInputComponent.h>
-#include <PlayerWeapon.h>
 #include "Components/CapsuleComponent.h"
+#include <PlayerWeapon.h>
 #include <EnemyCharacter.h>
-#include <PlayerHUD.h>
 #include "InputManager.h"
 #include "MotionControllerComponent.h"
 #include "GameFramework/PlayerController.h"
 #include "Components/WidgetInteractionComponent.h"
 #include "Components/WidgetComponent.h"
 #include "Camera/CameraComponent.h"
+#include "GameFramework/SpringArmComponent.h"
 
 
 // Sets default values
@@ -32,42 +32,49 @@ APlayerCharacter::APlayerCharacter()
 
 	//VR
 
+	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArmComp"));
+	SpringArmComp->SetupAttachment(GetCapsuleComponent());
+	SpringArmComp->TargetArmLength = 0.f;       
+	SpringArmComp->bUsePawnControlRotation = true;
+
 	VRCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("VRCamera"));
-	VRCamera->SetupAttachment(RootComponent);
+	VRCamera->SetupAttachment(SpringArmComp);
 	VRCamera->bLockToHmd = true;
-	VRCamera->SetRelativeLocation(FVector(5.0f, 0.0f, 64.f)); // 머리 위치쯤
+	VRCamera->SetRelativeLocation(FVector(5.0f, 0.0f, 90.0f)); // 머리 위치쯤
 	VRCamera->SetRelativeScale3D(FVector(0.25f,0.5f,0.5f));
 
 	MotionControllerLeft = CreateDefaultSubobject<UMotionControllerComponent>(TEXT("MotionControllerLeft"));
-	MotionControllerLeft->SetupAttachment(RootComponent);
+	MotionControllerLeft->SetupAttachment(GetCapsuleComponent());
 	MotionControllerLeft->SetTrackingSource(EControllerHand::Left);
 
 	MotionControllerLeftLazerMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MotionControllerLeftLazerMesh"));
 	MotionControllerLeftLazerMesh->SetupAttachment(MotionControllerLeft);
+	MotionControllerLeftLazerMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	WidgetInteractionLeft = CreateDefaultSubobject<UWidgetInteractionComponent>(TEXT("WidgetInteractionLeft"));
 	WidgetInteractionLeft->SetupAttachment(MotionControllerLeft);
-	WidgetInteractionLeft->InteractionDistance = 5000.0f; // 위젯 반응거리
+	WidgetInteractionLeft->InteractionDistance = 10000.0f; // 위젯 반응거리
 	WidgetInteractionLeft->PointerIndex = 0; //왼쪽 입력 구분
 	WidgetInteractionLeft->bShowDebug = true;
 
 	MotionControllerRight = CreateDefaultSubobject<UMotionControllerComponent>(TEXT("MotionControllerRight"));
-	MotionControllerRight->SetupAttachment(RootComponent);
+	MotionControllerRight->SetupAttachment(GetCapsuleComponent());
 	MotionControllerRight->SetTrackingSource(EControllerHand::Right);
 	
 	MotionControllerRightLazerMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MotionControllerRightLazerMesh"));
 	MotionControllerRightLazerMesh->SetupAttachment(MotionControllerRight);
+	MotionControllerRightLazerMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	WidgetInteractionRight = CreateDefaultSubobject<UWidgetInteractionComponent>(TEXT("WidgetInteractionRight"));
 	WidgetInteractionRight->SetupAttachment(MotionControllerRight);
-	WidgetInteractionRight->InteractionDistance = 5000.0f;
+	WidgetInteractionRight->InteractionDistance = 10000.0f;
 	WidgetInteractionRight->PointerIndex = 1; //오른쪽 입력 구분
 	WidgetInteractionRight->bShowDebug = true;
 
 	WidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("WidgetComponent"));
-	WidgetComponent->SetupAttachment(GetCapsuleComponent());
+	WidgetComponent->SetupAttachment(VRCamera);
 	WidgetComponent->SetWidgetSpace(EWidgetSpace::World);
-	WidgetComponent->SetDrawSize(FVector2D(500.0f,500.0f));
+	WidgetComponent->SetDrawSize(FVector2D(768.0f,1150.0f));
 	WidgetComponent->SetRelativeLocation(FVector(200.0f,0.0f,0.0f));
 
 
@@ -85,14 +92,19 @@ void APlayerCharacter::BeginPlay()
 	if (!PlayerController)
 	{
 		PlayerController = Cast<APlayerController>(GetController());
-		UInputComponent* InputComp = PlayerController->InputComponent;
-
-		if (!InputManager)
+	
+		if (IsValid(PlayerController))
 		{
-			InputManager = InputManager->GetInstance();
-			InputManager->Initialize(this, PlayerController);
-			InputManager->BindAction(Cast<UEnhancedInputComponent>(InputComp));
+			UInputComponent* InputComp = PlayerController->InputComponent;
+			if (!InputManager)
+			{
+				InputManager = InputManager->GetInstance();
+				InputManager->Initialize(this, PlayerController);
+				InputManager->BindAction(Cast<UEnhancedInputComponent>(InputComp));
+			}
+
 		}
+		
 	}
 
 	if (IsValid(CharacterCollision))
