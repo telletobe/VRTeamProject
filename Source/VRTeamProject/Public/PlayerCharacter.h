@@ -48,7 +48,7 @@ public:
 	float GetDefaultAtk() const { return DefaultAtk; }
 	float GetDefaultDef () const { return DefaultDef; }
 
-	void ApplyEffectItem(EItemEffectData Data);
+	void ApplyEffectItem(const EItemEffectData& Data);
 	void PlayerReSpawn();
 	void PlayerDeSpawn();
 	void NotifyPlayerDeath();
@@ -60,10 +60,13 @@ public:
 	UPROPERTY()
 	FOnHealthChange OnHealthChange;
 
+	// VR
 
-	TObjectPtr<UStaticMeshComponent> GetMotionControllerLeftLazerMesh() { return MotionControllerLeftLazerMesh.Get(); }
-	TObjectPtr<UStaticMeshComponent> GetMotionControllerRightLazerMesh() { return MotionControllerRightLazerMesh.Get(); }
+	TObjectPtr<UStaticMeshComponent> GetMotionControllerLeftLazerMesh() const { return MotionControllerLeftLazerMesh.Get(); }
+	TObjectPtr<UStaticMeshComponent> GetMotionControllerRightLazerMesh() const { return MotionControllerRightLazerMesh.Get(); }
 
+	TObjectPtr<UMotionControllerComponent> GetMotionControllerLeft() const { return *MotionControllerLeft; }
+	TObjectPtr<UMotionControllerComponent> GetMotionControllerRight() const { return *MotionControllerRight; }
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

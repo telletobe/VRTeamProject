@@ -24,7 +24,7 @@ AItemSpawnActor::AItemSpawnActor()
 
 void AItemSpawnActor::SpawnItem()
 {
-	FVector SpawnPoint = FMath::RandPointInBox(ItemSpawnerCollision->Bounds.GetBox());
+	const FVector SpawnPoint = FMath::RandPointInBox(ItemSpawnerCollision->Bounds.GetBox());
 
 	TSubclassOf<AGameItem> Item = LoadClass<AGameItem>(nullptr, TEXT("/Script/Engine.Blueprint'/Game/Actor/Item/MyGameItem.MyGameItem_C'"));
 	if (Item)
@@ -38,7 +38,7 @@ void AItemSpawnActor::SpawnItem()
 
 void AItemSpawnActor::MoveToEndPoint(float DeltaTime)
 {
-	FVector NewLocation = GetActorLocation() + MoveForce * DeltaTime;
+	const FVector NewLocation = GetActorLocation() + MoveForce * DeltaTime;
 	SetActorLocation(NewLocation);
 	ResetLocationToStartPoint();
 }
@@ -47,7 +47,7 @@ void AItemSpawnActor::FindTartgetPoint()
 {
 	TArray<AActor*> TargetPoint;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ATargetPoint::StaticClass(), TargetPoint);
-	for (auto ItemPoint : TargetPoint)
+	for (const auto& ItemPoint : TargetPoint)
 	{
 		if (ATargetPoint* tempPoint = Cast<ATargetPoint>(ItemPoint))
 		{
@@ -118,7 +118,7 @@ void AItemSpawnActor::ResetLocationToStartPoint()
 	{
 		if (IsValid(StartPoint))
 		{
-			float EndDistance = FVector::Dist2D(GetActorLocation(), EndPoint->GetActorLocation());
+			const float EndDistance = FVector::Dist2D(GetActorLocation(), EndPoint->GetActorLocation());
 			if (EndDistance < 100.0f)
 			{
 				SetActorLocation(StartPoint->GetActorLocation());

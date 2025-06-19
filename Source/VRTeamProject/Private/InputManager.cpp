@@ -130,7 +130,7 @@ void UInputManager::BindAction(UEnhancedInputComponent* InputComponent)
 
 void UInputManager::Move(const FInputActionValue& Value)
 {
-	APlayerController* PlayerController = Cast<APlayerController>(Player->GetController());
+	const APlayerController* PlayerController = Cast<APlayerController>(Player->GetController());
 	FVector2D MovementVector = Value.Get<FVector2D>();
 	//if exist Controller, is bound inputMappingContext
 	if (PlayerController != nullptr)
@@ -146,7 +146,7 @@ void UInputManager::Look(const FInputActionValue& Value)
 {
 	// input is a Vector2D
 	FVector2D LookAxisVector = Value.Get<FVector2D>();
-	APlayerController* PlayerController = Cast<APlayerController>(Player->GetController());
+	const APlayerController* PlayerController = Cast<APlayerController>(Player->GetController());
 
 	if (PlayerController != nullptr)
 	{
@@ -158,7 +158,6 @@ void UInputManager::Look(const FInputActionValue& Value)
 
 void UInputManager::Attack(const FInputActionValue& Value)
 {
-	
 
 	if (Player->GetWeapon() && Player->IsMouseClickedEnable())
 	{
@@ -208,9 +207,8 @@ void UInputManager::ToggleMap(const FInputActionValue& Value)
 				Player->GetMotionControllerRightLazerMesh()->SetVisibility(true);
 			}
 		}
-		
-
 	}
+	UE_LOG(LogTemp, Warning, TEXT("MapSelect"));
 }
 
 void UInputManager::PlayerStat(const FInputActionValue& Value)

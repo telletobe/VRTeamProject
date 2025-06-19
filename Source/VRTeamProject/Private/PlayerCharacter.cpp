@@ -160,7 +160,7 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 }
 
-void APlayerCharacter::ApplyEffectItem(EItemEffectData Data)
+void APlayerCharacter::ApplyEffectItem(const EItemEffectData& Data)
 {
 	//플레이어가 아이템을 파괴 햇을 때, 아이템 효과를 적용받는 함수.
 	//Switch를 활용하여 Data에 들어있는 값으로 효과 적용

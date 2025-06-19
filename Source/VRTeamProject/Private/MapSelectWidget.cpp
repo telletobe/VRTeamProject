@@ -4,8 +4,7 @@
 #include "MapSelectWidget.h"
 #include "Components/Button.h"
 #include "GameFramework/PlayerController.h"
-//TEST
-#include "VRProjectGameModeBase.h"
+
 void UMapSelectWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
@@ -27,8 +26,5 @@ void UMapSelectWidget::HandleRegionClicked()
     //    const FString Clean = BtnName.ToString().RightChop(7);
     //    OnRegionSelected.Broadcast(FName(*Clean));       // 델리게이트 전파
     //}
-    AVRProjectGameModeBase* GM = Cast<AVRProjectGameModeBase>(GetWorld()->GetAuthGameMode());
-    GM->TriggerGameClear();
-    GM->TriggerGameStart();
-    
+
 }
