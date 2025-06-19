@@ -36,7 +36,8 @@ public:
 	void Attack(const FInputActionValue& Value);
 	void ToggleMap(const FInputActionValue& Value);
 	void PlayerStat(const FInputActionValue& Value);
-	void Click(const FInputActionValue& Value);
+	void onRightTriggerPressed();
+	void onRightTriggerReleased();
 
 private:
 	UPROPERTY()

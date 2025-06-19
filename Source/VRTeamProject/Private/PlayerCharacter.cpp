@@ -4,16 +4,16 @@
 #include "PlayerCharacter.h"
 #include "Kismet/GameplayStatics.h"
 #include <EnhancedInputComponent.h>
-#include <PlayerWeapon.h>
 #include "Components/CapsuleComponent.h"
+#include <PlayerWeapon.h>
 #include <EnemyCharacter.h>
-#include <PlayerHUD.h>
 #include "InputManager.h"
 #include "MotionControllerComponent.h"
 #include "GameFramework/PlayerController.h"
 #include "Components/WidgetInteractionComponent.h"
 #include "Components/WidgetComponent.h"
 #include "Camera/CameraComponent.h"
+#include "GameFramework/SpringArmComponent.h"
 
 
 // Sets default values
@@ -21,16 +21,6 @@ APlayerCharacter::APlayerCharacter()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
-	/////
-	//static ConstructorHelpers::FClassFinder<UMapSelectWidget> WidgetClass(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UMG/MapUI/WBP_MapSelectWidget.WBP_MapSelectWidget_C'"));
-
-	//if (WidgetClass.Succeeded())
-	//{
-	//	MapSelectWidgetClass = WidgetClass.Class;
-	//}
-	////
-
 
 	SetHp(10.0f);
 	SetAtk(5);
@@ -42,36 +32,49 @@ APlayerCharacter::APlayerCharacter()
 
 	//VR
 
+	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArmComp"));
+	SpringArmComp->SetupAttachment(GetCapsuleComponent());
+	SpringArmComp->TargetArmLength = 0.f;       
+	SpringArmComp->bUsePawnControlRotation = true;
+
 	VRCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("VRCamera"));
-	VRCamera->SetupAttachment(RootComponent);
+	VRCamera->SetupAttachment(SpringArmComp);
 	VRCamera->bLockToHmd = true;
-	VRCamera->SetRelativeLocation(FVector(5.0f, 0.0f, 64.f)); // 머리 위치쯤
+	VRCamera->SetRelativeLocation(FVector(5.0f, 0.0f, 90.0f)); // 머리 위치쯤
 	VRCamera->SetRelativeScale3D(FVector(0.25f,0.5f,0.5f));
 
 	MotionControllerLeft = CreateDefaultSubobject<UMotionControllerComponent>(TEXT("MotionControllerLeft"));
-	MotionControllerLeft->SetupAttachment(RootComponent);
+	MotionControllerLeft->SetupAttachment(GetCapsuleComponent());
 	MotionControllerLeft->SetTrackingSource(EControllerHand::Left);
+
+	MotionControllerLeftLazerMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MotionControllerLeftLazerMesh"));
+	MotionControllerLeftLazerMesh->SetupAttachment(MotionControllerLeft);
+	MotionControllerLeftLazerMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	WidgetInteractionLeft = CreateDefaultSubobject<UWidgetInteractionComponent>(TEXT("WidgetInteractionLeft"));
 	WidgetInteractionLeft->SetupAttachment(MotionControllerLeft);
-	WidgetInteractionLeft->InteractionDistance = 5000.0f; // 위젯 반응거리
+	WidgetInteractionLeft->InteractionDistance = 10000.0f; // 위젯 반응거리
 	WidgetInteractionLeft->PointerIndex = 0; //왼쪽 입력 구분
 	WidgetInteractionLeft->bShowDebug = true;
 
 	MotionControllerRight = CreateDefaultSubobject<UMotionControllerComponent>(TEXT("MotionControllerRight"));
-	MotionControllerRight->SetupAttachment(RootComponent);
+	MotionControllerRight->SetupAttachment(GetCapsuleComponent());
 	MotionControllerRight->SetTrackingSource(EControllerHand::Right);
 	
+	MotionControllerRightLazerMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MotionControllerRightLazerMesh"));
+	MotionControllerRightLazerMesh->SetupAttachment(MotionControllerRight);
+	MotionControllerRightLazerMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
 	WidgetInteractionRight = CreateDefaultSubobject<UWidgetInteractionComponent>(TEXT("WidgetInteractionRight"));
 	WidgetInteractionRight->SetupAttachment(MotionControllerRight);
-	WidgetInteractionRight->InteractionDistance = 5000.0f;
+	WidgetInteractionRight->InteractionDistance = 10000.0f;
 	WidgetInteractionRight->PointerIndex = 1; //오른쪽 입력 구분
 	WidgetInteractionRight->bShowDebug = true;
 
 	WidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("WidgetComponent"));
-	WidgetComponent->SetupAttachment(GetCapsuleComponent());
+	WidgetComponent->SetupAttachment(VRCamera);
 	WidgetComponent->SetWidgetSpace(EWidgetSpace::World);
-	WidgetComponent->SetDrawSize(FVector2D(500.0f,500.0f));
+	WidgetComponent->SetDrawSize(FVector2D(768.0f,1150.0f));
 	WidgetComponent->SetRelativeLocation(FVector(200.0f,0.0f,0.0f));
 
 
@@ -89,14 +92,19 @@ void APlayerCharacter::BeginPlay()
 	if (!PlayerController)
 	{
 		PlayerController = Cast<APlayerController>(GetController());
-		UInputComponent* InputComp = PlayerController->InputComponent;
-
-		if (!InputManager)
+	
+		if (IsValid(PlayerController))
 		{
-			InputManager = InputManager->GetInstance();
-			InputManager->Initialize(this, PlayerController);
-			InputManager->BindAction(Cast<UEnhancedInputComponent>(InputComp));
+			UInputComponent* InputComp = PlayerController->InputComponent;
+			if (!InputManager)
+			{
+				InputManager = InputManager->GetInstance();
+				InputManager->Initialize(this, PlayerController);
+				InputManager->BindAction(Cast<UEnhancedInputComponent>(InputComp));
+			}
+
 		}
+		
 	}
 
 	if (IsValid(CharacterCollision))
@@ -130,11 +138,12 @@ void APlayerCharacter::OnComponentHit(UPrimitiveComponent* HitComponent, AActor*
 	AEnemyCharacter* Enemy = Cast<AEnemyCharacter>(OtherActor);
 	if (IsValid(Enemy))
 	{
-		float CurrentHp = this->GetHp();
+		float CurrentHp = GetHp();
 		float PlayerHp = CurrentHp - (Enemy->GetAtk() - this->GetDef());
 		if (PlayerHp > 0)
 		{
 			SetHp(PlayerHp);
+			NotifyPlayerChangeHealth();
 		}
 		else
 		{
@@ -163,7 +172,7 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 }
 
-void APlayerCharacter::ApplyEffectItem(EItemEffectData Data)
+void APlayerCharacter::ApplyEffectItem(const EItemEffectData& Data)
 {
 	//플레이어가 아이템을 파괴 햇을 때, 아이템 효과를 적용받는 함수.
 	//Switch를 활용하여 Data에 들어있는 값으로 효과 적용
@@ -205,6 +214,11 @@ void APlayerCharacter::NotifyPlayerDeath()
 {
 	OnPlayerDeath.Broadcast();
 	UE_LOG(LogTemp,Warning,TEXT("NotifyPlayerDeath"));
+}
+
+void APlayerCharacter::NotifyPlayerChangeHealth()
+{
+	OnHealthChange.Broadcast(GetHp(),GetMaxHp());
 }
 
 void APlayerCharacter::PlayerReSpawn()

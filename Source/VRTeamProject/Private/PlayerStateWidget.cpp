@@ -3,20 +3,58 @@
 
 #include "PlayerStateWidget.h"
 #include "Components/Button.h"
+#include "Components/ProgressBar.h"
 #include "PlayerCharacter.h"
+
 
 
 void UPlayerStateWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
+	if (APlayerController* PC = GetOwningPlayer())
+	{
+		Player = Cast<APlayerCharacter>(PC->GetPawn());
+		if (Player)
+		{
+			Player->OnHealthChange.AddDynamic(this,&UPlayerStateWidget::UpdatePlayerHP);
+		}
 	
+	}	
+	if (HPBar)
+	{
+		HPBar->SetPercent(1.0f);
+	}
+
+	UpdatePlayerDef();
+	UpdatePlayerExp(0.0f);
 }
 
-
-void UPlayerStateWidget::UpdatePlayerStats()
+void UPlayerStateWidget::UpdatePlayerHP(float CurrentHp, float MaxHp)
 {
 
+	if (HPBar && MaxHp > 0.0f)
+	{
+		HPBar->SetPercent(CurrentHp/MaxHp);
+	}
+	//Set Text
 }
 
+void UPlayerStateWidget::UpdatePlayerDef()
+{
+	if (DefBar)
+	{
+		DefBar->SetPercent(1.0f);
+	}
+	//Set Text
+}
 
+void UPlayerStateWidget::UpdatePlayerExp(float CurrentExp)
+{
+	if (ExpBar)
+	{
+		ExpBar->SetPercent(0.0f);
+	}
+
+		//Set Text
+}

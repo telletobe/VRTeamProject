@@ -44,7 +44,7 @@ public:
 
 private :
 
-	static int32 EnemyPoolSize;
+	const static int32 EnemyPoolSize;
 
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UBoxComponent> SpawnBox;

@@ -5,7 +5,6 @@
 #include "Components/Button.h"
 #include "GameFramework/PlayerController.h"
 
-
 void UMapSelectWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
@@ -28,5 +27,4 @@ void UMapSelectWidget::HandleRegionClicked()
     //    OnRegionSelected.Broadcast(FName(*Clean));       // 델리게이트 전파
     //}
 
-    
 }

@@ -7,7 +7,7 @@
 #include <VRProjectGameModeBase.h>
 #include "Engine/TargetPoint.h"
 
-int32 AEnemySpawner::EnemyPoolSize = 20;
+const int32 AEnemySpawner::EnemyPoolSize = 20;
 
 // Sets default values
 AEnemySpawner::AEnemySpawner()
@@ -37,7 +37,7 @@ AEnemySpawner::AEnemySpawner()
 
 void AEnemySpawner::CreateEnemy()
 {
-	FVector SpawnPoint = FMath::RandPointInBox(SpawnBox->Bounds.GetBox());
+	const FVector SpawnPoint = FMath::RandPointInBox(SpawnBox->Bounds.GetBox());
 
 	bool bIsSpawn = true;
 

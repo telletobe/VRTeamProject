@@ -83,7 +83,7 @@ void APlayerBulletActor::BeginPlay()
 void APlayerBulletActor::BulletMove()
 {
 	
-	FVector NewLocation = GetActorLocation() + GetActorForwardVector() * BulletSpeed * MoveInterval;
+	const FVector NewLocation = GetActorLocation() + GetActorForwardVector() * BulletSpeed * MoveInterval;
 	SetActorLocation(NewLocation);
 }
 
