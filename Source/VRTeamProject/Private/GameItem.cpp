@@ -64,7 +64,6 @@ void AGameItem::BeginPlay()
 
 	if (ItemMesh)
 	{
-		ItemMesh->SetMassOverrideInKg(NAME_None, 10000.0f, true);
 		ItemMesh->OnComponentHit.AddDynamic(this,&AGameItem::OnHit);
 	}
 }

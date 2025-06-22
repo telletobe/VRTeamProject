@@ -29,7 +29,7 @@ void AEnemyCharacter::FindSpawnPoint()
 	TArray<AActor*> RandomPoint;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ATargetPoint::StaticClass(), FoundEndPoint);
 
-	for (auto StartPoint : FoundEndPoint)
+	for (const auto& StartPoint : FoundEndPoint)
 	{
 		if (Cast<ATargetPoint>(StartPoint))
 		{
@@ -51,10 +51,10 @@ void AEnemyCharacter::FindSpawnPoint()
 
 void AEnemyCharacter::FindDeSpawnPoint()
 {
-TArray<AActor*> FoundEndPoint;
+	TArray<AActor*> FoundEndPoint;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ATargetPoint::StaticClass(), FoundEndPoint);
 
-	for (auto EndPoint : FoundEndPoint)
+	for (const auto& EndPoint : FoundEndPoint)
 	{
 		if (Cast<ATargetPoint>(EndPoint))
 		{

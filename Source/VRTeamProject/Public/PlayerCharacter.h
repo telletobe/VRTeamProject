@@ -10,6 +10,7 @@
 #include "PlayerCharacter.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPlayerDeath);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnHealthChange,float,CurrentHp,float,MaxHp);
 
 class APlayerController;
 class UInputManager;
@@ -18,6 +19,7 @@ class UWidgetInteractionComponent;
 class UCameraComponent;
 class UWidgetComponent;
 class UMapSelectWidget;
+class USpringArmComponent;
 
 UCLASS()
 class VRTEAMPROJECT_API APlayerCharacter : public ACharacter
@@ -47,21 +49,35 @@ public:
 	float GetDefaultAtk() const { return DefaultAtk; }
 	float GetDefaultDef () const { return DefaultDef; }
 
-	void ApplyEffectItem(EItemEffectData Data);
+	void ApplyEffectItem(const EItemEffectData& Data);
 	void PlayerReSpawn();
 	void PlayerDeSpawn();
 	void NotifyPlayerDeath();
-
+	void NotifyPlayerChangeHealth();
 
 	UPROPERTY()
 	FOnPlayerDeath OnPlayerDeath;
 
+	UPROPERTY()
+	FOnHealthChange OnHealthChange;
+
+	// VR
+
+	TObjectPtr<UStaticMeshComponent> GetMotionControllerLeftLazerMesh() const { return MotionControllerLeftLazerMesh.Get(); }
+	TObjectPtr<UStaticMeshComponent> GetMotionControllerRightLazerMesh() const { return MotionControllerRightLazerMesh.Get(); }
+	TObjectPtr<UMotionControllerComponent> GetMotionControllerLeft() const { return *MotionControllerLeft; }
+	TObjectPtr<UMotionControllerComponent> GetMotionControllerRight() const { return *MotionControllerRight; }
+	TObjectPtr<UWidgetInteractionComponent> GetWidgetInteractionLeft() const { return *WidgetInteractionLeft; }
+	TObjectPtr<UWidgetInteractionComponent> GetWidgetInteractionRight() const { return *WidgetInteractionRight; }
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 	UFUNCTION()
 	virtual void OnComponentHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+
+private:
+
 
 public:	
 	// Called every frame
@@ -123,6 +139,11 @@ private:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UWidgetComponent> WidgetComponent;
 
-	UPROPERTY()
-	TSubclassOf<UMapSelectWidget> MapSelectWidgetClass;
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UStaticMeshComponent> MotionControllerLeftLazerMesh;
+
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UStaticMeshComponent> MotionControllerRightLazerMesh;
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<USpringArmComponent> SpringArmComp;
 };
