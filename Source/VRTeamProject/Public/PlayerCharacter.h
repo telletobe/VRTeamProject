@@ -118,6 +118,8 @@ private:
 	UPROPERTY()
 	TObjectPtr<UInputManager> InputManager;
 
+	FTimerHandle RestoreTimerHandle;
+
 
 	//////// VR
 
