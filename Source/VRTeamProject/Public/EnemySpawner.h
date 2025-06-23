@@ -59,6 +59,7 @@ private :
 
 	UPROPERTY(EditAnywhere, category = "EnemyPool")
 	float SpawnDelay;
+
 	int32 CurrentKillCnt;
 	int32 RequiredKillCnt;
 	int32 PoolIndex = 0;

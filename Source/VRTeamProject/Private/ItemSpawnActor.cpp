@@ -26,12 +26,35 @@ void AItemSpawnActor::SpawnItem()
 {
 	const FVector SpawnPoint = FMath::RandPointInBox(ItemSpawnerCollision->Bounds.GetBox());
 
+	const int32 ItemDropTableCnt = 4; 
+
 	TSubclassOf<AGameItem> Item = LoadClass<AGameItem>(nullptr, TEXT("/Script/Engine.Blueprint'/Game/Actor/Item/MyGameItem.MyGameItem_C'"));
 	if (Item)
 	{
 		AGameItem* SpawnedItem = GetWorld()->SpawnActor<AGameItem>(Item, SpawnPoint, FRotator(0));
+		const int32 ItemType = FMath::RandRange(0,ItemDropTableCnt-1);
 
-		SpawnedItem->SetItemData(EItemEffectData::AtkUp);
+		switch (ItemType)
+		{
+		case 0 :
+			SpawnedItem->SetItemData(EItemEffectData::HEAL);
+			break;
+		case 1:
+			SpawnedItem->SetItemData(EItemEffectData::AtkUp);
+			break;
+		case 2:
+			SpawnedItem->SetItemData(EItemEffectData::DefUp);
+			break;
+		case 3:
+			SpawnedItem->SetItemData(EItemEffectData::AttackSpeed);
+			break;
+
+		default:
+			return;
+			break;
+		}
+
+		
 		return;
 	}
 
