@@ -11,7 +11,6 @@ class UButton;
 class APlayerCharacter;
 /**
  * 
- * 
  */
 UCLASS()
 class VRTEAMPROJECT_API UPlayerStateWidget : public UUserWidget
@@ -41,5 +40,6 @@ private:
 	UPROPERTY()
 	TObjectPtr<APlayerCharacter> Player;
 
+	// header
 
 };
