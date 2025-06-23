@@ -178,22 +178,54 @@ void APlayerCharacter::ApplyEffectItem(const EItemEffectData& Data)
 	//플레이어가 아이템을 파괴 햇을 때, 아이템 효과를 적용받는 함수.
 	//Switch를 활용하여 Data에 들어있는 값으로 효과 적용
 	GEngine->AddOnScreenDebugMessage(-1,3.0f,FColor::Green,TEXT("Player ApplyEffetItem!"));
-
+	
 	switch (Data)
 	{
 	case EItemEffectData::HEAL:
-
+		// 예: 체력 20 회복
+		SetHp(GetHp() + 20);;
+		GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Green, TEXT("HEAL applied: +20 HP"));
 		break;
+
 	case EItemEffectData::AtkUp:
+		
+		SetAtk(GetAtk() + 1);
+		GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Green, FString::Printf(TEXT("AtkUp applied: Atk = %.1f (for 10 seconds)"), GetAtk()));
 
+		GetWorldTimerManager().ClearTimer(RestoreTimerHandle);
+		GetWorld()->GetTimerManager().SetTimer(RestoreTimerHandle, [this]() {SetAtk(DefaultAtk);}, 10.0f, false);
+		
 		break;
+
 	case EItemEffectData::DefUp:
+		SetDef(GetDef() + 1);
+		GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Green, FString::Printf(TEXT("DefUp applied: Def = %.1f"), GetDef()));
+
+		GetWorld()->GetTimerManager().ClearTimer(RestoreTimerHandle);
+		GetWorld()->GetTimerManager().SetTimer(RestoreTimerHandle, [this]() {SetDef(DefaultDef);},10.0f, false);
 
 		break;
+
 	case EItemEffectData::AttackSpeed:
 
+		if (!IsValid(Weapon))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("PlayerWeapon is nullptr in AttackSpeed effect"));
+			return;
+		}
+		else
+		{
+			GetWeapon()->SetFireDelay(0.05f);
+		}
+
+		GetWorld()->GetTimerManager().ClearTimer(RestoreTimerHandle);
+		GetWorld()->GetTimerManager().SetTimer(RestoreTimerHandle, [this]() { GetWeapon()->SetFireDelay(GetWeapon()->GetDefaultFireDelay()); }, 10.0f, false);
+
+
 		break;
 
+	default :
+		break;
 	}
 
 }

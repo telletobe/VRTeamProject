@@ -60,7 +60,7 @@ void AGameItem::BeginPlay()
 	ItemMesh->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
 	ItemMesh->SetLinearDamping(5.0f);
 
-	ItemData = EItemEffectData::HEAL;
+	ItemData = EItemEffectData::AtkUp;
 
 	if (ItemMesh)
 	{
