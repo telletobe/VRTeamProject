@@ -127,8 +127,23 @@ void APlayerCharacter::BeginPlay()
 		if (IsValid(NewWeapon))
 		{
 			Weapon = NewWeapon;
-			Weapon->AttachToActor(this,FAttachmentTransformRules::KeepRelativeTransform);
+
+			FTransform HandSocketTransform = GetMesh()->GetSocketTransform(TEXT("RightHand"), RTS_World);
+			FTransform WeaponSocketTransform = Weapon->GetMesh()->GetSocketTransform(TEXT("rifle_magazine_001"), RTS_World);
+
+			// 손 위치에 정렬되도록 무기 이동 (핸드 기준으로 소켓 위치를 정렬)
+			FTransform Offset = WeaponSocketTransform.GetRelativeTransform(Weapon->GetActorTransform());
+			FTransform AlignedTransform = Offset.Inverse() * HandSocketTransform;
+
+			Weapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, "RightHand");
+
+			Weapon->SetActorTransform(AlignedTransform);
+
 		}
+	}
+	else
+	{
+		UE_LOG(LogTemp,Warning,TEXT("PlayerWeapon InValid"));
 	}
 }
 

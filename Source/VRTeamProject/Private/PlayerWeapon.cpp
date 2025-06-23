@@ -12,7 +12,9 @@ APlayerWeapon::APlayerWeapon()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> WeaponMeshData(TEXT("'/Engine/VREditor/TransformGizmo/SM_Sequencer_Key.SM_Sequencer_Key'"));
+
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> WeaponMeshData(TEXT("/Script/Engine.Skeleton'/Game/Asset/Weapon/rifle_001_Skeleton.rifle_001_Skeleton'"));
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> WeaponSkeletalData(TEXT("/Script/Engine.SkeletalMesh'/Game/Asset/Weapon/rifle_001.rifle_001'"));
 
 	WeaponCollision = CreateDefaultSubobject<USphereComponent>(TEXT("WeaponCollision"));
 	SetRootComponent(WeaponCollision);
@@ -20,11 +22,21 @@ APlayerWeapon::APlayerWeapon()
 	WeaponCollision->SetRelativeScale3D(FVector(1.0f,1.0f,1.0f));
 
 	WeaponMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WeaponMesh"));
-
+	WeaponSkeletal = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WeaponSkeletal"));
+	WeaponSkeletal->SetupAttachment(WeaponCollision);
 	
 	if (WeaponMeshData.Succeeded())
 	{
 		WeaponMeshAsset = WeaponMeshData.Object;
+		
+	}
+	if (WeaponSkeletalData.Succeeded())
+	{
+		WeaponSkeletal->SetSkeletalMesh(WeaponSkeletalData.Object);
+		WeaponSkeletal->SetRelativeScale3D(FVector(0.4f,0.4f,0.4));
+		WeaponSkeletal->SetRelativeRotation(FRotator(180.0f,180.0f,0));
+		WeaponSkeletal->SetRelativeLocation(FVector(0,0,0.3f));
+
 	}
 
 }
