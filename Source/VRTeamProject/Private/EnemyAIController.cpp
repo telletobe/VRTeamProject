@@ -32,12 +32,14 @@ void AEnemyAIController::BeginPlay()
 		GetPerceptionComponent()->ConfigureSense(*SightConfig);
 		GetPerceptionComponent()->SetDominantSense(SightConfig->GetSenseImplementation());
 		GetPerceptionComponent()->OnTargetPerceptionUpdated.AddDynamic(this, &AEnemyAIController::OnPerceptionUpdate);
+
 	}
 	
+
+
 	ACharacter* PlayerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
 	if (PlayerCharacter)
-	{
-		
+	{	
 		TargetActor = PlayerCharacter;
 	}
 }

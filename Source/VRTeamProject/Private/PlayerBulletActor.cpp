@@ -96,8 +96,17 @@ void APlayerBulletActor::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent
 			}
 			else
 			{
-				Enemy->NotifyEnemyDeath();
-				Enemy->DeSpawn();
+				if (Enemy->IsDeathAnim() == false)
+				{
+					Enemy->PlayDeathMontage();
+					
+				}
+				else {
+					UE_LOG(LogTemp, Warning, TEXT("Anim Playing"));
+				}
+				
+				//Enemy->NotifyEnemyDeath();
+				/*Enemy->DeSpawn();*/
 			}
 		}
 		Destroy();
