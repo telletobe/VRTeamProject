@@ -6,6 +6,8 @@
 #include "NavigationInvokerComponent.h"
 #include "Engine/TargetPoint.h"
 #include "Kismet/GameplayStatics.h"
+#include <EnemyAIController.h>
+#include "PlayerCharacter.h"
 
 AEnemyCharacter::AEnemyCharacter()
 {
@@ -13,7 +15,7 @@ AEnemyCharacter::AEnemyCharacter()
 	PrimaryActorTick.bCanEverTick = true;
 
 	//기본 값 세팅
-	SetCurrentHp(GetMaxHp());
+	SetCurrentHp(1);
 	SetDef(1.0f);
 	SetAtk(3.0f);
 	SetSpawnDelay(2.0f);
@@ -89,7 +91,16 @@ void AEnemyCharacter::Spawn()
 {
 	SetActorTickEnabled(true);
 	SetActorHiddenInGame(false);
+	this->SetActorEnableCollision(true);
+	AEnemyAIController* EnemyController = Cast<AEnemyAIController>(GetController());
+	APlayerCharacter* Player = Cast<APlayerCharacter>(EnemyController->GetTargetActor());
+	if (Player)
+	{
+		EnemyController->StartChasing(Player);
+	}
+
 	bIsActive = true;
+	bIsDeathAnim = false;
 
 	if (IsValid(SpawnPoint))
 	{
@@ -106,6 +117,40 @@ void AEnemyCharacter::NotifyEnemyDespawn()
 void AEnemyCharacter::NotifyEnemyDeath()
 {
 	OnEnemyDeath.Broadcast();
+}
+
+
+void AEnemyCharacter::PlayDeathMontage()
+{
+
+	//GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Blue, TEXT("Anim"));
+
+	if (USkeletalMeshComponent* MeshComp = GetMesh())
+	{
+		if (UAnimInstance* AnimInstance = MeshComp->GetAnimInstance())
+		{
+			if (DeathMontage)
+			{
+				AnimInstance->Montage_Play(DeathMontage);
+				bIsDeathAnim = true;
+				AEnemyAIController* EnemyController = Cast<AEnemyAIController>(GetController());
+				EnemyController->StopMovement();
+				this->SetActorEnableCollision(false);
+
+				// 몽타주 끝나고 처리될 함수 등록 (타이머 방식)
+				float Duration = DeathMontage->GetPlayLength()-0.5f;
+				GetWorld()->GetTimerManager().SetTimer(DeathAnimTimerHandle,this,&AEnemyCharacter::DeathMontageEnded,Duration,false);
+				GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Blue, TEXT("Anim"));
+			}
+		}
+	}
+}
+
+void AEnemyCharacter::DeathMontageEnded()
+{
+	  // 죽음 이후 숨기기 + 비활성 처리
+    NotifyEnemyDeath(); // 필요 시
+    DeSpawn();
 }
 
 // Called when the game starts or when spawned

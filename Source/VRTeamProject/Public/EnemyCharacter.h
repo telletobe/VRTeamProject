@@ -39,25 +39,26 @@ public:
 	float GetSpawnDelay() const { return SpawnDelay; }
 
 	bool IsActive() const { return bIsActive; }
+	bool IsDeathAnim() const { return bIsDeathAnim; }
 
 	void DeSpawn();
 	void Spawn();
 
 	void NotifyEnemyDespawn();
 	void NotifyEnemyDeath();
-
-	UPROPERTY(BlueprintReadOnly, Category = "Anim", meta = (AllowPrivateAccess = "true"))
-	bool bIsAttacking;
-
-	// 공격 중 상태
-	void SetIsAttacking(bool bNewState) { bIsAttacking = bNewState; }
-
 	
 	UPROPERTY()
 	FOnEnemyDespawned OnEnemyDespawned;
 
 	UPROPERTY()
 	FOnEnemyDeath OnEnemyDeath;
+
+
+	UFUNCTION()
+	void PlayDeathMontage();
+
+	UFUNCTION()
+	void DeathMontageEnded();
 
 protected:
 	// Called when the game starts or when spawned
@@ -66,6 +67,8 @@ protected:
 private :
 	void FindSpawnPoint();
 	void FindDeSpawnPoint();
+
+
 
 public :
 
@@ -111,8 +114,17 @@ private:
 	UPROPERTY(EditAnywhere)
 	float SpawnDelay;
 
+	UPROPERTY(EditAnywhere, Category = "Anim")
 	bool bIsActive = false;
 
+	UPROPERTY(EditAnywhere, Category = "Anim")
+	bool bIsDeathAnim = false;
 
+
+	//Death 애님관련
+	UPROPERTY(EditAnywhere, Category = "Animation")
+	UAnimMontage* DeathMontage;
+
+	FTimerHandle DeathAnimTimerHandle;
 
 };

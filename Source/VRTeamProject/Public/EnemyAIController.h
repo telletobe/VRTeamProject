@@ -31,7 +31,7 @@ public:
 
 	UFUNCTION()
 	void OnPerceptionUpdate(AActor* Actor, FAIStimulus Stimulus);
-
+	AActor* GetTargetActor() const { return TargetActor; }
 	EAIState GetCurrentState() const { return CurrentState; }
 
 protected:
