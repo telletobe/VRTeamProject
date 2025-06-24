@@ -87,7 +87,6 @@ void AItemSpawnActor::FindTartgetPoint()
 			{
 				EndPoint = tempPoint;
 			}
-
 		}
 	}
 }

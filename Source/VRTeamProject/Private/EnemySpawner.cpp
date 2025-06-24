@@ -19,7 +19,7 @@ AEnemySpawner::AEnemySpawner()
 	SetRootComponent(SpawnBox);
 
 	CurrentKillCnt = 1;
-	RequiredKillCnt = 10;
+	RequiredKillCnt = 200;
 	CreateDelay = 0.1f;
 	SpawnDelay = 0.7f;
 	PoolIndex = EnemyPoolSize - 1;
@@ -163,7 +163,6 @@ void AEnemySpawner::BeginPlay()
 void AEnemySpawner::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	//SpawnEnemy();
 
 }
 

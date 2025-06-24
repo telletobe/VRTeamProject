@@ -33,24 +33,24 @@ APlayerCharacter::APlayerCharacter()
 
 	//VR
 
-	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArmComp"));
-	SpringArmComp->SetupAttachment(GetCapsuleComponent());
-	SpringArmComp->TargetArmLength = 0.f;       
-	SpringArmComp->bUsePawnControlRotation = true;
-
+	SceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("SceneComponent"));
+	SceneComponent->SetupAttachment(GetCapsuleComponent());
+	SceneComponent->SetRelativeLocation(FVector(20.0f,0,55.0f));
 	VRCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("VRCamera"));
-	VRCamera->SetupAttachment(SpringArmComp);
+	VRCamera->SetupAttachment(SceneComponent);
 	VRCamera->bLockToHmd = true;
-	VRCamera->SetRelativeLocation(FVector(5.0f, 0.0f, 90.0f)); // ¸Ó¸® À§Ä¡Âë
+	VRCamera->SetRelativeLocation(FVector(FVector::ZeroVector));
 	VRCamera->SetRelativeScale3D(FVector(0.25f,0.5f,0.5f));
 
 	MotionControllerLeft = CreateDefaultSubobject<UMotionControllerComponent>(TEXT("MotionControllerLeft"));
 	MotionControllerLeft->SetupAttachment(GetCapsuleComponent());
 	MotionControllerLeft->SetTrackingSource(EControllerHand::Left);
 
+
 	MotionControllerLeftLazerMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MotionControllerLeftLazerMesh"));
 	MotionControllerLeftLazerMesh->SetupAttachment(MotionControllerLeft);
 	MotionControllerLeftLazerMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	MotionControllerLeftLazerMesh->SetRelativeLocation(FVector(FVector::ZeroVector));
 
 	WidgetInteractionLeft = CreateDefaultSubobject<UWidgetInteractionComponent>(TEXT("WidgetInteractionLeft"));
 	WidgetInteractionLeft->SetupAttachment(MotionControllerLeft);
@@ -61,10 +61,12 @@ APlayerCharacter::APlayerCharacter()
 	MotionControllerRight = CreateDefaultSubobject<UMotionControllerComponent>(TEXT("MotionControllerRight"));
 	MotionControllerRight->SetupAttachment(GetCapsuleComponent());
 	MotionControllerRight->SetTrackingSource(EControllerHand::Right);
+
 	
 	MotionControllerRightLazerMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MotionControllerRightLazerMesh"));
 	MotionControllerRightLazerMesh->SetupAttachment(MotionControllerRight);
 	MotionControllerRightLazerMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	MotionControllerRightLazerMesh->SetRelativeLocation(FVector(FVector::ZeroVector));
 
 	WidgetInteractionRight = CreateDefaultSubobject<UWidgetInteractionComponent>(TEXT("WidgetInteractionRight"));
 	WidgetInteractionRight->SetupAttachment(MotionControllerRight);
