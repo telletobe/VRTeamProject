@@ -20,6 +20,9 @@ AItemSpawnActor::AItemSpawnActor()
 	ItemSpawnerMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ItemSpawnerMesh"));
 	ItemSpawnerMesh->AttachToComponent(ItemSpawnerCollision, FAttachmentTransformRules::KeepRelativeTransform);
 
+	SpawnDelay = 3.0f;
+	DropDelay = 2.5f;
+
 }
 
 void AItemSpawnActor::SpawnItem()
@@ -84,10 +87,7 @@ void AItemSpawnActor::FindTartgetPoint()
 			{
 				EndPoint = tempPoint;
 			}
-		/*	else if (tempPoint->ActorHasTag("DropPoint"))
-			{
-				DropPoint = tempPoint;
-			}*/
+
 		}
 	}
 }
