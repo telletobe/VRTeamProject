@@ -6,7 +6,6 @@
 #include <EnhancedInputComponent.h>
 #include "Components/CapsuleComponent.h"
 #include <PlayerWeapon.h>
-#include <EnemyCharacter.h>
 #include "InputManager.h"
 #include "MotionControllerComponent.h"
 #include "GameFramework/PlayerController.h"
@@ -113,12 +112,6 @@ void APlayerCharacter::BeginPlay()
 			MotionControllerRightLazerMesh->AttachToComponent(WidgetInteractionRight, FAttachmentTransformRules::KeepRelativeTransform);
 		}
 	}
-
-	if (IsValid(CharacterCollision))
-	{
-		CharacterCollision->OnComponentHit.AddDynamic(this,&APlayerCharacter::OnComponentHit);
-	} 
-
 	if (!bIsActive)
 	{
 		PlayerReSpawn();
@@ -140,34 +133,6 @@ void APlayerCharacter::BeginPlay()
 	else
 	{
 		UE_LOG(LogTemp,Warning,TEXT("PlayerWeapon InValid"));
-	}
-}
-
-void APlayerCharacter::OnComponentHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
-{
-	// 1회성 충돌이므로, 체력의 감소는 플레이어에서 처리함.
-	AEnemyCharacter* Enemy = Cast<AEnemyCharacter>(OtherActor);
-	if (IsValid(Enemy))
-	{
-		float CurrentHp = GetHp();
-		float PlayerHp = CurrentHp - (Enemy->GetAtk() - this->GetDef());
-		if (PlayerHp > 0)
-		{
-			SetHp(PlayerHp);
-			NotifyPlayerChangeHealth();
-		}
-		else
-		{
-			PlayerDeSpawn();
-			NotifyPlayerDeath();
-		}
-
-		Enemy->DeSpawn();
-
-	}
-	else
-	{
-		return;
 	}
 }
 

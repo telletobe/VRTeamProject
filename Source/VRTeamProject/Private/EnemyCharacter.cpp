@@ -8,6 +8,7 @@
 #include "Kismet/GameplayStatics.h"
 #include <EnemyAIController.h>
 #include "PlayerCharacter.h"
+#include "PlayerBulletActor.h"
 
 AEnemyCharacter::AEnemyCharacter()
 {
@@ -69,6 +70,60 @@ void AEnemyCharacter::FindDeSpawnPoint()
 
 			}
 		}
+	}
+}
+
+void AEnemyCharacter::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	APlayerBulletActor* Bullet = Cast<APlayerBulletActor>(OtherActor);
+
+	if (IsValid(Bullet))
+	{
+		if (GetCurrentHp() > 0)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Bullet IsValid"));
+			float EnemyHp = GetCurrentHp() - (Bullet->GetDamage() - GetDef());
+			if (EnemyHp > 0)
+			{
+				SetCurrentHp(EnemyHp);
+			}
+			else
+			{
+				if (IsDeathAnim() == false)
+				{
+					PlayDeathMontage();
+				}
+
+			}
+		}
+		Bullet->Destroy();
+	}
+
+
+}
+
+void AEnemyCharacter::OnComponentHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+{
+
+	APlayerCharacter* Player = Cast<APlayerCharacter>(OtherActor);
+	
+
+	if (IsValid(Player))
+	{
+		UE_LOG(LogTemp,Warning,TEXT("Player IsValid"));
+		float PlayerCurrentHp = Player->GetHp();
+		float PlayerHp = PlayerCurrentHp - (GetAtk() - Player->GetDef());
+		if (PlayerHp > 0)
+		{
+			Player->SetHp(PlayerHp);
+			Player->NotifyPlayerChangeHealth();
+		}
+		else
+		{
+			Player->PlayerDeSpawn();
+			Player->NotifyPlayerDeath();
+		}
+		DeSpawn();
 	}
 }
 
@@ -157,6 +212,14 @@ void AEnemyCharacter::DeathMontageEnded()
 void AEnemyCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	UCapsuleComponent* CharacterCollision = GetCapsuleComponent();
+	if (CharacterCollision)
+	{
+		CharacterCollision->OnComponentHit.AddDynamic(this, &AEnemyCharacter::OnComponentHit);
+		CharacterCollision->OnComponentBeginOverlap.AddDynamic(this, &AEnemyCharacter::OnBeginOverlap);
+	}
+
 
 	// NavInvoker 관련 생성,삭제 변수값 설정
 	NavGenerationRadius = 2000.0f;

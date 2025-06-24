@@ -3,7 +3,6 @@
 
 #include "PlayerBulletActor.h"
 #include "Components/SphereComponent.h"
-#include <EnemyCharacter.h>
 #include <GameItem.h>
 #include <Kismet/GameplayStatics.h>
 
@@ -83,39 +82,12 @@ void APlayerBulletActor::SetDamage(float BulletDamage)
 	Damage = BulletDamage;
 }
 
-void APlayerBulletActor::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void APlayerBulletActor::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult) 
 {
-	if (AEnemyCharacter* Enemy = Cast<AEnemyCharacter>(OtherActor))
-	{
-		if(Enemy->GetCurrentHp() > 0)
-		{
-			float EnemyHp = Enemy->GetCurrentHp() - (GetDamage()-Enemy->GetDef());
-			if(EnemyHp > 0)
-			{ 
-				Enemy->SetCurrentHp(EnemyHp);
-			}
-			else
-			{
-				if (Enemy->IsDeathAnim() == false)
-				{
-					Enemy->PlayDeathMontage();
-					
-				}
-				else {
-					UE_LOG(LogTemp, Warning, TEXT("Anim Playing"));
-				}
-				
-				//Enemy->NotifyEnemyDeath();
-				/*Enemy->DeSpawn();*/
-			}
-		}
-		Destroy();
-	}
-	
 	if (AGameItem* Item = Cast<AGameItem>(OtherActor))
 	{
-		
-		UGameplayStatics::ApplyDamage(Item,GetDamage(),nullptr, GetOwner(),nullptr); // 총알의 데미지와 총알의오너(무기) 정보 넘겨줌
+
+		UGameplayStatics::ApplyDamage(Item, GetDamage(), nullptr, GetOwner(), nullptr); // 총알의 데미지와 총알의오너(무기) 정보 넘겨줌
 
 		if (Item->GetHp() > 0)
 		{
