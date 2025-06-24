@@ -58,7 +58,7 @@ void AGameItem::BeginPlay()
 	ItemMesh->SetNotifyRigidBodyCollision(true);
 	ItemMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	ItemMesh->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
-	ItemMesh->SetLinearDamping(5.0f);
+	ItemMesh->SetLinearDamping(2.0f);
 
 	ItemData = EItemEffectData::AtkUp;
 

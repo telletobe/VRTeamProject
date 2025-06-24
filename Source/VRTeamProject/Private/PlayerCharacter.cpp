@@ -43,7 +43,7 @@ APlayerCharacter::APlayerCharacter()
 	VRCamera->SetRelativeScale3D(FVector(0.25f,0.5f,0.5f));
 
 	MotionControllerLeft = CreateDefaultSubobject<UMotionControllerComponent>(TEXT("MotionControllerLeft"));
-	MotionControllerLeft->SetupAttachment(VRCamera);
+	MotionControllerLeft->SetupAttachment(SceneComponent);
 	MotionControllerLeft->SetTrackingSource(EControllerHand::Left);
 
 	WidgetInteractionLeft = CreateDefaultSubobject<UWidgetInteractionComponent>(TEXT("WidgetInteractionLeft"));
@@ -58,7 +58,7 @@ APlayerCharacter::APlayerCharacter()
 	MotionControllerLeftLazerMesh->SetRelativeLocation(FVector(FVector::ZeroVector));
 
 	MotionControllerRight = CreateDefaultSubobject<UMotionControllerComponent>(TEXT("MotionControllerRight"));
-	MotionControllerRight->SetupAttachment(VRCamera);
+	MotionControllerRight->SetupAttachment(SceneComponent);
 	MotionControllerRight->SetTrackingSource(EControllerHand::Right);
 
 	WidgetInteractionRight = CreateDefaultSubobject<UWidgetInteractionComponent>(TEXT("WidgetInteractionRight"));
@@ -77,8 +77,6 @@ APlayerCharacter::APlayerCharacter()
 	WidgetComponent->SetWidgetSpace(EWidgetSpace::World);
 	WidgetComponent->SetDrawSize(FVector2D(768.0f,1150.0f));
 	WidgetComponent->SetRelativeLocation(FVector(200.0f,0.0f,0.0f));
-
-
 }
 
 // Called when the game starts or when spawned
@@ -105,7 +103,15 @@ void APlayerCharacter::BeginPlay()
 			}
 
 		}
-		
+		if (MotionControllerLeftLazerMesh)
+		{
+			MotionControllerLeftLazerMesh->AttachToComponent(WidgetInteractionLeft, FAttachmentTransformRules::KeepRelativeTransform);
+		}
+
+		if (MotionControllerRightLazerMesh)
+		{
+			MotionControllerRightLazerMesh->AttachToComponent(WidgetInteractionRight, FAttachmentTransformRules::KeepRelativeTransform);
+		}
 	}
 
 	if (IsValid(CharacterCollision))
