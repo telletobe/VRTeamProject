@@ -66,18 +66,9 @@ void APlayerBulletActor::BeginPlay()
 		BulletCollision->OnComponentBeginOverlap.AddDynamic(this, &APlayerBulletActor::OnBeginOverlap);
 	}
 
-	FTimerHandle MoveTimerHandle;
-	FTimerHandle DestroyTimerHandle;
-
 	GetWorld()->GetTimerManager().SetTimer(MoveTimerHandle, this, &APlayerBulletActor::BulletMove, MoveInterval, true);
 
-	GetWorld()->GetTimerManager().SetTimer(DestroyTimerHandle, FTimerDelegate::CreateLambda([this]() {
-		if (IsValid(this))
-		{
-			Destroy();
-		}
-		}),
-		2.0F, false);
+	SetLifeSpan(2.0f);
 }
 
 void APlayerBulletActor::BulletMove()
