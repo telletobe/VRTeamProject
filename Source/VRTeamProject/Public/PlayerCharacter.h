@@ -91,7 +91,7 @@ private:
 	float Hp;
 
 	UPROPERTY(VisibleAnywhere)
-	float MaxHp = 100.0f;
+	float MaxHp = 1000.0f;
 
 	UPROPERTY(EditAnywhere)
 	float Atk;
@@ -147,5 +147,5 @@ private:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UStaticMeshComponent> MotionControllerRightLazerMesh;
 	UPROPERTY(EditAnywhere)
-	TObjectPtr<USpringArmComponent> SpringArmComp;
+	TObjectPtr<USceneComponent> SceneComponent;
 };

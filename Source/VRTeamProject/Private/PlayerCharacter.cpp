@@ -33,24 +33,18 @@ APlayerCharacter::APlayerCharacter()
 
 	//VR
 
-	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArmComp"));
-	SpringArmComp->SetupAttachment(GetCapsuleComponent());
-	SpringArmComp->TargetArmLength = 0.f;       
-	SpringArmComp->bUsePawnControlRotation = true;
-
+	SceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("SceneComponent"));
+	SceneComponent->SetupAttachment(GetCapsuleComponent());
+	SceneComponent->SetRelativeLocation(FVector(20.0f,0,55.0f));
 	VRCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("VRCamera"));
-	VRCamera->SetupAttachment(SpringArmComp);
+	VRCamera->SetupAttachment(SceneComponent);
 	VRCamera->bLockToHmd = true;
-	VRCamera->SetRelativeLocation(FVector(5.0f, 0.0f, 90.0f)); // 머리 위치쯤
+	VRCamera->SetRelativeLocation(FVector(FVector::ZeroVector));
 	VRCamera->SetRelativeScale3D(FVector(0.25f,0.5f,0.5f));
 
 	MotionControllerLeft = CreateDefaultSubobject<UMotionControllerComponent>(TEXT("MotionControllerLeft"));
-	MotionControllerLeft->SetupAttachment(GetCapsuleComponent());
+	MotionControllerLeft->SetupAttachment(VRCamera);
 	MotionControllerLeft->SetTrackingSource(EControllerHand::Left);
-
-	MotionControllerLeftLazerMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MotionControllerLeftLazerMesh"));
-	MotionControllerLeftLazerMesh->SetupAttachment(MotionControllerLeft);
-	MotionControllerLeftLazerMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	WidgetInteractionLeft = CreateDefaultSubobject<UWidgetInteractionComponent>(TEXT("WidgetInteractionLeft"));
 	WidgetInteractionLeft->SetupAttachment(MotionControllerLeft);
@@ -58,19 +52,25 @@ APlayerCharacter::APlayerCharacter()
 	WidgetInteractionLeft->PointerIndex = 0; //왼쪽 입력 구분
 	WidgetInteractionLeft->bShowDebug = true;
 
+	MotionControllerLeftLazerMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MotionControllerLeftLazerMesh"));
+	MotionControllerLeftLazerMesh->SetupAttachment(WidgetInteractionLeft);
+	MotionControllerLeftLazerMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	MotionControllerLeftLazerMesh->SetRelativeLocation(FVector(FVector::ZeroVector));
+
 	MotionControllerRight = CreateDefaultSubobject<UMotionControllerComponent>(TEXT("MotionControllerRight"));
-	MotionControllerRight->SetupAttachment(GetCapsuleComponent());
+	MotionControllerRight->SetupAttachment(VRCamera);
 	MotionControllerRight->SetTrackingSource(EControllerHand::Right);
-	
-	MotionControllerRightLazerMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MotionControllerRightLazerMesh"));
-	MotionControllerRightLazerMesh->SetupAttachment(MotionControllerRight);
-	MotionControllerRightLazerMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	WidgetInteractionRight = CreateDefaultSubobject<UWidgetInteractionComponent>(TEXT("WidgetInteractionRight"));
 	WidgetInteractionRight->SetupAttachment(MotionControllerRight);
 	WidgetInteractionRight->InteractionDistance = 10000.0f;
 	WidgetInteractionRight->PointerIndex = 1; //오른쪽 입력 구분
 	WidgetInteractionRight->bShowDebug = true;
+
+	MotionControllerRightLazerMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MotionControllerRightLazerMesh"));
+	MotionControllerRightLazerMesh->SetupAttachment(WidgetInteractionRight);
+	MotionControllerRightLazerMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	MotionControllerRightLazerMesh->SetRelativeLocation(FVector(FVector::ZeroVector));
 
 	WidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("WidgetComponent"));
 	WidgetComponent->SetupAttachment(VRCamera);
@@ -128,8 +128,12 @@ void APlayerCharacter::BeginPlay()
 		if (IsValid(NewWeapon))
 		{
 			Weapon = NewWeapon;
-			Weapon->AttachToActor(this,FAttachmentTransformRules::KeepRelativeTransform);
+			Weapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, "RightHand");
 		}
+	}
+	else
+	{
+		UE_LOG(LogTemp,Warning,TEXT("PlayerWeapon InValid"));
 	}
 }
 

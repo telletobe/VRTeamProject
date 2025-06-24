@@ -37,8 +37,6 @@ private:
 	UPROPERTY(meta = (Bindwidget))
 	TObjectPtr<UProgressBar> ExpBar;
 
-	UPROPERTY()
-	TObjectPtr<APlayerCharacter> Player;
 
 
 };

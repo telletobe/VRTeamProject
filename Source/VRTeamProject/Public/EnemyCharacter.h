@@ -46,6 +46,13 @@ public:
 	void NotifyEnemyDespawn();
 	void NotifyEnemyDeath();
 
+	UPROPERTY(BlueprintReadOnly, Category = "Anim", meta = (AllowPrivateAccess = "true"))
+	bool bIsAttacking;
+
+	// 공격 중 상태
+	void SetIsAttacking(bool bNewState) { bIsAttacking = bNewState; }
+
+	
 	UPROPERTY()
 	FOnEnemyDespawned OnEnemyDespawned;
 

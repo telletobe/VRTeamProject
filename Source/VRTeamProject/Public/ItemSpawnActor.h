@@ -42,10 +42,10 @@ private:
 	TObjectPtr<UStaticMeshComponent> ItemSpawnerMesh;
 
 	UPROPERTY(EditAnyWhere)
-	float SpawnDelay = 3.0f;
+	float SpawnDelay;
 
 	UPROPERTY(EditAnyWhere)
-	float DropDelay = 2.5f;
+	float DropDelay;
 
 	FTimerHandle SpawnItemHandle;
 	FTimerHandle ActorVisibleHandle;
