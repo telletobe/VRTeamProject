@@ -14,7 +14,7 @@ void UPlayerStateWidget::NativeConstruct()
 
 	if (APlayerController* PC = GetOwningPlayer())
 	{
-		Player = Cast<APlayerCharacter>(PC->GetPawn());
+		APlayerCharacter* Player = Cast<APlayerCharacter>(PC->GetPawn());
 		if (Player)
 		{
 			Player->OnHealthChange.AddDynamic(this,&UPlayerStateWidget::UpdatePlayerHP);

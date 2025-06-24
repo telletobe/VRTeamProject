@@ -8,6 +8,7 @@
 
 class UProgressBar;
 class UButton;
+class APlayerCharacter;
 /**
  * 
  */
@@ -19,8 +20,9 @@ class VRTEAMPROJECT_API UPlayerStateWidget : public UUserWidget
 public:
 
 	UFUNCTION()
-	void UpdatePlayerStats();
-
+	void UpdatePlayerHP(float CurrentHp,float MaxHp);
+	void UpdatePlayerDef();
+	void UpdatePlayerExp(float CurrentExp);
 
 protected:
 	virtual void NativeConstruct() override;
@@ -34,13 +36,6 @@ private:
 
 	UPROPERTY(meta = (Bindwidget))
 	TObjectPtr<UProgressBar> ExpBar;
-
-	UFUNCTION(BlueprintCallable)
-	void SetHealthPercent(float Percent);
-
-	UFUNCTION(BlueprintCallable)
-	void SetDefensePercent(float Percent);
-
 
 
 
