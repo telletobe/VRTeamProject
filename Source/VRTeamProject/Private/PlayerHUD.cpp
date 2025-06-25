@@ -6,6 +6,7 @@
 #include "PlayerStateWidget.h"
 #include "StageInfoWidget.h"
 #include "Blueprint/UserWidget.h"
+#include <EndGameWidget.h>
 
 APlayerHUD::APlayerHUD()
 {
@@ -28,6 +29,13 @@ APlayerHUD::APlayerHUD()
 	if (StageInfoWidget.Succeeded())
 	{
 		StageInfo = StageInfoWidget.Class;
+	}
+
+	static ConstructorHelpers::FClassFinder<UEndGameWidget> EndGameWidget(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UMG/EndGameWidget.EndGameWidget_C'"));
+
+	if (EndGameWidget.Succeeded())
+	{
+		EndGame = EndGameWidget.Class;
 	}
 
 }
@@ -54,6 +62,11 @@ void APlayerHUD::BeginPlay()
 	if (StageInfo && !StageInfoInstance)
 	{
 		StageInfoInstance = CreateWidget<UStageInfoWidget>(GetWorld(), StageInfo);
+	}
+
+	if (EndGame && !EndGameInstance)
+	{
+		EndGameInstance = CreateWidget<UEndGameWidget>(GetWorld(), EndGame);
 	}
 
 	Mode.SetHideCursorDuringCapture(false);
@@ -139,5 +152,11 @@ TObjectPtr<UPlayerStateWidget> APlayerHUD::GetPlayerStateInstance() const
 TObjectPtr<UStageInfoWidget> APlayerHUD::GetStageInfoInstance() const
 {
 	if (StageInfoInstance) return StageInfoInstance;
+	return nullptr;
+}
+
+TObjectPtr<UEndGameWidget> APlayerHUD::GetEndGameInstance() const
+{
+	if (EndGameInstance) return EndGameInstance;
 	return nullptr;
 }

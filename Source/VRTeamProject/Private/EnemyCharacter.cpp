@@ -288,6 +288,7 @@ void AEnemyCharacter::OnComponentHit(UPrimitiveComponent* HitComponent, AActor* 
 		{
 			Player->PlayerDeSpawn();
 			Player->NotifyPlayerDeath();
+			Player->ShowEndGame();
 		}
 		DeSpawn();
 	}
