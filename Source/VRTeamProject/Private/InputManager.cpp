@@ -116,9 +116,6 @@ void UInputManager::Initialize(APlayerCharacter* PlayerCharacter, APlayerControl
 }
 
 //컨트롤러 매핑 함수
-
-
-
 void UInputManager::BindAction(UEnhancedInputComponent* InputComponent)
 {
 	if (!InputComponent || !Player) return;
@@ -194,7 +191,6 @@ void UInputManager::ToggleMap(const FInputActionValue& Value)
 	if (IsValid(Player))
 	{
 		UWidgetComponent* UserWidgetComp = Player->GetWidgetComponent();
-
 		UMapSelectWidget* MapSelectInstance = MyHUD->GetMapSelectInstance();
 
 		if (IsValid(UserWidgetComp))
@@ -234,7 +230,6 @@ void UInputManager::PlayerStat(const FInputActionValue& Value)
 	if (IsValid(Player))
 	{
 		UWidgetComponent* UserWidgetComp = Player->GetWidgetComponent();
-
 		UPlayerStateWidget* PlayerStateInstance = MyHUD->GetPlayerStateInstance();
 
 		if (IsValid(UserWidgetComp))
