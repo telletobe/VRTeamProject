@@ -12,3 +12,5 @@ Saved
 *.suo
 *.xcodeproj
 *.xcworkspace
+Content/Character/Enemy/BP_EnemySpawner.uasset
+Content/Character/BP_PlayerCharacter.uasset
