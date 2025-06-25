@@ -23,7 +23,7 @@ APlayerHUD::APlayerHUD()
 		PlayerState = PlayerStateWidget.Class;
 	}
 
-	static ConstructorHelpers::FClassFinder<UStageInfoWidget> StageInfoWidget(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UMG/MapUI/WBP_MapSelectWidget.WBP_MapSelectWidget_C'"));
+	static ConstructorHelpers::FClassFinder<UStageInfoWidget> StageInfoWidget(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UMG/MapUI/WBP_StageInfoWidget.WBP_StageInfoWidget_C'"));
 
 	if (StageInfoWidget.Succeeded())
 	{

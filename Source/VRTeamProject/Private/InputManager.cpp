@@ -65,9 +65,13 @@ UInputManager::UInputManager()
 	}
 }
 
-void UInputManager::ToggleWidgetVisibility()
+void UInputManager::ToggleWidgetVisibility(UWidgetComponent* Widget)
 {
-	UWidgetComponent* Widget = Player->GetWidget();
+	if (!IsValid(Widget))
+	{
+		return;
+	}
+
 	if (Widget->IsVisible())
 	{
 		Widget->SetVisibility(false);
@@ -187,28 +191,29 @@ void UInputManager::ToggleMap(const FInputActionValue& Value)
 	}*/
 
 	// VR
-
 	if (IsValid(Player))
 	{
-		UWidgetComponent* Widget = Player->GetWidget();
+		UWidgetComponent* UserWidgetComp = Player->GetWidgetComponent();
 
-		if (!(Widget->GetWidgetClass())) return;
+		UMapSelectWidget* MapSelectInstance = MyHUD->GetMapSelectInstance();
 
-		if (Widget->GetWidgetClass() == MyHUD->GetMapSelectInstance()->GetClass())
+		if (IsValid(UserWidgetComp))
 		{
-			ToggleWidgetVisibility();
-		}
-		else
-		{
-			Widget->SetWidgetClass(MyHUD->GetMapSelectInstance().GetClass());
-			if (!(Widget->IsVisible()))
+			if (UserWidgetComp->GetUserWidgetObject() == MapSelectInstance)
 			{
-				Widget->SetVisibility(true);
-				Player->GetMotionControllerLeftLazerMesh()->SetVisibility(true);
-				Player->GetMotionControllerRightLazerMesh()->SetVisibility(true);
+				ToggleWidgetVisibility(UserWidgetComp);
+			}
+			else
+			{
+				UserWidgetComp->SetWidget(MapSelectInstance);
+				if (!UserWidgetComp->GetVisibleFlag())
+				{
+					ToggleWidgetVisibility(UserWidgetComp);
+				}
 			}
 		}
 	}
+
 	UE_LOG(LogTemp, Warning, TEXT("MapSelect"));
 }
 
@@ -225,25 +230,26 @@ void UInputManager::PlayerStat(const FInputActionValue& Value)
 	//	}
 	//}
 	
-
+	//VR
 	if (IsValid(Player))
 	{
-		UWidgetComponent* Widget = Player->GetWidget();
+		UWidgetComponent* UserWidgetComp = Player->GetWidgetComponent();
 
-		if (!(Widget->GetWidgetClass())) return;
+		UPlayerStateWidget* PlayerStateInstance = MyHUD->GetPlayerStateInstance();
 
-		if (Widget->GetWidgetClass() == MyHUD->GetPlayerStateInstance().GetClass()) {
-			ToggleWidgetVisibility();
-		}
-		else
+		if (IsValid(UserWidgetComp))
 		{
-			Widget->SetWidgetClass(MyHUD->GetPlayerStateInstance().GetClass());
-			if (!(Widget->IsVisible()))
+			if (UserWidgetComp->GetUserWidgetObject() == PlayerStateInstance)
 			{
-				Widget->SetVisibility(true);
-				Player->GetMotionControllerLeftLazerMesh()->SetVisibility(true);
-				Player->GetMotionControllerRightLazerMesh()->SetVisibility(true);
-
+				ToggleWidgetVisibility(UserWidgetComp);
+			}
+			else
+			{
+				UserWidgetComp->SetWidget(PlayerStateInstance);
+				if (!UserWidgetComp->GetVisibleFlag())
+				{
+					ToggleWidgetVisibility(UserWidgetComp);
+				}
 			}
 		}
 	}

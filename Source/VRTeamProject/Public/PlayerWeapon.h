@@ -52,6 +52,6 @@ private:
 	float FireDelay = 0.2;
 
 	float DefaultFireDelay = 0.2f;
-
+	FTimerHandle FireTimer;
 
 };

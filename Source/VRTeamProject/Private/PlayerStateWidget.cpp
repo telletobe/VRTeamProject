@@ -17,17 +17,10 @@ void UPlayerStateWidget::NativeConstruct()
 		APlayerCharacter* Player = Cast<APlayerCharacter>(PC->GetPawn());
 		if (Player)
 		{
-			Player->OnHealthChange.AddDynamic(this,&UPlayerStateWidget::UpdatePlayerHP);
+			Player->OnHealthChange.AddUniqueDynamic(this,&UPlayerStateWidget::UpdatePlayerHP);
 		}
 	
 	}	
-	if (HPBar)
-	{
-		HPBar->SetPercent(1.0f);
-	}
-
-	UpdatePlayerDef();
-	UpdatePlayerExp(0.0f);
 }
 
 void UPlayerStateWidget::UpdatePlayerHP(float CurrentHp, float MaxHp)

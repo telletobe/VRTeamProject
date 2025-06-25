@@ -69,13 +69,10 @@ public:
 	TObjectPtr<UMotionControllerComponent> GetMotionControllerRight() const { return *MotionControllerRight; }
 	TObjectPtr<UWidgetInteractionComponent> GetWidgetInteractionLeft() const { return *WidgetInteractionLeft; }
 	TObjectPtr<UWidgetInteractionComponent> GetWidgetInteractionRight() const { return *WidgetInteractionRight; }
+	TObjectPtr<UWidgetComponent> GetWidgetComponent() const { return *WidgetComponent; }
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
-	/*UFUNCTION()
-	virtual void OnComponentHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);*/
-
 private:
 
 

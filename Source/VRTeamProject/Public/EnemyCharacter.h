@@ -8,6 +8,7 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnEnemyDespawned);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnEnemyDeath);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnEnemyDeathAnimEnded);
 
 class AAIController;
 class UNavigationInvokerComponent;
@@ -45,27 +46,29 @@ public:
 	void OnComponentHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
 	UFUNCTION()
-	virtual void OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	void OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 	void DeSpawn();
 	void Spawn();
 
 	void NotifyEnemyDespawn();
 	void NotifyEnemyDeath();
-	
+
+
 	UPROPERTY()
 	FOnEnemyDespawned OnEnemyDespawned;
 
 	UPROPERTY()
 	FOnEnemyDeath OnEnemyDeath;
 
+	UPROPERTY()
+	FOnEnemyDeathAnimEnded OnEnemyDeathAnimEnded;
 
 	UFUNCTION()
 	void PlayDeathMontage();
 
 	UFUNCTION()
-	void DeathMontageEnded();
-
+	void EnemyDeathAnimEnded();
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -129,7 +132,7 @@ private:
 
 	//Death ¾Ö´Ô°ü·Ã
 	UPROPERTY(EditAnywhere, Category = "Animation")
-	UAnimMontage* DeathMontage;
+	TObjectPtr<UAnimMontage> DeathMontage;
 
 	FTimerHandle DeathAnimTimerHandle;
 

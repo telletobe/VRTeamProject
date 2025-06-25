@@ -30,7 +30,7 @@ void AVRProjectGameModeBase::TriggerGameClear()
 	
 	for (AActor* AllActor : FoundActor)
 	{
-		if (APlayerCharacter* PlayerActor = Cast<APlayerCharacter>(AllActor))
+		if (const APlayerCharacter* PlayerActor = Cast<APlayerCharacter>(AllActor))
 		{
 			continue;
 		}
