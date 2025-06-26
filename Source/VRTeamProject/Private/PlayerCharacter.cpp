@@ -203,18 +203,6 @@ void APlayerCharacter::ApplyEffectItem(const EItemEffectData& Data)
 
 }
 
-void APlayerCharacter::PlayerDeSpawn()
-{
-	if (PlayerController) 
-	{
-		PlayerController->SetIgnoreMoveInput(true);
-		bMouseClickEnable = false;
-	}
-	if (Weapon) Weapon->SetActorHiddenInGame(true);
-	bIsActive = false;
-	//GetMesh()->SetHiddenInGame(true);
-}
-
 void APlayerCharacter::NotifyPlayerDeath()
 {
 	OnPlayerDeath.Broadcast();
@@ -237,6 +225,17 @@ void APlayerCharacter::PlayerReSpawn()
 	if (Weapon) Weapon->SetActorHiddenInGame(false);
 	bIsActive = true;
 	SetActorHiddenInGame(false);
+}
+
+void APlayerCharacter::PlayerDeSpawn()
+{
+	if (PlayerController)
+	{
+		PlayerController->SetIgnoreMoveInput(true);
+		bMouseClickEnable = false;
+	}
+	if (Weapon) Weapon->SetActorHiddenInGame(true);
+	bIsActive = false;
 }
 
 void APlayerCharacter::SetHp(float PlayerHp)

@@ -32,7 +32,6 @@ void UStageInfoWidget::NativeConstruct()
 
 void UStageInfoWidget::GameStart()
 {
-
     FLatentActionInfo Latent;
     Latent.CallbackTarget = this;
     Latent.ExecutionFunction = "OnStreamLevelLoaded";

@@ -21,9 +21,14 @@ class VRTEAMPROJECT_API AVRProjectGameModeBase : public AGameModeBase
 public :
 	void TriggerGameClear();
 	void TriggerGameStart();
+	void TriggerGameReStart();
+	void CleanupAfterGameClear();
 	bool IsClear() { return bIsClear; }
 	bool IsPlayerAlive() { return bPlayerAlive; }
 	void InitializeGameObjects();
+
+	UFUNCTION()
+	void CleanupGameItem();
 
 	UFUNCTION()
 	void ChangePlayerAliveState();

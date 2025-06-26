@@ -20,29 +20,73 @@ AVRProjectGameModeBase::AVRProjectGameModeBase()
 	
 }
 
+void AVRProjectGameModeBase::BeginPlay()
+{
+	Super::BeginPlay();
+
+	TriggerGameStart();
+
+	APlayerCharacter* Player = Cast<APlayerCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn());
+	if (Player)
+	{
+		Player->OnPlayerDeath.AddDynamic(this, &AVRProjectGameModeBase::ChangePlayerAliveState);
+		Player->OnPlayerDeath.AddDynamic(this, &AVRProjectGameModeBase::CleanupGameItem);
+	}
+}
+
+
 void AVRProjectGameModeBase::TriggerGameClear()
 {
 
 	GEngine->AddOnScreenDebugMessage(-1,3.0f,FColor::MakeRandomColor(), TEXT("Clear Game"));
 	bIsClear = true;
+	CleanupAfterGameClear();
+	return;
+}
+
+void AVRProjectGameModeBase::TriggerGameStart()
+{
+	GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::MakeRandomColor(), TEXT("Start Game"));
+	bIsClear = false;
+	bPlayerAlive = true;
+
+	InitializeGameObjects();
+	CleanupGameItem();
+	return;
+}
+
+void AVRProjectGameModeBase::TriggerGameReStart()
+{
+	GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::MakeRandomColor(), TEXT("ReStart Game"));
+	bIsClear = false;
+	bPlayerAlive = true;
+
+	CleanupGameItem();
+	return;
+}
+
+void AVRProjectGameModeBase::CleanupAfterGameClear()
+{
 
 	TArray<AActor*> FoundActor;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AActor::StaticClass(), FoundActor);
-	
+
 	for (AActor* AllActor : FoundActor)
 	{
 		if (const APlayerCharacter* PlayerActor = Cast<APlayerCharacter>(AllActor))
 		{
 			continue;
 		}
-		else if (AGameItem* GameItem = Cast<AGameItem>(AllActor))
-		{
-			if(IsValid(GameItem))
-			GameItem->Destroy();
-		}
-		else if (AItemSpawnActor* ItemSpanwer = Cast<AItemSpawnActor>(AllActor)) 
+		else if (AItemSpawnActor* ItemSpanwer = Cast<AItemSpawnActor>(AllActor))
 		{
 			if (IsValid(ItemSpanwer)) ItemSpanwer->Destroy();
+		}
+		else if (AGameItem* GameItem = Cast<AGameItem>(AllActor))
+		{
+			if (IsValid(GameItem))
+			{
+				GameItem->Destroy();
+			}
 		}
 		else if (AEnemySpawner* EnemySpanwer = Cast<AEnemySpawner>(AllActor)) {
 			TArray<AEnemyCharacter*> EnemyPool = EnemySpanwer->GetEnemyPool();
@@ -58,22 +102,38 @@ void AVRProjectGameModeBase::TriggerGameClear()
 			if (IsValid(EnemySpanwer)) EnemySpanwer->Destroy();
 		}
 	}
-
-	return;
 }
 
-void AVRProjectGameModeBase::TriggerGameStart()
+void AVRProjectGameModeBase::CleanupGameItem()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::MakeRandomColor(), TEXT("Start Game"));
-	bIsClear = false;
+	TArray<AActor*> FoundActor;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AActor::StaticClass(), FoundActor);
 
-	InitializeGameObjects();
-
-	return;
+	for (AActor* AllActor : FoundActor)
+	{
+		if (AGameItem* GameItem = Cast<AGameItem>(AllActor))
+		{
+			if (IsValid(GameItem))
+			{
+				GameItem->Destroy();
+			}
+		}
+	}
 }
 
 void AVRProjectGameModeBase::InitializeGameObjects()
 {
+
+	if (!WeatherManager)
+	{
+		WeatherManager = UWeatherManager::GetInstance();
+		if (WeatherManager)
+		{
+			WeatherManager->SetCurrentWorld(GetWorld());
+			WeatherManager->Init();
+		}
+	}
+
 	if (BPEnemySpawner)
 	{
 		AEnemySpawner* Spanwer = GetWorld()->SpawnActor<AEnemySpawner>(BPEnemySpawner, FVector(-1350.0f, 3200.0f, 350.0f), FRotator(0, 0, 0));
@@ -90,31 +150,4 @@ void AVRProjectGameModeBase::ChangePlayerAliveState()
 	bPlayerAlive = !bPlayerAlive;
 	UE_LOG(LogTemp,Warning,TEXT("PlayerAlive : %s"), bPlayerAlive ? TEXT("true") : TEXT("false"));
 	return;
-}
-
-
-void AVRProjectGameModeBase::BeginPlay()
-{
-	Super::BeginPlay();
-
-	if (!WeatherManager)
-	{
-		WeatherManager = UWeatherManager::GetInstance();
-		if (WeatherManager)
-		{
-			WeatherManager->SetCurrentWorld(GetWorld());
-			WeatherManager->Init();
-		}
-	}
-
-	InitializeGameObjects();
-
-	APlayerCharacter* Player = Cast<APlayerCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn());
-	if (Player)
-	{
-		Player->OnPlayerDeath.AddDynamic(this, &AVRProjectGameModeBase::ChangePlayerAliveState);
-	}
-
-	
-
 }

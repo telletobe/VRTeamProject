@@ -19,7 +19,7 @@ AEnemySpawner::AEnemySpawner()
 	SetRootComponent(SpawnBox);
 
 	CurrentKillCnt = 1;
-	RequiredKillCnt = 200;
+	RequiredKillCnt = 50;
 	CreateDelay = 0.1f;
 	SpawnDelay = 0.7f;
 	PoolIndex = EnemyPoolSize - 1;
@@ -106,10 +106,8 @@ void AEnemySpawner::DeActivateEnemySpawner()
 
 void AEnemySpawner::ActivateEnemySpawner()
 {
-	GameMode->TriggerGameStart();
 	GetWorld()->GetTimerManager().SetTimer(SpawnHandle, this, &AEnemySpawner::SpawnEnemy, SpawnDelay, true);
 }
-
 
 void AEnemySpawner::CheckGameClear()
 {

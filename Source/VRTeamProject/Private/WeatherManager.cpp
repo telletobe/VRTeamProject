@@ -35,8 +35,14 @@ void UWeatherManager::Init()
 	//Get Data
 	if (CurrentWorld)
 	{
+		//숫자는 경도,위도 액셀 참조
 		UWeatherBPLibrary::GetPTY(CurrentWorld, apiKey, 60, 127, ReceivedPTY, LatenInfo);
 		UWeatherBPLibrary::GetSKY(CurrentWorld, apiKey, 60, 127, ReceivedSKY, LatenInfo);
+	}
+	else
+	{
+		UE_LOG(LogTemp,Warning,TEXT("World context is not set. Please call SetWorld() before using this Function."));
+		return;
 	}
 }
 

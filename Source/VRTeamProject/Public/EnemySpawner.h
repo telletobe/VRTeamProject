@@ -60,9 +60,13 @@ private :
 	UPROPERTY(EditAnywhere, category = "EnemyPool")
 	float SpawnDelay;
 
+	UPROPERTY(VisibleAnywhere, category = "EnemyPool")
 	int32 CurrentKillCnt;
+
+	UPROPERTY(EditAnywhere, category = "EnemyPool")
 	int32 RequiredKillCnt;
 	int32 PoolIndex = 0;
+
 	bool bIsClear = false;
 
 	TObjectPtr<AVRProjectGameModeBase> GameMode;
