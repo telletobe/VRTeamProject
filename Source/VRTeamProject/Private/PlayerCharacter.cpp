@@ -13,9 +13,6 @@
 #include "Components/WidgetComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
-#include <EndGameWidget.h>
-#include "PlayerHUD.h"
-
 // Sets default values
 // 커밋용 주석추가
 APlayerCharacter::APlayerCharacter()
@@ -77,28 +74,6 @@ APlayerCharacter::APlayerCharacter()
 	WidgetComponent->SetWidgetSpace(EWidgetSpace::World);
 	WidgetComponent->SetDrawSize(FVector2D(768.0f,1150.0f));
 	WidgetComponent->SetRelativeLocation(FVector(200.0f,0.0f,0.0f));
-}
-
-void APlayerCharacter::ShowEndGame()
-{
-	if (WidgetComponent)
-	{
-		if (PlayerController)
-		{
-			APlayerHUD* HUD = Cast<APlayerHUD>(PlayerController->GetHUD());
-			UEndGameWidget* EndGameWidget = HUD->GetEndGameInstance();
-			WidgetComponent->SetWidget(EndGameWidget);
-			
-			if (WidgetComponent->GetVisibleFlag() == false)
-			{
-				WidgetComponent->SetVisibility(true);
-			}
-		}		
-	}
-	else
-	{
-		UE_LOG(LogTemp,Warning,TEXT("WidgetComp inValid"));
-	}
 }
 
 // Called when the game starts or when spawned
@@ -237,8 +212,7 @@ void APlayerCharacter::PlayerDeSpawn()
 	}
 	if (Weapon) Weapon->SetActorHiddenInGame(true);
 	bIsActive = false;
-	//SetActorHiddenInGame(true);
-
+	//GetMesh()->SetHiddenInGame(true);
 }
 
 void APlayerCharacter::NotifyPlayerDeath()

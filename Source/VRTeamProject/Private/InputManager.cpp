@@ -190,27 +190,35 @@ void UInputManager::ToggleMap(const FInputActionValue& Value)
 	// VR
 	if (IsValid(Player))
 	{
+		if (Player->IsActive())
+		{
 		UWidgetComponent* UserWidgetComp = Player->GetWidgetComponent();
 		UMapSelectWidget* MapSelectInstance = MyHUD->GetMapSelectInstance();
-
-		if (IsValid(UserWidgetComp))
-		{
-			if (UserWidgetComp->GetUserWidgetObject() == MapSelectInstance)
+		
+			if (IsValid(UserWidgetComp))
 			{
-				ToggleWidgetVisibility(UserWidgetComp);
-			}
-			else
-			{
-				UserWidgetComp->SetWidget(MapSelectInstance);
-				if (!UserWidgetComp->GetVisibleFlag())
+				if (UserWidgetComp->GetUserWidgetObject() == MapSelectInstance)
 				{
 					ToggleWidgetVisibility(UserWidgetComp);
 				}
+				else
+				{
+					UserWidgetComp->SetWidget(MapSelectInstance);
+					if (!UserWidgetComp->GetVisibleFlag())
+					{
+						ToggleWidgetVisibility(UserWidgetComp);
+					}
+				}
 			}
+		} 
+		else 
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Player is Dead"));
 		}
+		
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("MapSelect"));
+	
 }
 
 void UInputManager::PlayerStat(const FInputActionValue& Value)
@@ -229,26 +237,33 @@ void UInputManager::PlayerStat(const FInputActionValue& Value)
 	//VR
 	if (IsValid(Player))
 	{
-		UWidgetComponent* UserWidgetComp = Player->GetWidgetComponent();
-		UPlayerStateWidget* PlayerStateInstance = MyHUD->GetPlayerStateInstance();
-
-		if (IsValid(UserWidgetComp))
+		if (Player->IsActive())
 		{
-			if (UserWidgetComp->GetUserWidgetObject() == PlayerStateInstance)
+			UWidgetComponent* UserWidgetComp = Player->GetWidgetComponent();
+			UPlayerStateWidget* PlayerStateInstance = MyHUD->GetPlayerStateInstance();
+
+			if (IsValid(UserWidgetComp))
 			{
-				ToggleWidgetVisibility(UserWidgetComp);
-			}
-			else
-			{
-				UserWidgetComp->SetWidget(PlayerStateInstance);
-				if (!UserWidgetComp->GetVisibleFlag())
+				if (UserWidgetComp->GetUserWidgetObject() == PlayerStateInstance)
 				{
 					ToggleWidgetVisibility(UserWidgetComp);
 				}
+				else
+				{
+					UserWidgetComp->SetWidget(PlayerStateInstance);
+					if (!UserWidgetComp->GetVisibleFlag())
+					{
+						ToggleWidgetVisibility(UserWidgetComp);
+					}
+				}
 			}
 		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Player Is Dead"));
+		}
 	}
-	UE_LOG(LogTemp,Warning,TEXT("PlayerStat"));
+
 }
 
 void UInputManager::onRightTriggerPressed()

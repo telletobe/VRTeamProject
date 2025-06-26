@@ -72,6 +72,8 @@ void APlayerHUD::BeginPlay()
 	Mode.SetHideCursorDuringCapture(false);
 	Mode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
 
+	EndGameInstance->AddToViewport();
+	EndGameInstance->RemoveFromParent();
 }
 
 void APlayerHUD::ToggleMapSelect()
@@ -160,3 +162,4 @@ TObjectPtr<UEndGameWidget> APlayerHUD::GetEndGameInstance() const
 	if (EndGameInstance) return EndGameInstance;
 	return nullptr;
 }
+ 

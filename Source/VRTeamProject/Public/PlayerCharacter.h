@@ -41,6 +41,8 @@ public:
 	float GetExp() const { return Exp; }
 	float GetMaxHp() const { return MaxHp; }
 
+	bool IsActive() const { return bIsActive; }
+
 	TObjectPtr<APlayerWeapon> GetWeapon() const { return *Weapon; }
 	bool IsMouseClickedEnable() const {	return bMouseClickEnable;}
 
@@ -69,7 +71,6 @@ public:
 	TObjectPtr<UWidgetInteractionComponent> GetWidgetInteractionRight() const { return *WidgetInteractionRight; }
 	TObjectPtr<UWidgetComponent> GetWidgetComponent() const { return *WidgetComponent; }
 
-	void ShowEndGame();
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
