@@ -77,13 +77,24 @@ void APlayerWeapon::Fire(float Damage)
 	const FRotator StartRightRotation = Player->GetMotionControllerRight()->GetRelativeRotation();
 	const FVector StartRightLocation = WeaponSkeletal->GetSocketLocation("rifle_shot");
 	 
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn; // 항상 스폰허용
+
 	/////////////////////////////////////////////////////////////////////////////////////////
-	APlayerBulletActor* NewBullet = GetWorld()->SpawnActor<APlayerBulletActor>(APlayerBulletActor::StaticClass(), StartRightLocation, StartRightRotation);
-	NewBullet->SetOwner(this);
-	NewBullet->SetDamage(Damage);
+	APlayerBulletActor* NewBullet = GetWorld()->SpawnActor<APlayerBulletActor>(APlayerBulletActor::StaticClass(), StartRightLocation, StartRightRotation, SpawnParams);
+	if (IsValid(NewBullet))
+	{
+		NewBullet->SetOwner(this);
+		NewBullet->SetDamage(Damage);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Bullet Data invalid"));
+	}
+
 
 	//총알이 0.2초마다 발사될 수 있도록 타이머설정.
-	FTimerHandle FireTimer;
+
 	GetWorld()->GetTimerManager().SetTimer(FireTimer,this,&APlayerWeapon::ChangeFireState, FireDelay,false);
 }
 

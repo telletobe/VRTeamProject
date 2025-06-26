@@ -10,8 +10,10 @@ class UInputMappingContext;
 class UInputAction;
 class APlayerCharacter;
 class UEnhancedInputComponent;
-struct FInputActionValue;
 class APlayerHUD;
+class UWidgetComponent;
+struct FInputActionValue;
+
 
 /**
  * 
@@ -24,7 +26,7 @@ class VRTEAMPROJECT_API UInputManager : public UObject
 private:
 	static UInputManager* Instance;
 	UInputManager();
-	void ToggleWidgetVisibility();
+	void ToggleWidgetVisibility(UWidgetComponent* Widget);
 
 public:
 	static UInputManager* GetInstance();
@@ -66,5 +68,4 @@ private:
 
 	UPROPERTY()
 	TObjectPtr<APlayerHUD> MyHUD;
-
 };

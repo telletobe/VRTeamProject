@@ -8,6 +8,7 @@
 #include "Kismet/GameplayStatics.h"
 #include <EnemyAIController.h>
 #include "PlayerCharacter.h"
+#include "PlayerBulletActor.h"
 
 AEnemyCharacter::AEnemyCharacter()
 {
@@ -24,145 +25,24 @@ AEnemyCharacter::AEnemyCharacter()
 
 }
 
-
-void AEnemyCharacter::FindSpawnPoint()
-{
-	TArray<AActor*> FoundEndPoint;
-	TArray<AActor*> RandomPoint;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ATargetPoint::StaticClass(), FoundEndPoint);
-
-	for (const auto& StartPoint : FoundEndPoint)
-	{
-		if (Cast<ATargetPoint>(StartPoint))
-		{
-			if (!SpawnPoint)
-			{
-				if (StartPoint->ActorHasTag(TEXT("EnemySpawnPoint")))
-				{
-					RandomPoint.Add(StartPoint);
-					
-				}
-
-			}
-		}
-	}
-
-	SpawnPoint = RandomPoint[FMath::RandRange(0,RandomPoint.Num()-1)];
-}
-
-
-void AEnemyCharacter::FindDeSpawnPoint()
-{
-	TArray<AActor*> FoundEndPoint;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ATargetPoint::StaticClass(), FoundEndPoint);
-
-	for (const auto& EndPoint : FoundEndPoint)
-	{
-		if (Cast<ATargetPoint>(EndPoint))
-		{
-			if (!DeSpawnPoint)
-			{
-				if (EndPoint->ActorHasTag(TEXT("EnemyDeSpawnPoint")))
-				{
-					DeSpawnPoint = EndPoint;
-				}
-
-			}
-		}
-	}
-}
-
-void AEnemyCharacter::DeSpawn()
-{
-
-	if (IsValid(DeSpawnPoint))
-	{
-		SetActorLocation(DeSpawnPoint->GetActorLocation());
-	}
-	
-	SetActorHiddenInGame(true);
-	bIsActive = false;
-	NotifyEnemyDespawn();
-	SetActorTickEnabled(false);
-}
-
-
-void AEnemyCharacter::Spawn()
-{
-	SetActorTickEnabled(true);
-	SetActorHiddenInGame(false);
-	this->SetActorEnableCollision(true);
-	AEnemyAIController* EnemyController = Cast<AEnemyAIController>(GetController());
-	APlayerCharacter* Player = Cast<APlayerCharacter>(EnemyController->GetTargetActor());
-	if (Player)
-	{
-		EnemyController->StartChasing(Player);
-	}
-
-	bIsActive = true;
-	bIsDeathAnim = false;
-
-	if (IsValid(SpawnPoint))
-	{
-		SetCurrentHp(GetMaxHp());
-		SetActorLocation(SpawnPoint->GetActorLocation());
-	}
-}
-
-void AEnemyCharacter::NotifyEnemyDespawn()
-{
-	OnEnemyDespawned.Broadcast();
-}
-
-void AEnemyCharacter::NotifyEnemyDeath()
-{
-	OnEnemyDeath.Broadcast();
-}
-
-
-void AEnemyCharacter::PlayDeathMontage()
-{
-
-	//GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Blue, TEXT("Anim"));
-
-	if (USkeletalMeshComponent* MeshComp = GetMesh())
-	{
-		if (UAnimInstance* AnimInstance = MeshComp->GetAnimInstance())
-		{
-			if (DeathMontage)
-			{
-				AnimInstance->Montage_Play(DeathMontage);
-				bIsDeathAnim = true;
-				AEnemyAIController* EnemyController = Cast<AEnemyAIController>(GetController());
-				EnemyController->StopMovement();
-				this->SetActorEnableCollision(false);
-
-				// 몽타주 끝나고 처리될 함수 등록 (타이머 방식)
-				float Duration = DeathMontage->GetPlayLength()-0.5f;
-				GetWorld()->GetTimerManager().SetTimer(DeathAnimTimerHandle,this,&AEnemyCharacter::DeathMontageEnded,Duration,false);
-				GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Blue, TEXT("Anim"));
-			}
-		}
-	}
-}
-
-void AEnemyCharacter::DeathMontageEnded()
-{
-	  // 죽음 이후 숨기기 + 비활성 처리
-    NotifyEnemyDeath(); // 필요 시
-    DeSpawn();
-}
-
 // Called when the game starts or when spawned
 void AEnemyCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
+	UCapsuleComponent* CharacterCollision = GetCapsuleComponent();
+	if (CharacterCollision)
+	{
+		CharacterCollision->OnComponentHit.AddDynamic(this, &AEnemyCharacter::OnComponentHit);
+		CharacterCollision->OnComponentBeginOverlap.AddDynamic(this, &AEnemyCharacter::OnBeginOverlap);
+		OnEnemyDeathAnimEnded.AddDynamic(this, &AEnemyCharacter::EnemyDeathAnimEnded);
+	}
+
+
 	// NavInvoker 관련 생성,삭제 변수값 설정
 	NavGenerationRadius = 2000.0f;
 	NavRemovalRadius = 500.0f;
 	NavInvoker->SetGenerationRadii(NavGenerationRadius, NavRemovalRadius);
-
 
 	UCapsuleComponent* EnemyCollision = GetCapsuleComponent();
 	EnemyCollision->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
@@ -173,7 +53,6 @@ void AEnemyCharacter::BeginPlay()
 	FindSpawnPoint();
 	FindDeSpawnPoint();
 }
-
 
 // Called every frame
 void AEnemyCharacter::Tick(float DeltaTime)
@@ -186,7 +65,6 @@ void AEnemyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 }
-
 
 void AEnemyCharacter::SetCurrentHp(float EnemyHp)
 {
@@ -236,7 +114,182 @@ void AEnemyCharacter::SetAtk(float EnemyAtk)
 	}
 }
 
+void AEnemyCharacter::FindSpawnPoint()
+{
+	TArray<AActor*> FoundEndPoint;
+	TArray<AActor*> RandomPoint;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ATargetPoint::StaticClass(), FoundEndPoint);
+
+	for (const auto& StartPoint : FoundEndPoint)
+	{
+		if (Cast<ATargetPoint>(StartPoint))
+		{
+			if (!SpawnPoint)
+			{
+				if (StartPoint->ActorHasTag(TEXT("EnemySpawnPoint")))
+				{
+					RandomPoint.Add(StartPoint);
+				}
+			}
+		}
+	}
+
+	SpawnPoint = RandomPoint[FMath::RandRange(0,RandomPoint.Num()-1)];
+}
+
+void AEnemyCharacter::FindDeSpawnPoint()
+{
+	TArray<AActor*> FoundEndPoint;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ATargetPoint::StaticClass(), FoundEndPoint);
+
+	for (const auto& EndPoint : FoundEndPoint)
+	{
+		if (Cast<ATargetPoint>(EndPoint))
+		{
+			if (!DeSpawnPoint)
+			{
+				if (EndPoint->ActorHasTag(TEXT("EnemyDeSpawnPoint")))
+				{
+					DeSpawnPoint = EndPoint;
+				}
+			}
+		}
+	}
+}
+
+void AEnemyCharacter::DeSpawn()
+{
+	if (IsValid(DeSpawnPoint))
+	{
+		SetActorLocation(DeSpawnPoint->GetActorLocation());
+	}
+	else
+	{
+		UE_LOG(LogTemp,Warning,TEXT("DeSpawnPoint invalid"));
+		SetActorLocation(FVector(FVector::ZeroVector));
+	}
+
+	SetActorHiddenInGame(true);
+	bIsActive = false;
+	NotifyEnemyDespawn();
+	SetActorTickEnabled(false);
+}
+
+void AEnemyCharacter::Spawn()
+{
+	SetActorTickEnabled(true);
+	SetActorHiddenInGame(false);
+	SetActorEnableCollision(true);
+	AEnemyAIController* EnemyController = Cast<AEnemyAIController>(GetController());
+	APlayerCharacter* Player = Cast<APlayerCharacter>(EnemyController->GetTargetActor());
+	if (Player)
+	{
+		EnemyController->StartChasing(Player);
+	}
+
+	bIsActive = true;
+	bIsDeathAnim = false;
+
+	if (IsValid(SpawnPoint))
+	{
+		SetCurrentHp(GetMaxHp());
+		SetActorLocation(SpawnPoint->GetActorLocation());
+	}
+	else {
+		UE_LOG(LogTemp,Warning,TEXT("SpawnPoint InValid "));
+		FindSpawnPoint();
+		Spawn();
+	}
+}
+
+void AEnemyCharacter::NotifyEnemyDespawn()
+{
+	OnEnemyDespawned.Broadcast(); // 게임 클리어체크용
+}
+
+void AEnemyCharacter::NotifyEnemyDeath()
+{
+	OnEnemyDeath.Broadcast(); // 킬 카운트 증가용
+}
+
+void AEnemyCharacter::EnemyDeathAnimEnded()
+{
+	bIsDeathAnim = false;
+	NotifyEnemyDeath();
+	DeSpawn();
+}
+
+void AEnemyCharacter::PlayDeathMontage()
+{
+	if (const USkeletalMeshComponent* MeshComp = GetMesh())
+	{
+		if (UAnimInstance* AnimInstance = MeshComp->GetAnimInstance())
+		{
+			if (DeathMontage)
+			{
+				SetActorEnableCollision(false);
+				AnimInstance->Montage_Play(DeathMontage);
+				bIsDeathAnim = true;
+				AEnemyAIController* EnemyController = Cast<AEnemyAIController>(GetController());
+				EnemyController->StopMovement();
+				
+			}
+		}
+	}
+}
+
 void AEnemyCharacter::SetSpawnDelay(float EnemySpawnDelay)
 {
 	SpawnDelay = EnemySpawnDelay;
+}
+
+void AEnemyCharacter::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	APlayerBulletActor* Bullet = Cast<APlayerBulletActor>(OtherActor);
+
+	if (IsValid(Bullet))
+	{
+		if (GetCurrentHp() > 0)
+		{
+			float EnemyHp = GetCurrentHp() - (Bullet->GetDamage() - GetDef());
+			if (EnemyHp > 0)
+			{
+				SetCurrentHp(EnemyHp);
+			}
+			else
+			{
+				if (IsDeathAnim() == false)
+				{
+					FTimerHandle AnimEndNotifyHandle;
+					PlayDeathMontage();
+					GetWorldTimerManager().SetTimer(AnimEndNotifyHandle, [this]() {OnEnemyDeathAnimEnded.Broadcast(); }, 3.0f, false);
+				}
+			}
+		}
+		Bullet->Destroy();
+	}
+}
+
+void AEnemyCharacter::OnComponentHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+{
+	APlayerCharacter* Player = Cast<APlayerCharacter>(OtherActor);
+
+	if (IsValid(Player))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Player IsValid"));
+		float PlayerCurrentHp = Player->GetHp();
+		float PlayerHp = PlayerCurrentHp - (GetAtk() - Player->GetDef());
+		if (PlayerHp > 0)
+		{
+			Player->SetHp(PlayerHp);
+			Player->NotifyPlayerChangeHealth();
+		}
+		else
+		{
+			Player->PlayerDeSpawn();
+			Player->NotifyPlayerDeath();
+			Player->ShowEndGame();
+		}
+		DeSpawn();
+	}
 }

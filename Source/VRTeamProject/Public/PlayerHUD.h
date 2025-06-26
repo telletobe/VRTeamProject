@@ -9,6 +9,7 @@
 class UMapSelectWidget;
 class UPlayerStateWidget;
 class UStageInfoWidget;
+class UEndGameWidget;
 class APlayerController;
 /**
  * 
@@ -30,6 +31,7 @@ public :
 	TObjectPtr<UMapSelectWidget> GetMapSelectInstance() const;
 	TObjectPtr<UPlayerStateWidget> GetPlayerStateInstance() const;
 	TObjectPtr<UStageInfoWidget> GetStageInfoInstance() const;
+	TObjectPtr<UEndGameWidget> GetEndGameInstance() const;
 
 protected:
 	virtual void BeginPlay() override;
@@ -49,6 +51,11 @@ private:
 	UPROPERTY(Transient)
 	TObjectPtr<UStageInfoWidget> StageInfoInstance;
 	
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<UEndGameWidget> EndGame;
+
+	UPROPERTY(Transient)
+	TObjectPtr<UEndGameWidget> EndGameInstance;
 
 	UPROPERTY()
 	TObjectPtr<APlayerController> PC;

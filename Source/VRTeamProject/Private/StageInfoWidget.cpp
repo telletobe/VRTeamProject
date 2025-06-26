@@ -22,11 +22,11 @@ void UStageInfoWidget::NativeConstruct()
 
     if (Btn_GameStart)
     {
-        Btn_GameStart->OnClicked.AddDynamic(this, &UStageInfoWidget::GameStart);
+        Btn_GameStart->OnClicked.AddUniqueDynamic(this, &UStageInfoWidget::GameStart);
     }
     if (Btn_Back)
     {
-        Btn_Back->OnClicked.AddDynamic(this, &UStageInfoWidget::BackToMenu);
+        Btn_Back->OnClicked.AddUniqueDynamic(this, &UStageInfoWidget::BackToMenu);
     }
 }
 

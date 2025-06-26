@@ -11,7 +11,7 @@ void UMapSelectWidget::NativeConstruct()
 
     if (Button_KyoungGi)
     {
-        Button_KyoungGi->OnClicked.AddDynamic(this, &UMapSelectWidget::HandleRegionClicked);
+        Button_KyoungGi->OnClicked.AddUniqueDynamic(this, &UMapSelectWidget::HandleRegionClicked);
     }
 
 }

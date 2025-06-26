@@ -6,7 +6,6 @@
 #include <EnhancedInputComponent.h>
 #include "Components/CapsuleComponent.h"
 #include <PlayerWeapon.h>
-#include <EnemyCharacter.h>
 #include "InputManager.h"
 #include "MotionControllerComponent.h"
 #include "GameFramework/PlayerController.h"
@@ -14,7 +13,8 @@
 #include "Components/WidgetComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
-
+#include <EndGameWidget.h>
+#include "PlayerHUD.h"
 
 // Sets default values
 // 커밋용 주석추가
@@ -43,7 +43,7 @@ APlayerCharacter::APlayerCharacter()
 	VRCamera->SetRelativeScale3D(FVector(0.25f,0.5f,0.5f));
 
 	MotionControllerLeft = CreateDefaultSubobject<UMotionControllerComponent>(TEXT("MotionControllerLeft"));
-	MotionControllerLeft->SetupAttachment(VRCamera);
+	MotionControllerLeft->SetupAttachment(SceneComponent);
 	MotionControllerLeft->SetTrackingSource(EControllerHand::Left);
 
 	WidgetInteractionLeft = CreateDefaultSubobject<UWidgetInteractionComponent>(TEXT("WidgetInteractionLeft"));
@@ -58,7 +58,7 @@ APlayerCharacter::APlayerCharacter()
 	MotionControllerLeftLazerMesh->SetRelativeLocation(FVector(FVector::ZeroVector));
 
 	MotionControllerRight = CreateDefaultSubobject<UMotionControllerComponent>(TEXT("MotionControllerRight"));
-	MotionControllerRight->SetupAttachment(VRCamera);
+	MotionControllerRight->SetupAttachment(SceneComponent);
 	MotionControllerRight->SetTrackingSource(EControllerHand::Right);
 
 	WidgetInteractionRight = CreateDefaultSubobject<UWidgetInteractionComponent>(TEXT("WidgetInteractionRight"));
@@ -77,8 +77,28 @@ APlayerCharacter::APlayerCharacter()
 	WidgetComponent->SetWidgetSpace(EWidgetSpace::World);
 	WidgetComponent->SetDrawSize(FVector2D(768.0f,1150.0f));
 	WidgetComponent->SetRelativeLocation(FVector(200.0f,0.0f,0.0f));
+}
 
-
+void APlayerCharacter::ShowEndGame()
+{
+	if (WidgetComponent)
+	{
+		if (PlayerController)
+		{
+			APlayerHUD* HUD = Cast<APlayerHUD>(PlayerController->GetHUD());
+			UEndGameWidget* EndGameWidget = HUD->GetEndGameInstance();
+			WidgetComponent->SetWidget(EndGameWidget);
+			
+			if (WidgetComponent->GetVisibleFlag() == false)
+			{
+				WidgetComponent->SetVisibility(true);
+			}
+		}		
+	}
+	else
+	{
+		UE_LOG(LogTemp,Warning,TEXT("WidgetComp inValid"));
+	}
 }
 
 // Called when the game starts or when spawned
@@ -105,14 +125,16 @@ void APlayerCharacter::BeginPlay()
 			}
 
 		}
-		
+		if (MotionControllerLeftLazerMesh)
+		{
+			MotionControllerLeftLazerMesh->AttachToComponent(WidgetInteractionLeft, FAttachmentTransformRules::KeepRelativeTransform);
+		}
+
+		if (MotionControllerRightLazerMesh)
+		{
+			MotionControllerRightLazerMesh->AttachToComponent(WidgetInteractionRight, FAttachmentTransformRules::KeepRelativeTransform);
+		}
 	}
-
-	if (IsValid(CharacterCollision))
-	{
-		CharacterCollision->OnComponentHit.AddDynamic(this,&APlayerCharacter::OnComponentHit);
-	} 
-
 	if (!bIsActive)
 	{
 		PlayerReSpawn();
@@ -134,34 +156,6 @@ void APlayerCharacter::BeginPlay()
 	else
 	{
 		UE_LOG(LogTemp,Warning,TEXT("PlayerWeapon InValid"));
-	}
-}
-
-void APlayerCharacter::OnComponentHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
-{
-	// 1회성 충돌이므로, 체력의 감소는 플레이어에서 처리함.
-	AEnemyCharacter* Enemy = Cast<AEnemyCharacter>(OtherActor);
-	if (IsValid(Enemy))
-	{
-		float CurrentHp = GetHp();
-		float PlayerHp = CurrentHp - (Enemy->GetAtk() - this->GetDef());
-		if (PlayerHp > 0)
-		{
-			SetHp(PlayerHp);
-			NotifyPlayerChangeHealth();
-		}
-		else
-		{
-			PlayerDeSpawn();
-			NotifyPlayerDeath();
-		}
-
-		Enemy->DeSpawn();
-
-	}
-	else
-	{
-		return;
 	}
 }
 
@@ -243,7 +237,7 @@ void APlayerCharacter::PlayerDeSpawn()
 	}
 	if (Weapon) Weapon->SetActorHiddenInGame(true);
 	bIsActive = false;
-	SetActorHiddenInGame(true);
+	//SetActorHiddenInGame(true);
 
 }
 

@@ -35,8 +35,6 @@ void AEnemyAIController::BeginPlay()
 
 	}
 	
-
-
 	ACharacter* PlayerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
 	if (PlayerCharacter)
 	{	
@@ -73,8 +71,6 @@ void AEnemyAIController::Tick(float DeltaTime)
 			}
 		}
 	}
-
-
 }
 
 void AEnemyAIController::StartChasing(AActor* Target)
@@ -116,7 +112,6 @@ void AEnemyAIController::OnPerceptionUpdate(AActor* Actor, FAIStimulus Stimulus)
 			}
 		}
 	}
-
 }
 
 void AEnemyAIController::UpdateAIState()
