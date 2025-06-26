@@ -5,7 +5,16 @@
 #include "Components/Button.h"
 #include "Components/ProgressBar.h"
 #include "PlayerCharacter.h"
+#include "VRProjectGameModeBase.h"
 
+
+void UPlayerStateWidget::ReSetHp()
+{
+	if (HPBar)
+	{
+		HPBar->SetPercent(1.0f);
+	}
+}
 
 
 void UPlayerStateWidget::NativeConstruct()
@@ -20,6 +29,12 @@ void UPlayerStateWidget::NativeConstruct()
 			Player->OnHealthChange.AddUniqueDynamic(this,&UPlayerStateWidget::UpdatePlayerHP);
 		}
 	}	
+
+	if (AVRProjectGameModeBase* GameMode = Cast<AVRProjectGameModeBase>(GetWorld()->GetAuthGameMode()))
+	{
+		GameMode->OnRestart.AddUniqueDynamic(this, &UPlayerStateWidget::ReSetHp);
+	}
+	
 }
 
 void UPlayerStateWidget::UpdatePlayerHP(float CurrentHp, float MaxHp)

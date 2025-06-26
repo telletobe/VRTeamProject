@@ -21,6 +21,10 @@ public:
 
 	UFUNCTION()
 	void UpdatePlayerHP(float CurrentHp,float MaxHp);
+
+	UFUNCTION()
+	void ReSetHp();
+
 	void UpdatePlayerDef();
 	void UpdatePlayerExp(float CurrentExp);
 

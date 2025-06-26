@@ -40,7 +40,6 @@ APlayerHUD::APlayerHUD()
 
 }
 
-
 void APlayerHUD::BeginPlay()
 {
 

@@ -135,6 +135,10 @@ void AEnemySpawner::BeginPlay()
 	Super::BeginPlay();
 
 	GameMode = Cast<AVRProjectGameModeBase>(GetWorld()->GetAuthGameMode());
+	if (GameMode)
+	{
+		GameMode->OnRestart.AddUniqueDynamic(this,&AEnemySpawner::ActivateEnemySpawner);
+	}
 
 	CurrentKillCnt = 0;
 

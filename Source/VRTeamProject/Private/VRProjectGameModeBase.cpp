@@ -37,7 +37,6 @@ void AVRProjectGameModeBase::BeginPlay()
 
 void AVRProjectGameModeBase::TriggerGameClear()
 {
-
 	GEngine->AddOnScreenDebugMessage(-1,3.0f,FColor::MakeRandomColor(), TEXT("Clear Game"));
 	bIsClear = true;
 	CleanupAfterGameClear();
@@ -59,15 +58,25 @@ void AVRProjectGameModeBase::TriggerGameReStart()
 {
 	GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::MakeRandomColor(), TEXT("ReStart Game"));
 	bIsClear = false;
-	bPlayerAlive = true;
+	APlayerCharacter* Player = Cast<APlayerCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn());
+	if (Player)
+	{
+		Player->PlayerReSpawn();
+		bPlayerAlive = true;
+	}
+	else
+	{
+		UE_LOG(LogTemp,Warning,TEXT("Player Is Destroyed"));
+		return;
+	}
 
 	CleanupGameItem();
+	NotifyReStart();
 	return;
 }
 
 void AVRProjectGameModeBase::CleanupAfterGameClear()
 {
-
 	TArray<AActor*> FoundActor;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AActor::StaticClass(), FoundActor);
 
@@ -150,4 +159,9 @@ void AVRProjectGameModeBase::ChangePlayerAliveState()
 	bPlayerAlive = !bPlayerAlive;
 	UE_LOG(LogTemp,Warning,TEXT("PlayerAlive : %s"), bPlayerAlive ? TEXT("true") : TEXT("false"));
 	return;
+}
+
+void AVRProjectGameModeBase::NotifyReStart()
+{
+	OnRestart.Broadcast();
 }

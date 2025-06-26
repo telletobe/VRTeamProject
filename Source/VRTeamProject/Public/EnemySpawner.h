@@ -37,6 +37,8 @@ protected:
 private:
 
 	void DeActivateEnemySpawner();
+
+	UFUNCTION()
 	void ActivateEnemySpawner();
 public:	
 	// Called every frame

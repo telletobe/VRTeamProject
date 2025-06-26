@@ -162,7 +162,6 @@ void UInputManager::Attack(const FInputActionValue& Value)
 	else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Player Weapon inValid"));
-		return;
 	}
 }
 
@@ -278,4 +277,3 @@ void UInputManager::onRightTriggerReleased()
 		}
 	}
 }
-

@@ -19,7 +19,12 @@ class VRTEAMPROJECT_API UEndGameWidget : public UUserWidget
 public :
 	UFUNCTION()
 	void ShowEndGame();
+	
+	UFUNCTION()
+	void ReStart();
 
+	UFUNCTION()
+	void Quit();
 protected:
 	virtual void NativeConstruct() override;
 

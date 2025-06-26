@@ -13,6 +13,7 @@
 #include "Components/WidgetComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include <VRProjectGameModeBase.h>
 // Sets default values
 // 커밋용 주석추가
 APlayerCharacter::APlayerCharacter()
@@ -71,6 +72,15 @@ APlayerCharacter::APlayerCharacter()
 	WidgetComponent->SetWidgetSpace(EWidgetSpace::World);
 	WidgetComponent->SetDrawSize(FVector2D(768.0f,1150.0f));
 	WidgetComponent->SetRelativeLocation(FVector(200.0f,0.0f,0.0f));
+}
+
+void APlayerCharacter::SetVisibleRazerMesh()
+{
+	if (MotionControllerRightLazerMesh || MotionControllerLeftLazerMesh)
+	{
+		MotionControllerRightLazerMesh->SetVisibility(false);
+		MotionControllerLeftLazerMesh->SetVisibility(false);
+	}
 }
 
 // Called when the game starts or when spawned
@@ -143,7 +153,13 @@ void APlayerCharacter::BeginPlay()
 	{
 		SetExp(0.0f);
 	}
-
+	/////////////////////////////////
+	AVRProjectGameModeBase* GameMode = Cast<AVRProjectGameModeBase>(GetWorld()->GetAuthGameMode());
+	if (GameMode)
+	{
+		GameMode->OnRestart.AddUniqueDynamic(this,&APlayerCharacter::SetVisibleRazerMesh);
+	}
+	////////////////////////////////
 }
 
 // Called every frame
@@ -169,6 +185,7 @@ void APlayerCharacter::ApplyEffectItem(const EItemEffectData& Data)
 	case EItemEffectData::HEAL:
 		// 예: 체력 20 회복
 		SetHp(GetHp() + 20);;
+		NotifyPlayerChangeHealth();
 		GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Green, TEXT("HEAL applied: +20 HP"));
 		break;
 
@@ -229,6 +246,8 @@ void APlayerCharacter::PlayerReSpawn()
 		PlayerController->SetIgnoreMoveInput(false);
 		bMouseClickEnable = true;
 	}
+
+	SetHp(GetMaxHp());
 
 	if (Weapon) Weapon->SetActorHiddenInGame(false);
 	bIsActive = true;
