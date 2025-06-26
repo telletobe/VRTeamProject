@@ -28,7 +28,6 @@ AEnemySpawner::AEnemySpawner()
 void AEnemySpawner::CreateEnemy()
 {
 	const FVector SpawnPoint = FMath::RandPointInBox(SpawnBox->Bounds.GetBox());
-
 	bool bIsSpawn = true;
 
 	if (bIsSpawn)
@@ -36,7 +35,6 @@ void AEnemySpawner::CreateEnemy()
 		TSubclassOf<AEnemyCharacter> CommonEnemy = LoadClass<AEnemyCharacter>(nullptr, TEXT("/Script/Engine.Blueprint'/Game/Character/Enemy/BP_EnemyCharacter.BP_EnemyCharacter_C'"));
 		if (CommonEnemy)
 		{
-
 			if (EnemyPool.Num() < EnemyPoolSize)
 			{
 				AEnemyCharacter* SpawnedEnemy = GetWorld()->SpawnActor<AEnemyCharacter>(CommonEnemy, SpawnPoint, FRotator(0));
@@ -103,7 +101,6 @@ void AEnemySpawner::CheckGameClear()
 {
 	if (IsValid(GameMode))
 	{
-
 		if (!(GameMode->IsClear()))
 		{
 			UE_LOG(LogTemp, Warning, TEXT("GameMode:Player Alive : %s"), GameMode->IsPlayerAlive() ? TEXT("true") : TEXT("False"));
@@ -132,8 +129,6 @@ void AEnemySpawner::IncreaseKillCount()
 	CurrentKillCnt++;
 }
 
-
-
 // Called when the game starts or when spawned
 void AEnemySpawner::BeginPlay()
 {
@@ -143,6 +138,21 @@ void AEnemySpawner::BeginPlay()
 
 	CurrentKillCnt = 0;
 
+	if (RequiredKillCnt < 1)
+	{
+		RequiredKillCnt = 100;
+	}
+
+	if (CreateDelay <= 0)
+	{
+		CreateDelay = 0.1f;
+	}
+
+	if (SpawnDelay <= 0)
+	{
+		SpawnDelay = 0.7f;
+	}
+
 	GetWorld()->GetTimerManager().SetTimer(CreateHandle,this,&AEnemySpawner::CreateEnemy,CreateDelay,true);
 	GetWorld()->GetTimerManager().SetTimer(SpawnHandle, this, &AEnemySpawner::SpawnEnemy, SpawnDelay, true);
 }
@@ -151,6 +161,5 @@ void AEnemySpawner::BeginPlay()
 void AEnemySpawner::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 

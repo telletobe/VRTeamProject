@@ -28,7 +28,6 @@ UInputManager::UInputManager()
 	static ConstructorHelpers::FObjectFinder<UInputAction> PlayerStatObject(TEXT("'/Game/Map/System/Input/IA_PlayerStat.IA_PlayerStat'"));
 	static ConstructorHelpers::FObjectFinder<UInputAction> ClickObject(TEXT("'/Game/Map/System/Input/IA_Click.IA_Click'"));
 
-
 	if (IMCObject.Succeeded())
 	{
 		IMC_InputMappingContext = IMCObject.Object;
@@ -109,10 +108,7 @@ void UInputManager::Initialize(APlayerCharacter* PlayerCharacter, APlayerControl
 		}
 
 		if(!IsValid(MyHUD.Get())) MyHUD = Cast<APlayerHUD>(PC->GetHUD());
-
-		
 	}
-
 }
 
 //컨트롤러 매핑 함수
@@ -141,7 +137,6 @@ void UInputManager::Move(const FInputActionValue& Value)
 		// add movement 
 		PlayerController->GetPawn()->AddMovementInput(PlayerController->GetPawn()->GetActorRightVector(), MovementVector.X);
 	}
-
 }
 
 void UInputManager::Look(const FInputActionValue& Value)
@@ -160,7 +155,6 @@ void UInputManager::Look(const FInputActionValue& Value)
 
 void UInputManager::Attack(const FInputActionValue& Value)
 {
-
 	if (Player->GetWeapon() && Player->IsMouseClickedEnable())
 	{
 		Player->GetWeapon()->Fire(Player->GetAtk());
@@ -174,7 +168,6 @@ void UInputManager::Attack(const FInputActionValue& Value)
 
 void UInputManager::ToggleMap(const FInputActionValue& Value)
 {
-	
 	// PC
 	/*APlayerController* PlayerController = Cast<APlayerController>(Player->GetController());
 
@@ -215,10 +208,7 @@ void UInputManager::ToggleMap(const FInputActionValue& Value)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("Player is Dead"));
 		}
-		
 	}
-
-	
 }
 
 void UInputManager::PlayerStat(const FInputActionValue& Value)
@@ -263,7 +253,6 @@ void UInputManager::PlayerStat(const FInputActionValue& Value)
 			UE_LOG(LogTemp, Warning, TEXT("Player Is Dead"));
 		}
 	}
-
 }
 
 void UInputManager::onRightTriggerPressed()

@@ -78,7 +78,6 @@ void APlayerHUD::BeginPlay()
 
 void APlayerHUD::ToggleMapSelect()
 {
-	
 	if (IsValid(MapSelectInstance))
 	{
 		if (MapSelectInstance->IsInViewport())
@@ -88,9 +87,7 @@ void APlayerHUD::ToggleMapSelect()
 			{
 				PC->bShowMouseCursor = false;
 				PC->SetInputMode(FInputModeGameOnly());
-				
 			}
-			
 		}
 		else
 		{
@@ -104,7 +101,6 @@ void APlayerHUD::ToggleMapSelect()
 				PC->bShowMouseCursor = true;
 				PC->SetInputMode(Mode);
 			}
-			
 		}
 	}
 }
@@ -133,7 +129,6 @@ void APlayerHUD::PlayerStateShow()
 			}
 		}	
 	}
-	
 	return;
 }
 

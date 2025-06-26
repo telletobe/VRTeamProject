@@ -25,9 +25,6 @@ APlayerCharacter::APlayerCharacter()
 	SetDef(1);
 	bIsActive = false;
 	bMouseClickEnable = false;
-
-
-
 	//VR
 
 	SceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("SceneComponent"));
@@ -81,7 +78,6 @@ void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-
 	UCapsuleComponent* CharacterCollision = GetCapsuleComponent();
 	CharacterCollision->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 
@@ -98,7 +94,6 @@ void APlayerCharacter::BeginPlay()
 				InputManager->Initialize(this, PlayerController);
 				InputManager->BindAction(Cast<UEnhancedInputComponent>(InputComp));
 			}
-
 		}
 		if (MotionControllerLeftLazerMesh)
 		{
@@ -132,6 +127,23 @@ void APlayerCharacter::BeginPlay()
 	{
 		UE_LOG(LogTemp,Warning,TEXT("PlayerWeapon InValid"));
 	}
+
+	if (GetHp() < 0)
+	{
+		SetHp(GetMaxHp());
+	}
+	if (GetAtk() < 0) {
+		SetAtk(GetDefaultAtk());
+	}
+	if (GetDef() < 0)
+	{
+		SetDef(GetDefaultDef());
+	}
+	if (GetExp() < 0)
+	{
+		SetExp(0.0f);
+	}
+
 }
 
 // Called every frame
@@ -166,8 +178,7 @@ void APlayerCharacter::ApplyEffectItem(const EItemEffectData& Data)
 		GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Green, FString::Printf(TEXT("AtkUp applied: Atk = %.1f (for 10 seconds)"), GetAtk()));
 
 		GetWorldTimerManager().ClearTimer(RestoreTimerHandle);
-		GetWorld()->GetTimerManager().SetTimer(RestoreTimerHandle, [this]() {SetAtk(DefaultAtk);}, 10.0f, false);
-		
+		GetWorld()->GetTimerManager().SetTimer(RestoreTimerHandle, [this]() {SetAtk(DefaultAtk);}, 10.0f, false);	
 		break;
 
 	case EItemEffectData::DefUp:
@@ -176,7 +187,6 @@ void APlayerCharacter::ApplyEffectItem(const EItemEffectData& Data)
 
 		GetWorld()->GetTimerManager().ClearTimer(RestoreTimerHandle);
 		GetWorld()->GetTimerManager().SetTimer(RestoreTimerHandle, [this]() {SetDef(DefaultDef);},10.0f, false);
-
 		break;
 
 	case EItemEffectData::AttackSpeed:
@@ -193,8 +203,6 @@ void APlayerCharacter::ApplyEffectItem(const EItemEffectData& Data)
 
 		GetWorld()->GetTimerManager().ClearTimer(RestoreTimerHandle);
 		GetWorld()->GetTimerManager().SetTimer(RestoreTimerHandle, [this]() { GetWeapon()->SetFireDelay(GetWeapon()->GetDefaultFireDelay()); }, 10.0f, false);
-
-
 		break;
 
 	default :

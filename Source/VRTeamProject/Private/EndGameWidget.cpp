@@ -7,7 +7,6 @@
 
 void UEndGameWidget::NativeConstruct()
 {
-
 	if (APlayerController* PC = GetOwningPlayer())
 	{
 		APlayerCharacter* Player = Cast<APlayerCharacter>(PC->GetPawn());
@@ -16,7 +15,6 @@ void UEndGameWidget::NativeConstruct()
 			Player->OnPlayerDeath.AddUniqueDynamic(this,&UEndGameWidget::ShowEndGame);
 		}
 	}
-
 }
 
 void UEndGameWidget::ShowEndGame() 

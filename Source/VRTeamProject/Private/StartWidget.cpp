@@ -6,5 +6,4 @@
 void UStartWidget::NativeConstruct()
 {
 
-
 }

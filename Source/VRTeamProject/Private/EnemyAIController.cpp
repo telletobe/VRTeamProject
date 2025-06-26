@@ -32,9 +32,7 @@ void AEnemyAIController::BeginPlay()
 		GetPerceptionComponent()->ConfigureSense(*SightConfig);
 		GetPerceptionComponent()->SetDominantSense(SightConfig->GetSenseImplementation());
 		GetPerceptionComponent()->OnTargetPerceptionUpdated.AddDynamic(this, &AEnemyAIController::OnPerceptionUpdate);
-
 	}
-	
 	ACharacter* PlayerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
 	if (PlayerCharacter)
 	{	
@@ -83,7 +81,6 @@ void AEnemyAIController::StopChasing()
 {
 	bIsChasing = false;
 	StopMovement();
-
 }
 
 void AEnemyAIController::OnPerceptionUpdate(AActor* Actor, FAIStimulus Stimulus)
@@ -108,7 +105,6 @@ void AEnemyAIController::OnPerceptionUpdate(AActor* Actor, FAIStimulus Stimulus)
 				{
 					CurrentState = EAIState::Suspicious;
 				}
-			
 			}
 		}
 	}
@@ -148,6 +144,5 @@ void AEnemyAIController::UpdateAIState()
 		}
 		break;
 	}
-
 }
 

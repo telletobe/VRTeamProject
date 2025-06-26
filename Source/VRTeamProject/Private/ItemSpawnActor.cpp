@@ -123,7 +123,6 @@ void AItemSpawnActor::ChangeActiveState()
 		PrimaryActorTick.bCanEverTick = false;
 		GetWorldTimerManager().ClearTimer(ActorVisibleHandle);
 	}
-	
 }
 
 void AItemSpawnActor::SetDropTimer()
@@ -140,7 +139,6 @@ void AItemSpawnActor::SetDropTimer()
 
 void AItemSpawnActor::ResetLocationToStartPoint()
 {
-
 	if (IsValid(EndPoint))
 	{
 		if (IsValid(StartPoint))
@@ -154,7 +152,6 @@ void AItemSpawnActor::ResetLocationToStartPoint()
 			}
 		}
 	}
-
 }
 
 // Called when the game starts or when spawned

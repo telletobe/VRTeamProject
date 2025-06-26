@@ -22,8 +22,6 @@ ABulidingBaseActor::ABulidingBaseActor()
 	BulidRight->AttachToComponent(BulidingCollision,FAttachmentTransformRules::KeepRelativeTransform);
 	BulidLeft->AttachToComponent(BulidingCollision, FAttachmentTransformRules::KeepRelativeTransform);
 	BulidMiddle->AttachToComponent(BulidingCollision, FAttachmentTransformRules::KeepRelativeTransform);
-
-
 }
 
 void ABulidingBaseActor::SetIsArrive(bool IsArrive)
@@ -39,18 +37,14 @@ void ABulidingBaseActor::BeginPlay()
 	
 	if (!EndPoint)
 	{
-
 		return;
 	}
-
 	StartLocation = GetActorLocation();
-
 
 }
 
 void ABulidingBaseActor::MovetoTarget(float DeltaTime)
 {
-
 	if (IsValid(EndPoint))
 	{
 		float Distance = FVector::Dist2D(GetActorLocation(), EndPoint->GetActorLocation()); // 건물과 타겟포인트의 거리
@@ -59,11 +53,9 @@ void ABulidingBaseActor::MovetoTarget(float DeltaTime)
 			SetIsArrive(true);
 			return;
 		}
-	}
-																	  // MoveForce 값에 따라 이동속도조절
+	}																  // MoveForce 값에 따라 이동속도조절
 	FVector NewLocation = GetActorLocation() + MoveForce * DeltaTime; //DelataTime을 활용하여 자연스러운 움직임 처리
 	SetActorLocation(NewLocation);
-
 }
 
 void ABulidingBaseActor::BackToStartPoint(FVector Location)

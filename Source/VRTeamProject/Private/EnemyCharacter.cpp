@@ -38,7 +38,6 @@ void AEnemyCharacter::BeginPlay()
 		OnEnemyDeathAnimEnded.AddDynamic(this, &AEnemyCharacter::EnemyDeathAnimEnded);
 	}
 
-
 	// NavInvoker 관련 생성,삭제 변수값 설정
 	NavGenerationRadius = 2000.0f;
 	NavRemovalRadius = 500.0f;

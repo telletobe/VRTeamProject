@@ -19,13 +19,11 @@ void UPlayerStateWidget::NativeConstruct()
 		{
 			Player->OnHealthChange.AddUniqueDynamic(this,&UPlayerStateWidget::UpdatePlayerHP);
 		}
-	
 	}	
 }
 
 void UPlayerStateWidget::UpdatePlayerHP(float CurrentHp, float MaxHp)
 {
-
 	if (HPBar && MaxHp > 0.0f)
 	{
 		HPBar->SetPercent(CurrentHp/MaxHp);
@@ -48,6 +46,5 @@ void UPlayerStateWidget::UpdatePlayerExp(float CurrentExp)
 	{
 		ExpBar->SetPercent(0.0f);
 	}
-
 		//Set Text
 }

@@ -36,11 +36,8 @@ APlayerWeapon::APlayerWeapon()
 		WeaponSkeletal->SetRelativeScale3D(FVector(0.4f,0.4f,0.4));
 		WeaponSkeletal->SetRelativeRotation(FRotator(180.0f,180.0f,0));
 		WeaponSkeletal->SetRelativeLocation(FVector(0,0,0.3f));
-
 	}
-
 }
-
 
 // Called when the game starts or when spawned
 void APlayerWeapon::BeginPlay()
@@ -55,7 +52,6 @@ void APlayerWeapon::BeginPlay()
 	WeaponMesh->AttachToComponent(WeaponCollision, FAttachmentTransformRules::KeepRelativeTransform);
 	WeaponMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	WeaponMesh->SetSimulatePhysics(false);
-
 }
 
 
@@ -64,7 +60,6 @@ void APlayerWeapon::Fire(float Damage)
 	if (!bIsFire) return;
 
 	ChangeFireState();
-
 	//임시 코드.
 	//카메라의 회전값을 받아서 총알의 방향을 정해줌.
 	//VR활용 시 VR컨트롤러의 정보를 받아서 방향을 다시 설정해주어야 할수있음.
@@ -91,10 +86,7 @@ void APlayerWeapon::Fire(float Damage)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Bullet Data invalid"));
 	}
-
-
 	//총알이 0.2초마다 발사될 수 있도록 타이머설정.
-
 	GetWorld()->GetTimerManager().SetTimer(FireTimer,this,&APlayerWeapon::ChangeFireState, FireDelay,false);
 }
 

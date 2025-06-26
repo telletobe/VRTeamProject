@@ -98,7 +98,6 @@ void AGameItem::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPr
 		ParachuteMesh->SetVisibility(false);
 		ItemMesh->OnComponentHit.RemoveDynamic(this,&AGameItem::OnHit);
 	}
-
 	return;
 }
 

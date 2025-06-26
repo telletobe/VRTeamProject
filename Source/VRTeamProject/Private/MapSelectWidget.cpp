@@ -13,7 +13,6 @@ void UMapSelectWidget::NativeConstruct()
     {
         Button_KyoungGi->OnClicked.AddUniqueDynamic(this, &UMapSelectWidget::HandleRegionClicked);
     }
-
 }
 
 void UMapSelectWidget::HandleRegionClicked()
@@ -26,5 +25,4 @@ void UMapSelectWidget::HandleRegionClicked()
     //    const FString Clean = BtnName.ToString().RightChop(7);
     //    OnRegionSelected.Broadcast(FName(*Clean));       // 델리게이트 전파
     //}
-
 }

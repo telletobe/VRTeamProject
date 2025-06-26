@@ -34,9 +34,7 @@ APlayerBulletActor::APlayerBulletActor()
 
 	BulletCollision->SetRelativeScale3D(FVector(0.25f));
 	BulletMesh->SetRelativeScale3D(FVector(0.25f));
-
 }
-
 
 // Called when the game starts or when spawned
 void APlayerBulletActor::BeginPlay()
@@ -53,7 +51,6 @@ void APlayerBulletActor::BeginPlay()
 		BulletMesh->SetMaterial(0, BulletMeshMaterial);
 	}
 
-
 	//총알 메쉬의 충돌을 무시
 	BulletMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
@@ -66,13 +63,11 @@ void APlayerBulletActor::BeginPlay()
 	}
 
 	GetWorld()->GetTimerManager().SetTimer(MoveTimerHandle, this, &APlayerBulletActor::BulletMove, MoveInterval, true);
-
 	SetLifeSpan(2.0f);
 }
 
 void APlayerBulletActor::BulletMove()
 {
-	
 	const FVector NewLocation = GetActorLocation() + GetActorForwardVector() * BulletSpeed * MoveInterval;
 	SetActorLocation(NewLocation);
 }
@@ -86,7 +81,6 @@ void APlayerBulletActor::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent
 {
 	if (AGameItem* Item = Cast<AGameItem>(OtherActor))
 	{
-
 		UGameplayStatics::ApplyDamage(Item, GetDamage(), nullptr, GetOwner(), nullptr); // 총알의 데미지와 총알의오너(무기) 정보 넘겨줌
 
 		if (Item->GetHp() > 0)

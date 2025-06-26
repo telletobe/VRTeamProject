@@ -49,9 +49,9 @@ private:
 	bool bIsFire = true;
 
 	UPROPERTY(EditAnywhere)
-	float FireDelay = 0.2;
+	float FireDelay = 0.05;
 
-	float DefaultFireDelay = 0.2f;
+	float DefaultFireDelay = 0.05f;
 	FTimerHandle FireTimer;
 
 };
