@@ -8,6 +8,7 @@
 #include <EnemyCharacter.h>
 #include <EnemySpawner.h>
 #include <ItemSpawnActor.h>
+#include <WeatherManager.h>
 
 AVRProjectGameModeBase::AVRProjectGameModeBase()
 {
@@ -95,6 +96,16 @@ void AVRProjectGameModeBase::ChangePlayerAliveState()
 void AVRProjectGameModeBase::BeginPlay()
 {
 	Super::BeginPlay();
+
+	if (!WeatherManager)
+	{
+		WeatherManager = UWeatherManager::GetInstance();
+		if (WeatherManager)
+		{
+			WeatherManager->SetCurrentWorld(GetWorld());
+			WeatherManager->Init();
+		}
+	}
 
 	InitializeGameObjects();
 

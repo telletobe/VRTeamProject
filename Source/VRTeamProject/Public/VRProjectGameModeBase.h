@@ -8,7 +8,7 @@
 
 class AItemSpawnActor;
 class AEnemySpawner;
-
+class UWeatherManager;
 /**
  * 
  */
@@ -41,5 +41,8 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<AEnemySpawner> BPEnemySpawner;
+
+	UPROPERTY()
+	TObjectPtr<UWeatherManager> WeatherManager;
 
 };

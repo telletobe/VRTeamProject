@@ -15,7 +15,7 @@
 #include "Components/WidgetInteractionComponent.h"
 
 
-UInputManager* UInputManager::Instance = nullptr;
+TObjectPtr<UInputManager> UInputManager::Instance = nullptr;
 
 UInputManager::UInputManager()
 {
@@ -93,7 +93,7 @@ UInputManager* UInputManager::GetInstance() {
 		Instance = NewObject<UInputManager>();
 		Instance->AddToRoot();
 	}
-	return Instance;
+	return Instance.Get();
 }
 
 void UInputManager::Initialize(APlayerCharacter* PlayerCharacter, APlayerController* PC)
