@@ -72,6 +72,9 @@ void APlayerHUD::BeginPlay()
 	Mode.SetHideCursorDuringCapture(false);
 	Mode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
 
+	PlayerStateInstance->AddToViewport();
+	PlayerStateInstance->RemoveFromParent();
+
 	EndGameInstance->AddToViewport();
 	EndGameInstance->RemoveFromParent();
 }

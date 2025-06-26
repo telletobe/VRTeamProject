@@ -7,7 +7,7 @@
 #include <VRProjectGameModeBase.h>
 #include "Engine/TargetPoint.h"
 
-const int32 AEnemySpawner::EnemyPoolSize = 20;
+const int32 AEnemySpawner::EnemyPoolSize = 100;
 
 // Sets default values
 AEnemySpawner::AEnemySpawner()
@@ -19,7 +19,7 @@ AEnemySpawner::AEnemySpawner()
 	SetRootComponent(SpawnBox);
 
 	CurrentKillCnt = 1;
-	RequiredKillCnt = 50;
+	RequiredKillCnt = 500;
 	CreateDelay = 0.1f;
 	SpawnDelay = 0.7f;
 	PoolIndex = EnemyPoolSize - 1;
