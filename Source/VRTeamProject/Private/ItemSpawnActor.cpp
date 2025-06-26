@@ -22,45 +22,49 @@ AItemSpawnActor::AItemSpawnActor()
 
 	SpawnDelay = 3.0f;
 	DropDelay = 2.5f;
-
 }
 
 void AItemSpawnActor::SpawnItem()
 {
-	const FVector SpawnPoint = FMath::RandPointInBox(ItemSpawnerCollision->Bounds.GetBox());
-
-	const int32 ItemDropTableCnt = 4; 
-
-	TSubclassOf<AGameItem> Item = LoadClass<AGameItem>(nullptr, TEXT("/Script/Engine.Blueprint'/Game/Actor/Item/MyGameItem.MyGameItem_C'"));
-	if (Item)
+	if (GameMode->IsPlayerAlive())
 	{
-		AGameItem* SpawnedItem = GetWorld()->SpawnActor<AGameItem>(Item, SpawnPoint, FRotator(0));
-		const int32 ItemType = FMath::RandRange(0,ItemDropTableCnt-1);
+		const FVector SpawnPoint = FMath::RandPointInBox(ItemSpawnerCollision->Bounds.GetBox());
 
-		switch (ItemType)
+		const int32 ItemDropTableCnt = 4;
+
+		TSubclassOf<AGameItem> Item = LoadClass<AGameItem>(nullptr, TEXT("/Script/Engine.Blueprint'/Game/Actor/Item/MyGameItem.MyGameItem_C'"));
+		if (Item)
 		{
-		case 0 :
-			SpawnedItem->SetItemData(EItemEffectData::HEAL);
-			break;
-		case 1:
-			SpawnedItem->SetItemData(EItemEffectData::AtkUp);
-			break;
-		case 2:
-			SpawnedItem->SetItemData(EItemEffectData::DefUp);
-			break;
-		case 3:
-			SpawnedItem->SetItemData(EItemEffectData::AttackSpeed);
-			break;
+			AGameItem* SpawnedItem = GetWorld()->SpawnActor<AGameItem>(Item, SpawnPoint, FRotator(0));
+			const int32 ItemType = FMath::RandRange(0, ItemDropTableCnt - 1);
 
-		default:
+			switch (ItemType)
+			{
+			case 0:
+				SpawnedItem->SetItemData(EItemEffectData::HEAL);
+				break;
+			case 1:
+				SpawnedItem->SetItemData(EItemEffectData::AtkUp);
+				break;
+			case 2:
+				SpawnedItem->SetItemData(EItemEffectData::DefUp);
+				break;
+			case 3:
+				SpawnedItem->SetItemData(EItemEffectData::AttackSpeed);
+				break;
+
+			default:
+				return;
+				break;
+			}
 			return;
-			break;
 		}
-
-		
+	}
+	else
+	{
+		UE_LOG(LogTemp,Warning,TEXT("ItemSpawnActor(SpawnItem()) : Player IS Dead"));
 		return;
 	}
-
 }
 
 void AItemSpawnActor::MoveToEndPoint(float DeltaTime)
@@ -148,19 +152,10 @@ void AItemSpawnActor::ResetLocationToStartPoint()
 				ChangeActiveState();
 				return;
 			}
-
 		}
 	}
 
 }
-
-//void AItemSpawnActor::CreateItemSpawnActor()
-//{
-//	if (BPItemSpawner)
-//	{
-//		AItemSpawnActor* ItemSpawner = GetWorld()->SpawnActor<AItemSpawnActor>(BPItemSpawner, FVector(0, 0, 0),FRotator(0,90.0f,0));
-//	}
-//}
 
 // Called when the game starts or when spawned
 void AItemSpawnActor::BeginPlay()
@@ -171,8 +166,6 @@ void AItemSpawnActor::BeginPlay()
 	{
 		GameMode = Cast<AVRProjectGameModeBase>(GetWorld()->GetAuthGameMode());
 	}
-
-
 	ItemSpawnerCollision->SetCollisionObjectType(ECollisionChannel::ECC_WorldDynamic);
 	ItemSpawnerMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	ItemSpawnerCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
@@ -186,9 +179,7 @@ void AItemSpawnActor::BeginPlay()
 	if (!bIsActive)
 	{
 		GetWorld()->GetTimerManager().SetTimer(ActorVisibleHandle, this, &AItemSpawnActor::ChangeActiveState, SpawnDelay, true);
-
 	}
-
 }
 
 // Called every frame
@@ -200,7 +191,5 @@ void AItemSpawnActor::Tick(float DeltaTime)
 	{
 		MoveToEndPoint(DeltaTime);
 	}
-
-
 }
 

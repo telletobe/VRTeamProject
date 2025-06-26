@@ -70,8 +70,4 @@ private :
 	bool bIsClear = false;
 
 	TObjectPtr<AVRProjectGameModeBase> GameMode;
-
-	//UPROPERTY(EditAnywhere)
-	//TSubclassOf<AEnemySpawner> BPEnemySpawner;
-
 };

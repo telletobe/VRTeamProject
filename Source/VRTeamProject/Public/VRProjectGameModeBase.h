@@ -23,8 +23,8 @@ public :
 	void TriggerGameStart();
 	void TriggerGameReStart();
 	void CleanupAfterGameClear();
-	bool IsClear() { return bIsClear; }
-	bool IsPlayerAlive() { return bPlayerAlive; }
+	bool IsClear() const { return bIsClear; }
+	bool IsPlayerAlive() const { return bPlayerAlive; }
 	void InitializeGameObjects();
 
 	UFUNCTION()

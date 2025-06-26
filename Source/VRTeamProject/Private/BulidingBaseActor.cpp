@@ -39,7 +39,7 @@ void ABulidingBaseActor::BeginPlay()
 	
 	if (!EndPoint)
 	{
-		UE_LOG(LogTemp,Warning,TEXT("EndPoint is NULL! Please Set Engine"));
+
 		return;
 	}
 

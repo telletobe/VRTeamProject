@@ -23,7 +23,6 @@ public:
 	void ChangeActiveState();
 	void SetDropTimer();
 	void ResetLocationToStartPoint();
-	//void CreateItemSpawnActor();
 
 protected:
 	// Called when the game starts or when spawned
@@ -56,16 +55,9 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<AActor> EndPoint;
 
-	/*UPROPERTY(VisibleAnywhere)
-	TObjectPtr<AActor> DropPoint;*/
-
 	FVector MoveForce;
 
 	bool bIsActive = false;
 
 	TObjectPtr<AVRProjectGameModeBase> GameMode;
-
-	//UPROPERTY(EditAnywhere)
-	//TSubclassOf<AItemSpawnActor> BPItemSpawner;
-
 };

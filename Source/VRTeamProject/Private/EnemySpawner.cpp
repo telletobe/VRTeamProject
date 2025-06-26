@@ -25,16 +25,6 @@ AEnemySpawner::AEnemySpawner()
 	PoolIndex = EnemyPoolSize - 1;
 }
 
-
-//void AEnemySpawner::CreateEnemySpawner()
-//{
-//	if (BPEnemySpawner)
-//	{
-//		AEnemySpawner* Spanwer = GetWorld()->SpawnActor<AEnemySpawner>(BPEnemySpawner,FVector(-1350.0f,3200.0f,350.0f),FRotator(0,0,0));
-//	}
-//}
-
-
 void AEnemySpawner::CreateEnemy()
 {
 	const FVector SpawnPoint = FMath::RandPointInBox(SpawnBox->Bounds.GetBox());
