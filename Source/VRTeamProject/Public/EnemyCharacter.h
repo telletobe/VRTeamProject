@@ -133,7 +133,7 @@ private:
 	//Death ¾Ö´Ô°ü·Ã
 	UPROPERTY(EditAnywhere, Category = "Animation")
 	TObjectPtr<UAnimMontage> DeathMontage;
-
+	
 	FTimerHandle DeathAnimTimerHandle;
 
 };
