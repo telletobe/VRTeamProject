@@ -7,6 +7,7 @@
 #include <VRProjectGameModeBase.h>
 #include "Engine/TargetPoint.h"
 
+
 /*
 	메모리 해제는 게임모드에서 처리
 */
@@ -24,7 +25,6 @@ AEnemySpawner::AEnemySpawner()
 	SpawnBox = CreateDefaultSubobject<UBoxComponent>(TEXT("SpawnBox"));
 	SetRootComponent(SpawnBox);
 
-	CreateDelay = 0.1f;
 	SpawnDelay = 0.7f;
 	PoolIndex = EnemyPoolSize - 1;
 }
@@ -35,27 +35,29 @@ void AEnemySpawner::CreateEnemy()
 	const FVector SpawnPoint = FMath::RandPointInBox(SpawnBox->Bounds.GetBox());
 	bool bIsSpawn = true;
 
+	AVRProjectGameModeBase* GameMode = Cast<AVRProjectGameModeBase>(GetWorld()->GetAuthGameMode());
+
 	if (bIsSpawn)
 	{
 		TSubclassOf<AEnemyCharacter> CommonEnemy = LoadClass<AEnemyCharacter>(nullptr, TEXT("/Script/Engine.Blueprint'/Game/Character/Enemy/BP_EnemyCharacter.BP_EnemyCharacter_C'"));
 		if (CommonEnemy)
 		{
-			if (EnemyPool.Num() < EnemyPoolSize)
+			for (int32 i = 0; i < EnemyPoolSize; i++)
 			{
-				AEnemyCharacter* SpawnedEnemy = GetWorld()->SpawnActor<AEnemyCharacter>(CommonEnemy, SpawnPoint, FRotator(0));
+				FActorSpawnParameters SpawnParams;
+				SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+				AEnemyCharacter* SpawnedEnemy = GetWorld()->SpawnActor<AEnemyCharacter>(CommonEnemy, SpawnPoint, FRotator(0),SpawnParams);
 
 				if (SpawnedEnemy)
 				{
 					SpawnedEnemy->SpawnDefaultController();
+					SpawnedEnemy->FindSpawnPoint();
+					SpawnedEnemy->FindDeSpawnPoint();
 					SpawnedEnemy->DeSpawn();
-					SpawnedEnemy->OnEnemyKilled.AddDynamic(this,&AEnemySpawner::IncreaseKillCount);
-					SpawnedEnemy->OnEnemyDeSpawn.AddDynamic(this, &AEnemySpawner::CheckGameClear);
+					SpawnedEnemy->OnEnemyKilled.AddDynamic(GameMode, &AVRProjectGameModeBase::InCreaseKillCnt);
+
 					EnemyPool.Add(SpawnedEnemy);
-				}				
-			}
-			else
-			{
-				GetWorld()->GetTimerManager().ClearTimer(CreateHandle);
+				}
 			}
 		}
 		else
@@ -68,7 +70,7 @@ void AEnemySpawner::CreateEnemy()
 void AEnemySpawner::SpawnEnemy()
 {
 	// 메모리에 할당되어있는 Enemy를 활성화 시키는 코드
-	if (EnemyPool.Num() == 0) return;
+	if (EnemyPool.Num() <= 0) return;
 
 	for (int32 i = 0; i < EnemyPool.Num(); ++i)
 	{
@@ -85,7 +87,7 @@ void AEnemySpawner::SpawnEnemy()
 void AEnemySpawner::DeActivateEnemySpawner()
 {
 	//메모리에 할당은 유지하면서, Enemy를 보이지않게 함.
-	GetWorld()->GetTimerManager().ClearTimer(SpawnHandle);
+
 
 	if (EnemyPool.Num() != 0)
 	{
@@ -105,35 +107,34 @@ void AEnemySpawner::ActivateEnemySpawner()
 	GetWorld()->GetTimerManager().SetTimer(SpawnHandle, this, &AEnemySpawner::SpawnEnemy, SpawnDelay, true);
 }
 
-void AEnemySpawner::CheckGameClear()
-{
-	//적이 죽을 때, 게임모드의 클리어 상태를 체크해서 킬카운트를 증가. 
-	//조건에 따라 게임을 클리어, 혹은 플레이어 사망으로 인한 스포너 비활성 처리
-	UE_LOG(LogTemp, Warning, TEXT("CurrentKillCnt : %d , RequiredKillCnt : %d"), CurrentKillCnt, RequiredKillCnt);
-	if (IsValid(GameMode))
-	{
-		if (!(GameMode->IsClear()))
-		{
-			UE_LOG(LogTemp, Warning, TEXT("GameMode:Player Alive : %s"), GameMode->IsPlayerAlive() ? TEXT("true") : TEXT("False"));
-			if (CurrentKillCnt >= RequiredKillCnt)
-			{			
-				GameMode->TriggerGameClear();
-				CurrentKillCnt = 1;
-
-			}
-			 if (!(GameMode->IsPlayerAlive()))
-	  		 {
-				 DeActivateEnemySpawner();
-				 CurrentKillCnt = 1;
-			 }
-		}
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("GameMode Is not Valid"));
-		return;
-	}
-}
+//void AEnemySpawner::CheckGameClear()
+//{
+//	//적이 죽을 때, 게임모드의 클리어 상태를 체크해서 킬카운트를 증가. 
+//	//조건에 따라 게임을 클리어, 혹은 플레이어 사망으로 인한 스포너 비활성 처리
+//	UE_LOG(LogTemp, Warning, TEXT("CurrentKillCnt : %d , RequiredKillCnt : %d"), CurrentKillCnt, RequiredKillCnt);
+//	if (IsValid(GameMode))
+//	{
+//		if (!(GameMode->IsClear()))
+//		{
+//			if (CurrentKillCnt >= RequiredKillCnt)
+//			{			
+//				GameMode->TriggerGameClear();
+//				CurrentKillCnt = 0;
+//
+//			}
+//			 if (!(GameMode->IsPlayerAlive()))
+//	  		 {
+//				 DeActivateEnemySpawner();
+//				 CurrentKillCnt = 0;
+//			 }
+//		}
+//	}
+//	else
+//	{
+//		UE_LOG(LogTemp, Warning, TEXT("GameMode Is not Valid"));
+//		return;
+//	}
+//}
 
 void AEnemySpawner::IncreaseKillCount()
 {
@@ -145,26 +146,12 @@ void AEnemySpawner::BeginPlay()
 {
 	Super::BeginPlay();
 
-	GameMode = Cast<AVRProjectGameModeBase>(GetWorld()->GetAuthGameMode());
-	if (GameMode)
-	{
-		GameMode->OnRestart.AddUniqueDynamic(this,&AEnemySpawner::ActivateEnemySpawner);
-	}
-
 	CurrentKillCnt = 0;
-
-	if (CreateDelay <= 0)
-	{
-		CreateDelay = 0.1f;
-	}
 
 	if (SpawnDelay <= 0)
 	{
 		SpawnDelay = 0.7f;
 	}
-
-	GetWorld()->GetTimerManager().SetTimer(CreateHandle,this,&AEnemySpawner::CreateEnemy,CreateDelay,true); // Enemy 메모리 할당
-	GetWorld()->GetTimerManager().SetTimer(SpawnHandle, this, &AEnemySpawner::SpawnEnemy, SpawnDelay, true); // Enemy 활성화
 }
 
 // Called every frame

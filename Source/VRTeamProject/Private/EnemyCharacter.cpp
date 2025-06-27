@@ -54,8 +54,11 @@ void AEnemyCharacter::BeginPlay()
 	USkeletalMeshComponent* EnemyMesh = GetMesh();
 	EnemyMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
-	FindSpawnPoint();
-	FindDeSpawnPoint();
+
+	if (APlayerCharacter* Player = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(this, 0)))
+	{
+		OnEnemyAttack.AddDynamic(Player, &APlayerCharacter::TakenDamage);
+	}
 }
 
 // Called every frame
@@ -120,26 +123,31 @@ void AEnemyCharacter::SetAtk(float EnemyAtk)
 
 void AEnemyCharacter::FindSpawnPoint()
 {
-	//Enemy가 활성될 때 위치할 곳
-	TArray<AActor*> FoundEndPoint;
+	////Enemy가 활성될 때 위치할 곳
+	TArray<AActor*> FoundPoint;
 	TArray<AActor*> RandomPoint;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ATargetPoint::StaticClass(), FoundEndPoint);
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ATargetPoint::StaticClass(), FoundPoint);
 
-	for (const auto& StartPoint : FoundEndPoint)
+	for (const auto& StartPoint : FoundPoint)
 	{
 		if (Cast<ATargetPoint>(StartPoint))
-		{
-			if (!SpawnPoint)
+		{		
+			UE_LOG(LogTemp, Warning, TEXT("Found point"));
+			if (StartPoint->ActorHasTag(TEXT("EnemySpawnPoint")))
 			{
-				if (StartPoint->ActorHasTag(TEXT("EnemySpawnPoint")))
-				{
-					RandomPoint.Add(StartPoint);
-				}
-			}
+				SpawnPoint = StartPoint;
+				RandomPoint.Add(StartPoint);
+			}	
 		}
 	}
-
-	SpawnPoint = RandomPoint[FMath::RandRange(0,RandomPoint.Num()-1)];
+	if (RandomPoint.Num() > 0)
+	{
+		SpawnPoint = RandomPoint[FMath::RandRange(0,RandomPoint.Num()-1)];
+	}
+	else
+	{
+		UE_LOG(LogTemp,Warning,TEXT("no valid spawn points with tag 'EnemySpawnPoint' found"));
+	}
 }
 
 void AEnemyCharacter::FindDeSpawnPoint()
@@ -178,7 +186,6 @@ void AEnemyCharacter::DeSpawn()
 
 	SetActorHiddenInGame(true);
 	bIsActive = false;
-	BoradCastEnemyDeSpawn();
 	SetActorTickEnabled(false);
 }
 
@@ -215,15 +222,14 @@ void AEnemyCharacter::BroadcastEnemyKilled()
 	OnEnemyKilled.Broadcast();
 }
 
-void AEnemyCharacter::BoradCastEnemyDeSpawn()
+void AEnemyCharacter::BoradCastEnemyAttack()
 {
-	OnEnemyDeSpawn.Broadcast();
+	OnEnemyAttack.Broadcast(GetAtk());
 }
 
 void AEnemyCharacter::EnemyDeathAnimEnded()
 {
 	bIsDeathAnim = false;
-	BroadcastEnemyKilled();
 	DeSpawn();
 }
 
@@ -269,6 +275,7 @@ void AEnemyCharacter::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, A
 				if (IsDeathAnim() == false)
 				{
 					FTimerHandle AnimEndNotifyHandle;
+					BroadcastEnemyKilled();
 					PlayDeathMontage();
 					GetWorldTimerManager().SetTimer(AnimEndNotifyHandle, [this]() {OnEnemyDeathAnimEnded.Broadcast(); }, 3.0f, false);
 				}
@@ -287,16 +294,8 @@ void AEnemyCharacter::OnComponentHit(UPrimitiveComponent* HitComponent, AActor* 
 		UE_LOG(LogTemp, Warning, TEXT("Player IsValid"));
 		float PlayerCurrentHp = Player->GetHp();
 		float PlayerHp = PlayerCurrentHp - (GetAtk() - Player->GetDef());
-		if (PlayerHp > 0)
-		{
-			Player->SetHp(PlayerHp);
-			Player->NotifyPlayerChangeHealth();
-		}
-		else
-		{
-			Player->NotifyPlayerDeath();
-			Player->PlayerDeSpawn();
-		}
+
+		BoradCastEnemyAttack();
 		DeSpawn();
 	}
 }

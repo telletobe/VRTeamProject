@@ -22,10 +22,11 @@ public:
 	void CreateEnemy();
 	void SpawnEnemy();
 	TArray<AEnemyCharacter*>& GetEnemyPool() { return EnemyPool; }
+	FTimerHandle& GetSpawnHandle() { return SpawnHandle; }
+	float GetSpawnDelay() const { return SpawnDelay; }
 
-
-	UFUNCTION()
-	void CheckGameClear();
+	//UFUNCTION()
+	//void CheckGameClear();
 
 	UFUNCTION()
 	void IncreaseKillCount();
@@ -52,20 +53,14 @@ private :
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UBoxComponent> SpawnBox;
 
-	FTimerHandle CreateHandle;
 	FTimerHandle SpawnHandle;
 
 	TArray<AEnemyCharacter*> EnemyPool;
 
 	UPROPERTY(EditAnywhere, category = "EnemyPool")
-	float CreateDelay;
-
-	UPROPERTY(EditAnywhere, category = "EnemyPool")
-	float SpawnDelay;
+	float SpawnDelay = 0.7f;
 
 	int32 PoolIndex = 0;
 
 	bool bIsClear = false;
-
-	TObjectPtr<AVRProjectGameModeBase> GameMode;
 };

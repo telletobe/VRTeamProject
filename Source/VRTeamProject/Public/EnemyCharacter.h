@@ -8,7 +8,7 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnEnemyKilled);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnEnemyDeathAnimEnded);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnEnemyDeSpawn);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnEnemyAttack,float, Atk);
 
 class AAIController;
 class UNavigationInvokerComponent;
@@ -52,10 +52,10 @@ public:
 	void Spawn();
 
 	void BroadcastEnemyKilled();
-	void BoradCastEnemyDeSpawn();
+	void BoradCastEnemyAttack();
 
 	UPROPERTY()
-	FOnEnemyDeSpawn OnEnemyDeSpawn;
+	FOnEnemyAttack OnEnemyAttack;
 
 	UPROPERTY()
 	FOnEnemyKilled OnEnemyKilled;
@@ -68,15 +68,12 @@ public:
 
 	UFUNCTION()
 	void EnemyDeathAnimEnded();
+
+	void FindSpawnPoint();
+	void FindDeSpawnPoint();
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
-private :
-	void FindSpawnPoint();
-	void FindDeSpawnPoint();
-
-
 
 public :
 

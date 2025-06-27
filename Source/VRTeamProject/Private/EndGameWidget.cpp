@@ -33,10 +33,8 @@ void UEndGameWidget::NativeConstruct()
 
 void UEndGameWidget::ShowEndGame() 
 {
-	UE_LOG(LogTemp, Warning, TEXT("Call ShowEndGame"));
 	if (APlayerController* PC = GetOwningPlayer())
 	{
-		UE_LOG(LogTemp,Warning,TEXT("Call ShowEndGame"));
 		APlayerCharacter* Player = Cast<APlayerCharacter>(PC->GetPawn());
 		UWidgetComponent* WidgetComp = Player->GetWidgetComponent();
 		if (IsValid(WidgetComp))
@@ -45,7 +43,12 @@ void UEndGameWidget::ShowEndGame()
 			////////////////////
 			#if WITH_EDITOR
 			AddToViewport();
-			PC->SetShowMouseCursor(true);
+			PC->bShowMouseCursor = true;
+
+			FInputModeUIOnly InputMode;
+			InputMode.SetWidgetToFocus(TakeWidget()); // 현재 위젯에 포커스 설정
+			InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+			PC->SetInputMode(InputMode);
 			#endif
 			/////////////////////
 			
@@ -75,6 +78,10 @@ void UEndGameWidget::ReStart()
 	}
 	////////////////////////
 	#if WITH_EDITOR
+	if (APlayerController* PC = GetOwningPlayer()) 
+	{
+		PC->SetInputMode(FInputModeGameAndUI());
+	}
 		RemoveFromParent();
 	#endif
 	/////////////////////////

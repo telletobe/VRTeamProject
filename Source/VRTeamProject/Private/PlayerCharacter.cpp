@@ -14,6 +14,8 @@
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include <VRProjectGameModeBase.h>
+#include "EnemyCharacter.h"
+#include "EngineUtils.h"
 // Sets default values
 // 커밋용 주석추가
 APlayerCharacter::APlayerCharacter()
@@ -162,12 +164,15 @@ void APlayerCharacter::BeginPlay()
 	{
 		SetExp(0.0f);
 	}
+
+
 	/////////////////////////////////
 	// 플레이어가 사망시 GameEndWidget을 보여주고 ReStart버튼을 누르면 눈에보이던 레이저 메쉬제거용
 	AVRProjectGameModeBase* GameMode = Cast<AVRProjectGameModeBase>(GetWorld()->GetAuthGameMode());
 	if (GameMode)
 	{
 		GameMode->OnRestart.AddUniqueDynamic(this,&APlayerCharacter::InVisibleRezerMesh);
+		GameMode->OnRestart.AddUniqueDynamic(this, &APlayerCharacter::PlayerReSpawn);
 	}
 	////////////////////////////////
 }
@@ -260,13 +265,28 @@ void APlayerCharacter::PlayerReSpawn()
 	{
 		PlayerController->SetIgnoreMoveInput(false);
 		bMouseClickEnable = true;
-	}
+	} 
 
 	SetHp(GetMaxHp());
 
 	if (Weapon) Weapon->SetActorHiddenInGame(false);
 	bIsActive = true;
 	SetActorHiddenInGame(false);
+}
+
+void APlayerCharacter::TakenDamage(float Damage)
+{
+	float PlayerHp = GetHp();
+	if (PlayerHp >= 0)
+	{
+		SetHp(PlayerHp - (Damage-GetDef()));
+		NotifyPlayerChangeHealth();
+	}
+	else
+	{
+		NotifyPlayerDeath();
+		PlayerDeSpawn();
+	}
 }
 
 void APlayerCharacter::PlayerDeSpawn()

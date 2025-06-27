@@ -10,6 +10,8 @@
 #include <ItemSpawnActor.h>
 #include <WeatherManager.h>
 
+
+
 AVRProjectGameModeBase::AVRProjectGameModeBase()
 {
 
@@ -17,7 +19,7 @@ AVRProjectGameModeBase::AVRProjectGameModeBase()
 		
 	DefaultPawnClass = APlayerCharacter::StaticClass();
 	HUDClass = APlayerHUD::StaticClass();
-	
+
 }
 
 void AVRProjectGameModeBase::BeginPlay()
@@ -32,6 +34,9 @@ void AVRProjectGameModeBase::BeginPlay()
 		Player->OnPlayerDeath.AddDynamic(this, &AVRProjectGameModeBase::ChangePlayerAliveState);
 		Player->OnPlayerDeath.AddDynamic(this, &AVRProjectGameModeBase::CleanupGameItem);
 	}
+
+
+
 }
 
 
@@ -57,18 +62,9 @@ void AVRProjectGameModeBase::TriggerGameStart()
 void AVRProjectGameModeBase::TriggerGameReStart()
 {
 	GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::MakeRandomColor(), TEXT("ReStart Game"));
+
 	bIsClear = false;
-	APlayerCharacter* Player = Cast<APlayerCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn());
-	if (Player)
-	{
-		Player->PlayerReSpawn();
-		bPlayerAlive = true;
-	}
-	else
-	{
-		UE_LOG(LogTemp,Warning,TEXT("Player Is Destroyed"));
-		return;
-	}
+	bPlayerAlive = true;
 
 	CleanupGameItem();
 	NotifyReStart();
@@ -108,7 +104,6 @@ void AVRProjectGameModeBase::CleanupAfterGameClear() //게임 클리어 시 플레이어를
 			{
 				if (IsValid(Enemy))
 				{
-					Enemy->OnEnemyKilled.RemoveDynamic(EnemySpanwer, &AEnemySpawner::CheckGameClear);
 					Enemy->OnEnemyKilled.RemoveDynamic(EnemySpanwer, &AEnemySpawner::IncreaseKillCount);
 					Enemy->Destroy();
 				}
@@ -179,12 +174,16 @@ void AVRProjectGameModeBase::InitializeGameObjects() // 게임 start시 오브젝트의 
 		}
 	}
 
-
 	if (BPEnemySpawner)
 	{
 		if (!bEnemySpawnerExists)
 		{
-			AEnemySpawner* Spanwer = GetWorld()->SpawnActor<AEnemySpawner>(BPEnemySpawner, FVector(-1350.0f, 3200.0f, 350.0f), FRotator(0, 0, 0));
+			if (!Spanwer)
+			{
+				Spanwer = GetWorld()->SpawnActor<AEnemySpawner>(BPEnemySpawner, FVector(-1350.0f, 3200.0f, 350.0f), FRotator(0, 0, 0));
+				Spanwer->CreateEnemy();
+				GetWorldTimerManager().SetTimer(Spanwer->GetSpawnHandle(), Spanwer.Get(), &AEnemySpawner::SpawnEnemy, Spanwer->GetSpawnDelay(), true);
+			}			
 			bEnemySpawnerExists = true;
 		}
 	}
@@ -204,6 +203,14 @@ void AVRProjectGameModeBase::InitializeGameObjects() // 게임 start시 오브젝트의 
 	else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Make sure to assign this in the editor before running the game."));
+	}
+}
+
+void AVRProjectGameModeBase::CheckGameClear()
+{
+	if (RequiredKillCnt >= CurrentKillCnt)
+	{
+		TriggerGameClear();
 	}
 }
 

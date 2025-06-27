@@ -27,6 +27,8 @@ public :
 	bool IsClear() const { return bIsClear; }
 	bool IsPlayerAlive() const { return bPlayerAlive; }
 	void InitializeGameObjects();
+	void InCreaseKillCnt() { CurrentKillCnt++; }
+	void CheckGameClear();
 
 	UFUNCTION()
 	void CleanupGameItem();
@@ -48,12 +50,18 @@ private:
 	bool bItemSpawnerExists = false;
 	bool bEnemySpawnerExists = false;
 
+	int32 CurrentKillCnt = 0;
+	int32 RequiredKillCnt = 20;
+
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<AItemSpawnActor> BPItemSpawner;
 
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<AEnemySpawner> BPEnemySpawner;
+
+	UPROPERTY()
+	TObjectPtr<AEnemySpawner> Spanwer;
 
 	UPROPERTY()
 	TObjectPtr<UWeatherManager> WeatherManager;

@@ -50,7 +50,13 @@ public:
 	float GetDefaultDef () const { return DefaultDef; }
 
 	void ApplyEffectItem(const EItemEffectData& Data);
+
+	UFUNCTION()
 	void PlayerReSpawn();
+
+	UFUNCTION()
+	void TakenDamage(float Damage);
+
 	void PlayerDeSpawn();
 	void NotifyPlayerDeath();
 	void NotifyPlayerChangeHealth();
