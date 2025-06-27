@@ -75,7 +75,7 @@ void AVRProjectGameModeBase::TriggerGameReStart()
 	return;
 }
 
-void AVRProjectGameModeBase::CleanupAfterGameClear()
+void AVRProjectGameModeBase::CleanupAfterGameClear() //게임 클리어 시 플레이어를 제외한 메모리 할당 해제
 {
 	TArray<AActor*> FoundActor;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AActor::StaticClass(), FoundActor);
@@ -103,8 +103,8 @@ void AVRProjectGameModeBase::CleanupAfterGameClear()
 			{
 				if (IsValid(Enemy))
 				{
-					Enemy->OnEnemyDespawned.RemoveDynamic(EnemySpanwer, &AEnemySpawner::CheckGameClear);
-					Enemy->OnEnemyDeath.RemoveDynamic(EnemySpanwer, &AEnemySpawner::IncreaseKillCount);
+					Enemy->OnEnemyKilled.RemoveDynamic(EnemySpanwer, &AEnemySpawner::CheckGameClear);
+					Enemy->OnEnemyKilled.RemoveDynamic(EnemySpanwer, &AEnemySpawner::IncreaseKillCount);
 					Enemy->Destroy();
 				}
 			}
@@ -113,7 +113,7 @@ void AVRProjectGameModeBase::CleanupAfterGameClear()
 	}
 }
 
-void AVRProjectGameModeBase::CleanupGameItem()
+void AVRProjectGameModeBase::CleanupGameItem() // 플레이어 사망시 아이템 메모리 할당해제
 {
 	TArray<AActor*> FoundActor;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AActor::StaticClass(), FoundActor);
@@ -130,8 +130,11 @@ void AVRProjectGameModeBase::CleanupGameItem()
 	}
 }
 
-void AVRProjectGameModeBase::InitializeGameObjects()
+void AVRProjectGameModeBase::InitializeGameObjects() // 게임 오브젝트의 초기화(클래스 변수 할당)
 {
+	/*
+		날씨정보를 가져오는 오브젝트 할당 및 정보가져옴.
+	*/
 
 	if (!WeatherManager)
 	{

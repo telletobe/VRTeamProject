@@ -7,6 +7,10 @@
 #include <PlayerCharacter.h>
 #include "MotionControllerComponent.h"
 
+/*
+	무기의 메모리 할당과 해제는 PlayerCharacter에서 처리함
+*/
+
 // Sets default values
 APlayerWeapon::APlayerWeapon()
 {

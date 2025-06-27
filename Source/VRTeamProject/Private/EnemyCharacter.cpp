@@ -10,6 +10,11 @@
 #include "PlayerCharacter.h"
 #include "PlayerBulletActor.h"
 
+/*
+	Enemy class 의메모리의 할당은 Spawner 클래스에서 담당함.
+	메모리 해제는 게임모드에서 관리
+*/
+
 AEnemyCharacter::AEnemyCharacter()
 {
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
@@ -115,6 +120,7 @@ void AEnemyCharacter::SetAtk(float EnemyAtk)
 
 void AEnemyCharacter::FindSpawnPoint()
 {
+	//Enemy가 활성될 때 위치할 곳
 	TArray<AActor*> FoundEndPoint;
 	TArray<AActor*> RandomPoint;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ATargetPoint::StaticClass(), FoundEndPoint);
@@ -138,6 +144,7 @@ void AEnemyCharacter::FindSpawnPoint()
 
 void AEnemyCharacter::FindDeSpawnPoint()
 {
+	//Enemy가 비활성 될 때 이동할 곳
 	TArray<AActor*> FoundEndPoint;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ATargetPoint::StaticClass(), FoundEndPoint);
 
@@ -158,6 +165,7 @@ void AEnemyCharacter::FindDeSpawnPoint()
 
 void AEnemyCharacter::DeSpawn()
 {
+	//메모리에서 제거하지않고 비활성으로 전환
 	if (IsValid(DeSpawnPoint))
 	{
 		SetActorLocation(DeSpawnPoint->GetActorLocation());
@@ -170,12 +178,13 @@ void AEnemyCharacter::DeSpawn()
 
 	SetActorHiddenInGame(true);
 	bIsActive = false;
-	NotifyEnemyDespawn();
+	BroadcastEnemyKilled();
 	SetActorTickEnabled(false);
 }
 
 void AEnemyCharacter::Spawn()
 {
+	//메모리에 상주중인 데이터를 활성상태로 변경
 	SetActorTickEnabled(true);
 	SetActorHiddenInGame(false);
 	SetActorEnableCollision(true);
@@ -201,20 +210,15 @@ void AEnemyCharacter::Spawn()
 	}
 }
 
-void AEnemyCharacter::NotifyEnemyDespawn()
+void AEnemyCharacter::BroadcastEnemyKilled()
 {
-	OnEnemyDespawned.Broadcast(); // 게임 클리어체크용
-}
-
-void AEnemyCharacter::NotifyEnemyDeath()
-{
-	OnEnemyDeath.Broadcast(); // 킬 카운트 증가용
+	OnEnemyKilled.Broadcast();
 }
 
 void AEnemyCharacter::EnemyDeathAnimEnded()
 {
 	bIsDeathAnim = false;
-	NotifyEnemyDeath();
+	BroadcastEnemyKilled();
 	DeSpawn();
 }
 

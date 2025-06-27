@@ -6,8 +6,7 @@
 #include "GameFramework/Character.h"
 #include "EnemyCharacter.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnEnemyDespawned);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnEnemyDeath);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnEnemyKilled);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnEnemyDeathAnimEnded);
 
 class AAIController;
@@ -51,15 +50,12 @@ public:
 	void DeSpawn();
 	void Spawn();
 
-	void NotifyEnemyDespawn();
-	void NotifyEnemyDeath();
+	void BroadcastEnemyKilled();
 
 
-	UPROPERTY()
-	FOnEnemyDespawned OnEnemyDespawned;
 
 	UPROPERTY()
-	FOnEnemyDeath OnEnemyDeath;
+	FOnEnemyKilled OnEnemyKilled;
 
 	UPROPERTY()
 	FOnEnemyDeathAnimEnded OnEnemyDeathAnimEnded;
@@ -129,11 +125,9 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Anim")
 	bool bIsDeathAnim = false;
 
-
 	//Death ¾Ö´Ô°ü·Ã
 	UPROPERTY(EditAnywhere, Category = "Animation")
 	TObjectPtr<UAnimMontage> DeathMontage;
 
-	FTimerHandle DeathAnimTimerHandle;
 
 };

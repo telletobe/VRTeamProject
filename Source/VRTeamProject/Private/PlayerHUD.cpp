@@ -8,6 +8,10 @@
 #include "Blueprint/UserWidget.h"
 #include <EndGameWidget.h>
 
+/*
+	UserWidgetclass의 관리
+*/
+
 APlayerHUD::APlayerHUD()
 {
 	static ConstructorHelpers::FClassFinder<UMapSelectWidget> Selectwidget(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UMG/MapUI/WBP_MapSelectWidget.WBP_MapSelectWidget_C'"));
@@ -78,61 +82,63 @@ void APlayerHUD::BeginPlay()
 	EndGameInstance->RemoveFromParent();
 }
 
-void APlayerHUD::ToggleMapSelect()
-{
-	if (IsValid(MapSelectInstance))
-	{
-		if (MapSelectInstance->IsInViewport())
-		{
-			MapSelectInstance->RemoveFromParent();      // 커서 OFF
-			if (PC)
-			{
-				PC->bShowMouseCursor = false;
-				PC->SetInputMode(FInputModeGameOnly());
-			}
-		}
-		else
-		{
-			if (PlayerStateInstance->IsInViewport())
-			{
-				PlayerStateInstance->RemoveFromParent();
-			}
-			MapSelectInstance->AddToViewport();      // 커서 ON
-			if (PC) 
-			{
-				PC->bShowMouseCursor = true;
-				PC->SetInputMode(Mode);
-			}
-		}
-	}
-}
+//PC버전
 
-void APlayerHUD::PlayerStateShow()
-{
-	if (IsValid(PlayerStateInstance))
-	{
-		if (GetWorld()->GetMapName().Contains("Map"))
-		{
-			if (PlayerStateInstance->IsInViewport())
-			{
-				PlayerStateInstance->RemoveFromParent();
-				PC->bShowMouseCursor = false;
-				if (PC) PC->SetInputMode(FInputModeGameOnly());
-			}
-			else
-			{
-				if (MapSelectInstance->IsInViewport())
-				{
-					MapSelectInstance->RemoveFromParent();
-				}
-				PlayerStateInstance->AddToViewport();
-				PC->bShowMouseCursor = true;
-				if (PC) PC->SetInputMode(Mode);
-			}
-		}	
-	}
-	return;
-}
+//void APlayerHUD::ToggleMapSelect()
+//{
+//	if (IsValid(MapSelectInstance))
+//	{
+//		if (MapSelectInstance->IsInViewport())
+//		{
+//			MapSelectInstance->RemoveFromParent();      // 커서 OFF
+//			if (PC)
+//			{
+//				PC->bShowMouseCursor = false;
+//				PC->SetInputMode(FInputModeGameOnly());
+//			}
+//		}
+//		else
+//		{
+//			if (PlayerStateInstance->IsInViewport())
+//			{
+//				PlayerStateInstance->RemoveFromParent();
+//			}
+//			MapSelectInstance->AddToViewport();      // 커서 ON
+//			if (PC) 
+//			{
+//				PC->bShowMouseCursor = true;
+//				PC->SetInputMode(Mode);
+//			}
+//		}
+//	}
+//}
+//
+//void APlayerHUD::PlayerStateShow()
+//{
+//	if (IsValid(PlayerStateInstance))
+//	{
+//		if (GetWorld()->GetMapName().Contains("Map"))
+//		{
+//			if (PlayerStateInstance->IsInViewport())
+//			{
+//				PlayerStateInstance->RemoveFromParent();
+//				PC->bShowMouseCursor = false;
+//				if (PC) PC->SetInputMode(FInputModeGameOnly());
+//			}
+//			else
+//			{
+//				if (MapSelectInstance->IsInViewport())
+//				{
+//					MapSelectInstance->RemoveFromParent();
+//				}
+//				PlayerStateInstance->AddToViewport();
+//				PC->bShowMouseCursor = true;
+//				if (PC) PC->SetInputMode(Mode);
+//			}
+//		}	
+//	}
+//	return;
+//}
 
 TObjectPtr<UMapSelectWidget> APlayerHUD::GetMapSelectInstance() const
 {

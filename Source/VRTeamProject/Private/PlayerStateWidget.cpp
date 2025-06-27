@@ -8,13 +8,6 @@
 #include "VRProjectGameModeBase.h"
 
 
-void UPlayerStateWidget::ReSetHp()
-{
-	if (HPBar)
-	{
-		HPBar->SetPercent(1.0f);
-	}
-}
 
 
 void UPlayerStateWidget::NativeConstruct()
@@ -35,6 +28,14 @@ void UPlayerStateWidget::NativeConstruct()
 		GameMode->OnRestart.AddUniqueDynamic(this, &UPlayerStateWidget::ReSetHp);
 	}
 	
+}
+
+void UPlayerStateWidget::ReSetHp() //Restart 버튼을 눌럿을떄 활용
+{
+	if (HPBar)
+	{
+		HPBar->SetPercent(1.0f);
+	}
 }
 
 void UPlayerStateWidget::UpdatePlayerHP(float CurrentHp, float MaxHp)

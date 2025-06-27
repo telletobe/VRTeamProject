@@ -7,6 +7,12 @@
 #include <Kismet/GameplayStatics.h>
 #include "Engine/TargetPoint.h"
 #include "VRProjectGameModeBase.h"
+
+/*
+	아이템 스포너 -> 비행기로 표시
+	메모리 해제는 게임모드에서 관리
+*/
+
 // Sets default values
 AItemSpawnActor::AItemSpawnActor()
 {
@@ -26,17 +32,18 @@ AItemSpawnActor::AItemSpawnActor()
 
 void AItemSpawnActor::SpawnItem()
 {
+	//게임모드에서 플레이어의 상태를 받아와서 비행기가 나타 날 때, 플레이어가 살아 있다면 아이템을 드랍.
 	if (GameMode->IsPlayerAlive())
 	{
 		const FVector SpawnPoint = FMath::RandPointInBox(ItemSpawnerCollision->Bounds.GetBox());
 
-		const int32 ItemDropTableCnt = 4;
+		const int32 ItemDropTableCnt = 4; //ItemDropTable값은 ItemTypeEnum 변경시 수치변경 필요
 
 		TSubclassOf<AGameItem> Item = LoadClass<AGameItem>(nullptr, TEXT("/Script/Engine.Blueprint'/Game/Actor/Item/MyGameItem.MyGameItem_C'"));
 		if (Item)
 		{
 			AGameItem* SpawnedItem = GetWorld()->SpawnActor<AGameItem>(Item, SpawnPoint, FRotator(0));
-			const int32 ItemType = FMath::RandRange(0, ItemDropTableCnt - 1);
+			const int32 ItemType = FMath::RandRange(0, ItemDropTableCnt - 1); //아이템 드랍은 랜덤. 확률은 없음.
 
 			switch (ItemType)
 			{
@@ -67,37 +74,11 @@ void AItemSpawnActor::SpawnItem()
 	}
 }
 
-void AItemSpawnActor::MoveToEndPoint(float DeltaTime)
-{
-	const FVector NewLocation = GetActorLocation() + MoveForce * DeltaTime;
-	SetActorLocation(NewLocation);
-	ResetLocationToStartPoint();
-}
-
-void AItemSpawnActor::FindTartgetPoint()
-{
-	TArray<AActor*> TargetPoint;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ATargetPoint::StaticClass(), TargetPoint);
-	for (const auto& ItemPoint : TargetPoint)
-	{
-		if (ATargetPoint* tempPoint = Cast<ATargetPoint>(ItemPoint))
-		{
-			if (tempPoint->ActorHasTag("StartPoint"))
-			{
-				StartPoint = tempPoint;
-				SetActorLocation(StartPoint->GetActorLocation());
-			}
-			else if (tempPoint->ActorHasTag("EndPoint"))
-			{
-				EndPoint = tempPoint;
-			}
-		}
-	}
-}
-
 void AItemSpawnActor::ChangeActiveState()
 {
-	if (!GameMode->IsClear())
+	// beginPlay에서 바인딩 걸어 둔 함수 
+	// 현재 게임클리어 상태에 따라서 아이템을 드랍해주는 비행기를 나타나게 하거나, 나타나지 않게 함.
+	if (!GameMode->IsClear()) 
 	{
 		if (!bIsActive)
 		{
@@ -127,6 +108,7 @@ void AItemSpawnActor::ChangeActiveState()
 
 void AItemSpawnActor::SetDropTimer()
 {
+	//비행기는 일정시간마다 아이템을 드랍하며, 비행기가 활성화되있지않으면 아이템을 드랍하지않음.
 	if (bIsActive)
 	{
 		GetWorld()->GetTimerManager().SetTimer(SpawnItemHandle, this, &AItemSpawnActor::SpawnItem, DropDelay, false);
@@ -134,23 +116,6 @@ void AItemSpawnActor::SetDropTimer()
 	else
 	{
 		GetWorld()->GetTimerManager().ClearTimer(SpawnItemHandle);
-	}
-}
-
-void AItemSpawnActor::ResetLocationToStartPoint()
-{
-	if (IsValid(EndPoint))
-	{
-		if (IsValid(StartPoint))
-		{
-			const float EndDistance = FVector::Dist2D(GetActorLocation(), EndPoint->GetActorLocation());
-			if (EndDistance < 100.0f)
-			{
-				SetActorLocation(StartPoint->GetActorLocation());
-				ChangeActiveState();
-				return;
-			}
-		}
 	}
 }
 
@@ -190,3 +155,51 @@ void AItemSpawnActor::Tick(float DeltaTime)
 	}
 }
 
+//아래의 함수들은 비행기의 이동을 담당하는 함수
+
+void AItemSpawnActor::MoveToEndPoint(float DeltaTime)
+{
+	const FVector NewLocation = GetActorLocation() + MoveForce * DeltaTime;
+	SetActorLocation(NewLocation);
+	ResetLocationToStartPoint();
+}
+
+void AItemSpawnActor::FindTartgetPoint()
+{
+	TArray<AActor*> TargetPoint;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ATargetPoint::StaticClass(), TargetPoint);
+	for (const auto& ItemPoint : TargetPoint)
+	{
+		if (ATargetPoint* tempPoint = Cast<ATargetPoint>(ItemPoint))
+		{
+			if (tempPoint->ActorHasTag("StartPoint"))
+			{
+				StartPoint = tempPoint;
+				SetActorLocation(StartPoint->GetActorLocation());
+			}
+			else if (tempPoint->ActorHasTag("EndPoint"))
+			{
+				EndPoint = tempPoint;
+			}
+		}
+	}
+}
+
+void AItemSpawnActor::ResetLocationToStartPoint()
+{
+	if (IsValid(EndPoint))
+	{
+		if (IsValid(StartPoint))
+		{
+			const float EndDistance = FVector::Dist2D(GetActorLocation(), EndPoint->GetActorLocation());
+			if (EndDistance < 100.0f)
+			{
+				SetActorLocation(StartPoint->GetActorLocation());
+				ChangeActiveState();
+				return;
+			}
+		}
+	}
+}
+
+//////이동 함수 끝

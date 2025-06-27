@@ -79,6 +79,7 @@ void APlayerBulletActor::SetDamage(float BulletDamage)
 
 void APlayerBulletActor::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult) 
 {
+	// 아이템을 부수기위한 이벤트처리
 	if (AGameItem* Item = Cast<AGameItem>(OtherActor))
 	{
 		UGameplayStatics::ApplyDamage(Item, GetDamage(), nullptr, GetOwner(), nullptr); // 총알의 데미지와 총알의오너(무기) 정보 넘겨줌

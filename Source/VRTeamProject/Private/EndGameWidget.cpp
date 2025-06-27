@@ -35,10 +35,10 @@ void UEndGameWidget::ShowEndGame()
 	if (APlayerController* PC = GetOwningPlayer())
 	{
 		APlayerCharacter* Player = Cast<APlayerCharacter>(PC->GetPawn());
-		UWidgetComponent* Widget = Player->GetWidgetComponent();
-		if (IsValid(Widget))
+		UWidgetComponent* WidgetComp = Player->GetWidgetComponent();
+		if (IsValid(WidgetComp))
 		{
-			Widget->SetWidget(this);
+			WidgetComp->SetWidget(this);
 			////////////////////
 			#if WITH_EDITOR
 			AddToViewport();
@@ -46,9 +46,10 @@ void UEndGameWidget::ShowEndGame()
 			#endif
 			/////////////////////
 			
-			if (Widget->GetVisibleFlag() == false)
+			if (WidgetComp->GetVisibleFlag() == false)
 			{
-				Widget->SetVisibility(true);
+				WidgetComp->SetVisibility(true);
+				Player->SetVisibleRazerMesh(true);
 			}
 		}
 		else

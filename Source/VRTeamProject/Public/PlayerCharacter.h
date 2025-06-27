@@ -72,7 +72,10 @@ public:
 	TObjectPtr<UWidgetComponent> GetWidgetComponent() const { return *WidgetComponent; }
 
 	UFUNCTION()
-	void SetVisibleRazerMesh();
+	void SetVisibleRazerMesh(bool visible);
+
+	UFUNCTION()
+	void InVisibleRezerMesh();
 
 protected:
 	// Called when the game starts or when spawned
@@ -118,8 +121,6 @@ private:
 
 	UPROPERTY()
 	TObjectPtr<UInputManager> InputManager;
-
-	FTimerHandle RestoreTimerHandle;
 
 
 	//////// VR

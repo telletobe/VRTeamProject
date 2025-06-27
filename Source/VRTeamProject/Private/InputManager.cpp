@@ -14,6 +14,9 @@
 #include "StageInfoWidget.h"
 #include "Components/WidgetInteractionComponent.h"
 
+/*
+	전반적인 입력을 관리하는 클래스
+*/
 
 TObjectPtr<UInputManager> UInputManager::Instance = nullptr;
 
@@ -74,15 +77,13 @@ void UInputManager::ToggleWidgetVisibility(UWidgetComponent* Widget)
 	if (Widget->IsVisible())
 	{
 		Widget->SetVisibility(false);
-		Player->GetMotionControllerLeftLazerMesh()->SetVisibility(false);
-		Player->GetMotionControllerRightLazerMesh()->SetVisibility(false);
+		Player->SetVisibleRazerMesh(false);
 
 	}
 	else
 	{
 		Widget->SetVisibility(true);
-		Player->GetMotionControllerLeftLazerMesh()->SetVisibility(true);
-		Player->GetMotionControllerRightLazerMesh()->SetVisibility(true);
+		Player->SetVisibleRazerMesh(true);
 	}
 }
 
@@ -97,6 +98,10 @@ UInputManager* UInputManager::GetInstance() {
 
 void UInputManager::Initialize(APlayerCharacter* PlayerCharacter, APlayerController* PC)
 {
+	/*
+		처음 호출될 때 설정하는 함수.
+		클래스 변수들을 이곳에서 설정함.  
+	*/
 	Player = PlayerCharacter;
 
 	if (PC)
@@ -189,13 +194,13 @@ void UInputManager::ToggleMap(const FInputActionValue& Value)
 		
 			if (IsValid(UserWidgetComp))
 			{
-				if (UserWidgetComp->GetUserWidgetObject() == MapSelectInstance)
+				if (UserWidgetComp->GetUserWidgetObject() == MapSelectInstance) // 위젯컴포넌트의 클래스와 허드에 있는 클래스를 비교
 				{
-					ToggleWidgetVisibility(UserWidgetComp);
+					ToggleWidgetVisibility(UserWidgetComp); // 정보가 같다면 COMPONENT의 visible 속성만 조절
 				}
-				else
+				else 
 				{
-					UserWidgetComp->SetWidget(MapSelectInstance);
+					UserWidgetComp->SetWidget(MapSelectInstance); //정보가 다르다면 component의 클래스를 변경 후 visible을 조절함.
 					if (!UserWidgetComp->GetVisibleFlag())
 					{
 						ToggleWidgetVisibility(UserWidgetComp);
@@ -233,13 +238,13 @@ void UInputManager::PlayerStat(const FInputActionValue& Value)
 
 			if (IsValid(UserWidgetComp))
 			{
-				if (UserWidgetComp->GetUserWidgetObject() == PlayerStateInstance)
+				if (UserWidgetComp->GetUserWidgetObject() == PlayerStateInstance) // 위젯컴포넌트의 클래스와 허드에 있는 클래스를 비교
 				{
-					ToggleWidgetVisibility(UserWidgetComp);
+					ToggleWidgetVisibility(UserWidgetComp); // 정보가 같다면 COMPONENT의 visible 속성만 조절
 				}
 				else
 				{
-					UserWidgetComp->SetWidget(PlayerStateInstance);
+					UserWidgetComp->SetWidget(PlayerStateInstance);  //정보가 다르다면 component의 클래스를 변경 후 visible을 조절함.
 					if (!UserWidgetComp->GetVisibleFlag())
 					{
 						ToggleWidgetVisibility(UserWidgetComp);

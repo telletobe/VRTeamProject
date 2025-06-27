@@ -74,7 +74,16 @@ APlayerCharacter::APlayerCharacter()
 	WidgetComponent->SetRelativeLocation(FVector(200.0f,0.0f,0.0f));
 }
 
-void APlayerCharacter::SetVisibleRazerMesh()
+void APlayerCharacter::SetVisibleRazerMesh(bool visible)
+{
+	if (MotionControllerRightLazerMesh || MotionControllerLeftLazerMesh)
+	{
+		MotionControllerRightLazerMesh->SetVisibility(visible);
+		MotionControllerLeftLazerMesh->SetVisibility(visible);
+	}
+}
+
+void APlayerCharacter::InVisibleRezerMesh()
 {
 	if (MotionControllerRightLazerMesh || MotionControllerLeftLazerMesh)
 	{
@@ -115,7 +124,7 @@ void APlayerCharacter::BeginPlay()
 			MotionControllerRightLazerMesh->AttachToComponent(WidgetInteractionRight, FAttachmentTransformRules::KeepRelativeTransform);
 		}
 	}
-	if (!bIsActive)
+	if (!bIsActive) //기본값 false
 	{
 		PlayerReSpawn();
 	}
@@ -154,10 +163,11 @@ void APlayerCharacter::BeginPlay()
 		SetExp(0.0f);
 	}
 	/////////////////////////////////
+	// 플레이어가 사망시 GameEndWidget을 보여주고 ReStart버튼을 누르면 눈에보이던 레이저 메쉬제거용
 	AVRProjectGameModeBase* GameMode = Cast<AVRProjectGameModeBase>(GetWorld()->GetAuthGameMode());
 	if (GameMode)
 	{
-		GameMode->OnRestart.AddUniqueDynamic(this,&APlayerCharacter::SetVisibleRazerMesh);
+		GameMode->OnRestart.AddUniqueDynamic(this,&APlayerCharacter::InVisibleRezerMesh);
 	}
 	////////////////////////////////
 }
@@ -179,12 +189,17 @@ void APlayerCharacter::ApplyEffectItem(const EItemEffectData& Data)
 	//플레이어가 아이템을 파괴 햇을 때, 아이템 효과를 적용받는 함수.
 	//Switch를 활용하여 Data에 들어있는 값으로 효과 적용
 	GEngine->AddOnScreenDebugMessage(-1,3.0f,FColor::Green,TEXT("Player ApplyEffetItem!"));
+	FTimerHandle RestoreTimerHandle;
 	
 	switch (Data)
 	{
 	case EItemEffectData::HEAL:
 		// 예: 체력 20 회복
-		SetHp(GetHp() + 20);;
+		SetHp(GetHp() + 20);
+		if (GetHp() > GetMaxHp())
+		{
+			SetHp(GetMaxHp());
+		}
 		NotifyPlayerChangeHealth();
 		GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Green, TEXT("HEAL applied: +20 HP"));
 		break;
@@ -215,7 +230,7 @@ void APlayerCharacter::ApplyEffectItem(const EItemEffectData& Data)
 		}
 		else
 		{
-			GetWeapon()->SetFireDelay(0.05f);
+			GetWeapon()->SetFireDelay(0.005f);
 		}
 
 		GetWorld()->GetTimerManager().ClearTimer(RestoreTimerHandle);

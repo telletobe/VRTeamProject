@@ -24,11 +24,6 @@ ABulidingBaseActor::ABulidingBaseActor()
 	BulidMiddle->AttachToComponent(BulidingCollision, FAttachmentTransformRules::KeepRelativeTransform);
 }
 
-void ABulidingBaseActor::SetIsArrive(bool IsArrive)
-{
-	bIsArrive = IsArrive;
-}
-
 // Called when the game starts or when spawned
 void ABulidingBaseActor::BeginPlay()
 {
@@ -42,6 +37,25 @@ void ABulidingBaseActor::BeginPlay()
 	StartLocation = GetActorLocation();
 
 }
+
+// Called every frame
+void ABulidingBaseActor::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	if (!bIsArrive)
+	{
+		MovetoTarget(DeltaTime);
+	}
+	else
+	{
+		BackToStartPoint(StartLocation);
+	}
+}
+/*
+	BeginPlay,Tick 밑의 함수들은 TargetPoint를 지정해서 건물을 움직일 수 있게 하는 함수들 '만' 있으므로 
+	건물을 이동시키지 않는다면 함수 전체를 삭제해도 무방함. 함수 삭제 시 BeginPlay 내부 로직도 같이 삭제해야함.
+*/
 
 void ABulidingBaseActor::MovetoTarget(float DeltaTime)
 {
@@ -64,17 +78,7 @@ void ABulidingBaseActor::BackToStartPoint(FVector Location)
 	SetIsArrive(false);
 }
 
-// Called every frame
-void ABulidingBaseActor::Tick(float DeltaTime)
+void ABulidingBaseActor::SetIsArrive(bool IsArrive)
 {
-	Super::Tick(DeltaTime);
-
-	if (!bIsArrive)
-	{
-		MovetoTarget(DeltaTime);
-	}
-	else
-	{
-		BackToStartPoint(StartLocation);
-	}
+	bIsArrive = IsArrive;
 }
