@@ -20,6 +20,8 @@ AVRProjectGameModeBase::AVRProjectGameModeBase()
 	DefaultPawnClass = APlayerCharacter::StaticClass();
 	HUDClass = APlayerHUD::StaticClass();
 
+	CurrentKillCnt = 0;
+	RequiredKillCnt = 20;
 }
 
 void AVRProjectGameModeBase::BeginPlay()
@@ -34,9 +36,6 @@ void AVRProjectGameModeBase::BeginPlay()
 		Player->OnPlayerDeath.AddDynamic(this, &AVRProjectGameModeBase::ChangePlayerAliveState);
 		Player->OnPlayerDeath.AddDynamic(this, &AVRProjectGameModeBase::CleanupGameItem);
 	}
-
-
-
 }
 
 
@@ -104,7 +103,7 @@ void AVRProjectGameModeBase::CleanupAfterGameClear() //게임 클리어 시 플레이어를
 			{
 				if (IsValid(Enemy))
 				{
-					Enemy->OnEnemyKilled.RemoveDynamic(EnemySpanwer, &AEnemySpawner::IncreaseKillCount);
+					Enemy->OnEnemyKilled.RemoveDynamic(this,&AVRProjectGameModeBase::CheckGameClear);
 					Enemy->Destroy();
 				}
 			}
@@ -208,9 +207,15 @@ void AVRProjectGameModeBase::InitializeGameObjects() // 게임 start시 오브젝트의 
 
 void AVRProjectGameModeBase::CheckGameClear()
 {
+	CurrentKillCnt++;
+	UE_LOG(LogTemp,Warning,TEXT("call CheckGameClear"));
 	if (RequiredKillCnt >= CurrentKillCnt)
 	{
 		TriggerGameClear();
+	}
+	else
+	{
+		return;
 	}
 }
 

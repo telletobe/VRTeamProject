@@ -25,12 +25,7 @@ public:
 	FTimerHandle& GetSpawnHandle() { return SpawnHandle; }
 	float GetSpawnDelay() const { return SpawnDelay; }
 
-	//UFUNCTION()
-	//void CheckGameClear();
 
-	UFUNCTION()
-	void IncreaseKillCount();
-	
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -47,8 +42,6 @@ public:
 private :
 
 	const static int32 EnemyPoolSize;
-	const static int32 RequiredKillCnt;
-	static int32 CurrentKillCnt;
 
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UBoxComponent> SpawnBox;

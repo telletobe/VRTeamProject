@@ -184,6 +184,7 @@ void AEnemyCharacter::DeSpawn()
 		SetActorLocation(FVector(FVector::ZeroVector));
 	}
 
+	GetMesh()->SetSimulatePhysics(false);
 	SetActorHiddenInGame(true);
 	bIsActive = false;
 	SetActorTickEnabled(false);
@@ -194,6 +195,7 @@ void AEnemyCharacter::Spawn()
 	//메모리에 상주중인 데이터를 활성상태로 변경
 	SetActorTickEnabled(true);
 	SetActorHiddenInGame(false);
+	GetMesh()->SetSimulatePhysics(true);
 	SetActorEnableCollision(true);
 	AEnemyAIController* EnemyController = Cast<AEnemyAIController>(GetController());
 	APlayerCharacter* Player = Cast<APlayerCharacter>(EnemyController->GetTargetActor());

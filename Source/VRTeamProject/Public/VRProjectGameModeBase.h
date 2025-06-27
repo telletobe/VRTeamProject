@@ -27,8 +27,9 @@ public :
 	bool IsClear() const { return bIsClear; }
 	bool IsPlayerAlive() const { return bPlayerAlive; }
 	void InitializeGameObjects();
-	void InCreaseKillCnt() { CurrentKillCnt++; }
+	UFUNCTION()
 	void CheckGameClear();
+
 
 	UFUNCTION()
 	void CleanupGameItem();

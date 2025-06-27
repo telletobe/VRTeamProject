@@ -13,8 +13,6 @@
 */
 
 const int32 AEnemySpawner::EnemyPoolSize = 20;
-const int32 AEnemySpawner::RequiredKillCnt = 20;
-int32 AEnemySpawner::CurrentKillCnt = 1;
 
 // Sets default values
 AEnemySpawner::AEnemySpawner()
@@ -54,7 +52,7 @@ void AEnemySpawner::CreateEnemy()
 					SpawnedEnemy->FindSpawnPoint();
 					SpawnedEnemy->FindDeSpawnPoint();
 					SpawnedEnemy->DeSpawn();
-					SpawnedEnemy->OnEnemyKilled.AddDynamic(GameMode, &AVRProjectGameModeBase::InCreaseKillCnt);
+					SpawnedEnemy->OnEnemyKilled.AddDynamic(GameMode, &AVRProjectGameModeBase::CheckGameClear);
 
 					EnemyPool.Add(SpawnedEnemy);
 				}
@@ -107,46 +105,11 @@ void AEnemySpawner::ActivateEnemySpawner()
 	GetWorld()->GetTimerManager().SetTimer(SpawnHandle, this, &AEnemySpawner::SpawnEnemy, SpawnDelay, true);
 }
 
-//void AEnemySpawner::CheckGameClear()
-//{
-//	//적이 죽을 때, 게임모드의 클리어 상태를 체크해서 킬카운트를 증가. 
-//	//조건에 따라 게임을 클리어, 혹은 플레이어 사망으로 인한 스포너 비활성 처리
-//	UE_LOG(LogTemp, Warning, TEXT("CurrentKillCnt : %d , RequiredKillCnt : %d"), CurrentKillCnt, RequiredKillCnt);
-//	if (IsValid(GameMode))
-//	{
-//		if (!(GameMode->IsClear()))
-//		{
-//			if (CurrentKillCnt >= RequiredKillCnt)
-//			{			
-//				GameMode->TriggerGameClear();
-//				CurrentKillCnt = 0;
-//
-//			}
-//			 if (!(GameMode->IsPlayerAlive()))
-//	  		 {
-//				 DeActivateEnemySpawner();
-//				 CurrentKillCnt = 0;
-//			 }
-//		}
-//	}
-//	else
-//	{
-//		UE_LOG(LogTemp, Warning, TEXT("GameMode Is not Valid"));
-//		return;
-//	}
-//}
-
-void AEnemySpawner::IncreaseKillCount()
-{
-	CurrentKillCnt++;
-}
-
 // Called when the game starts or when spawned
 void AEnemySpawner::BeginPlay()
 {
 	Super::BeginPlay();
 
-	CurrentKillCnt = 0;
 
 	if (SpawnDelay <= 0)
 	{
