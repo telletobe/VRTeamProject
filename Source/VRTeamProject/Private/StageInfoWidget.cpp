@@ -4,6 +4,7 @@
 #include "StageInfoWidget.h"
 #include "Components/Button.h"
 #include <Kismet/GameplayStatics.h>
+#include <VRProjectGameModeBase.h>
 
 void UStageInfoWidget::Init(const FName& InRegionID, UTexture2D* Thumbnail, int32 Difficulty)
 {
@@ -32,14 +33,23 @@ void UStageInfoWidget::NativeConstruct()
 
 void UStageInfoWidget::GameStart()
 {
-    FLatentActionInfo Latent;
-    Latent.CallbackTarget = this;
-    Latent.ExecutionFunction = "OnStreamLevelLoaded";
-    Latent.Linkage = 0;
-    Latent.UUID = __LINE__;
-    UGameplayStatics::LoadStreamLevel(this, FName(TEXT("FirstMap")), true, true, Latent);
+    AVRProjectGameModeBase* GameMode = Cast<AVRProjectGameModeBase>(GetWorld()->GetAuthGameMode());
+    if (GameMode)
+    {
+        if (!GameMode->IsClear())
+        {
+            return;
+        }
+        else
+        {
+            //로딩설정필요
+            GameMode->TriggerGameStart();
+        }
+    }
+
 }
 
 void UStageInfoWidget::BackToMenu()
 {
+    SetVisibility(ESlateVisibility::Hidden);
 }

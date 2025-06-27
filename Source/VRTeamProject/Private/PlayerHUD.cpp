@@ -74,71 +74,24 @@ void APlayerHUD::BeginPlay()
 
 	Mode.SetHideCursorDuringCapture(false);
 	Mode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+	if (PlayerStateInstance)
+	{
+		PlayerStateInstance->AddToViewport();
+		PlayerStateInstance->RemoveFromParent();
+	}
+	
+	if (EndGameInstance)
+	{
+		EndGameInstance->AddToViewport();
+		EndGameInstance->RemoveFromParent();
+	}
 
-	PlayerStateInstance->AddToViewport();
-	PlayerStateInstance->RemoveFromParent();
+	
+	/*TEST 코드( 제거해야하는 코드*/
+	//PC->SetShowMouseCursor(true);
+	//MapSelectInstance->AddToViewport();
 
-	EndGameInstance->AddToViewport();
-	EndGameInstance->RemoveFromParent();
 }
-
-//PC버전
-
-//void APlayerHUD::ToggleMapSelect()
-//{
-//	if (IsValid(MapSelectInstance))
-//	{
-//		if (MapSelectInstance->IsInViewport())
-//		{
-//			MapSelectInstance->RemoveFromParent();      // 커서 OFF
-//			if (PC)
-//			{
-//				PC->bShowMouseCursor = false;
-//				PC->SetInputMode(FInputModeGameOnly());
-//			}
-//		}
-//		else
-//		{
-//			if (PlayerStateInstance->IsInViewport())
-//			{
-//				PlayerStateInstance->RemoveFromParent();
-//			}
-//			MapSelectInstance->AddToViewport();      // 커서 ON
-//			if (PC) 
-//			{
-//				PC->bShowMouseCursor = true;
-//				PC->SetInputMode(Mode);
-//			}
-//		}
-//	}
-//}
-//
-//void APlayerHUD::PlayerStateShow()
-//{
-//	if (IsValid(PlayerStateInstance))
-//	{
-//		if (GetWorld()->GetMapName().Contains("Map"))
-//		{
-//			if (PlayerStateInstance->IsInViewport())
-//			{
-//				PlayerStateInstance->RemoveFromParent();
-//				PC->bShowMouseCursor = false;
-//				if (PC) PC->SetInputMode(FInputModeGameOnly());
-//			}
-//			else
-//			{
-//				if (MapSelectInstance->IsInViewport())
-//				{
-//					MapSelectInstance->RemoveFromParent();
-//				}
-//				PlayerStateInstance->AddToViewport();
-//				PC->bShowMouseCursor = true;
-//				if (PC) PC->SetInputMode(Mode);
-//			}
-//		}	
-//	}
-//	return;
-//}
 
 TObjectPtr<UMapSelectWidget> APlayerHUD::GetMapSelectInstance() const
 {

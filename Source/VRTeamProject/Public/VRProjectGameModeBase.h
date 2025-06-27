@@ -45,6 +45,8 @@ protected:
 private:
 	bool bIsClear = false;
 	bool bPlayerAlive = true;
+	bool bItemSpawnerExists = false;
+	bool bEnemySpawnerExists = false;
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<AItemSpawnActor> BPItemSpawner;

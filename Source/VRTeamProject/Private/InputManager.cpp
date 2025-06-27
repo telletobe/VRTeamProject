@@ -172,18 +172,6 @@ void UInputManager::Attack(const FInputActionValue& Value)
 
 void UInputManager::ToggleMap(const FInputActionValue& Value)
 {
-	// PC
-	/*APlayerController* PlayerController = Cast<APlayerController>(Player->GetController());
-
-	if (PlayerController != nullptr)
-	{
-		if (IsValid(MyHUD.Get()))
-		{
-			MyHUD.Get()->ToggleMapSelect();       
-
-		}
-	}*/
-
 	// VR
 	if (IsValid(Player))
 	{
@@ -217,17 +205,7 @@ void UInputManager::ToggleMap(const FInputActionValue& Value)
 
 void UInputManager::PlayerStat(const FInputActionValue& Value)
 {
-	//APlayerController* PlayerController = Cast<APlayerController>(Player->GetController());
 
-	//if (PlayerController != nullptr)
-	//{
-	//	if (IsValid(MyHUD.Get()))
-	//	{
-	//		MyHUD.Get()->PlayerStateShow();         // HUD 쪽 함수 호출
-
-	//	}
-	//}
-	
 	//VR
 	if (IsValid(Player))
 	{

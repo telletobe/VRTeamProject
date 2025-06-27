@@ -8,6 +8,7 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnEnemyKilled);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnEnemyDeathAnimEnded);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnEnemyDeSpawn);
 
 class AAIController;
 class UNavigationInvokerComponent;
@@ -51,8 +52,10 @@ public:
 	void Spawn();
 
 	void BroadcastEnemyKilled();
+	void BoradCastEnemyDeSpawn();
 
-
+	UPROPERTY()
+	FOnEnemyDeSpawn OnEnemyDeSpawn;
 
 	UPROPERTY()
 	FOnEnemyKilled OnEnemyKilled;

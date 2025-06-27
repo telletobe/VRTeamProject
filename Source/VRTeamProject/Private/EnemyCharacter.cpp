@@ -178,7 +178,7 @@ void AEnemyCharacter::DeSpawn()
 
 	SetActorHiddenInGame(true);
 	bIsActive = false;
-	BroadcastEnemyKilled();
+	BoradCastEnemyDeSpawn();
 	SetActorTickEnabled(false);
 }
 
@@ -213,6 +213,11 @@ void AEnemyCharacter::Spawn()
 void AEnemyCharacter::BroadcastEnemyKilled()
 {
 	OnEnemyKilled.Broadcast();
+}
+
+void AEnemyCharacter::BoradCastEnemyDeSpawn()
+{
+	OnEnemyDeSpawn.Broadcast();
 }
 
 void AEnemyCharacter::EnemyDeathAnimEnded()

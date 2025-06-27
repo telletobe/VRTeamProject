@@ -6,6 +6,7 @@
 #include "Components/WidgetComponent.h"
 #include "Components/Button.h"
 #include <VRProjectGameModeBase.h>
+#include <Kismet/KismetSystemLibrary.h>
 
 void UEndGameWidget::NativeConstruct()
 {
@@ -32,8 +33,10 @@ void UEndGameWidget::NativeConstruct()
 
 void UEndGameWidget::ShowEndGame() 
 {
+	UE_LOG(LogTemp, Warning, TEXT("Call ShowEndGame"));
 	if (APlayerController* PC = GetOwningPlayer())
 	{
+		UE_LOG(LogTemp,Warning,TEXT("Call ShowEndGame"));
 		APlayerCharacter* Player = Cast<APlayerCharacter>(PC->GetPawn());
 		UWidgetComponent* WidgetComp = Player->GetWidgetComponent();
 		if (IsValid(WidgetComp))
@@ -88,5 +91,13 @@ void UEndGameWidget::ReStart()
 
 void UEndGameWidget::Quit()
 {
-
+	if (APlayerController* PC = GetOwningPlayer())
+	{
+		UKismetSystemLibrary::QuitGame(GetWorld(), PC, EQuitPreference::Quit, false);
+	}
+	else
+	{
+		//컨트롤러 정보가 없을 시 비정상 강제종료.
+		FGenericPlatformMisc::RequestExit(false);
+	}
 }

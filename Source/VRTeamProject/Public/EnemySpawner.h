@@ -19,7 +19,6 @@ class VRTEAMPROJECT_API AEnemySpawner : public AActor
 public:	
 	// Sets default values for this actor's properties
 	AEnemySpawner();
-	//void CreateEnemySpawner();
 	void CreateEnemy();
 	void SpawnEnemy();
 	TArray<AEnemyCharacter*>& GetEnemyPool() { return EnemyPool; }
@@ -47,6 +46,8 @@ public:
 private :
 
 	const static int32 EnemyPoolSize;
+	const static int32 RequiredKillCnt;
+	static int32 CurrentKillCnt;
 
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UBoxComponent> SpawnBox;
@@ -62,11 +63,6 @@ private :
 	UPROPERTY(EditAnywhere, category = "EnemyPool")
 	float SpawnDelay;
 
-	UPROPERTY(VisibleAnywhere, category = "EnemyPool")
-	int32 CurrentKillCnt;
-
-	UPROPERTY(EditAnywhere, category = "EnemyPool")
-	int32 RequiredKillCnt;
 	int32 PoolIndex = 0;
 
 	bool bIsClear = false;

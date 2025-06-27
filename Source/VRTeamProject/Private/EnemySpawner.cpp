@@ -11,7 +11,9 @@
 	메모리 해제는 게임모드에서 처리
 */
 
-const int32 AEnemySpawner::EnemyPoolSize = 100;
+const int32 AEnemySpawner::EnemyPoolSize = 20;
+const int32 AEnemySpawner::RequiredKillCnt = 20;
+int32 AEnemySpawner::CurrentKillCnt = 1;
 
 // Sets default values
 AEnemySpawner::AEnemySpawner()
@@ -22,8 +24,6 @@ AEnemySpawner::AEnemySpawner()
 	SpawnBox = CreateDefaultSubobject<UBoxComponent>(TEXT("SpawnBox"));
 	SetRootComponent(SpawnBox);
 
-	CurrentKillCnt = 1;
-	RequiredKillCnt = 500;
 	CreateDelay = 0.1f;
 	SpawnDelay = 0.7f;
 	PoolIndex = EnemyPoolSize - 1;
@@ -49,7 +49,7 @@ void AEnemySpawner::CreateEnemy()
 					SpawnedEnemy->SpawnDefaultController();
 					SpawnedEnemy->DeSpawn();
 					SpawnedEnemy->OnEnemyKilled.AddDynamic(this,&AEnemySpawner::IncreaseKillCount);
-					SpawnedEnemy->OnEnemyKilled.AddDynamic(this, &AEnemySpawner::CheckGameClear);
+					SpawnedEnemy->OnEnemyDeSpawn.AddDynamic(this, &AEnemySpawner::CheckGameClear);
 					EnemyPool.Add(SpawnedEnemy);
 				}				
 			}
@@ -109,6 +109,7 @@ void AEnemySpawner::CheckGameClear()
 {
 	//적이 죽을 때, 게임모드의 클리어 상태를 체크해서 킬카운트를 증가. 
 	//조건에 따라 게임을 클리어, 혹은 플레이어 사망으로 인한 스포너 비활성 처리
+	UE_LOG(LogTemp, Warning, TEXT("CurrentKillCnt : %d , RequiredKillCnt : %d"), CurrentKillCnt, RequiredKillCnt);
 	if (IsValid(GameMode))
 	{
 		if (!(GameMode->IsClear()))
@@ -151,11 +152,6 @@ void AEnemySpawner::BeginPlay()
 	}
 
 	CurrentKillCnt = 0;
-
-	if (RequiredKillCnt < 1)
-	{
-		RequiredKillCnt = 100;
-	}
 
 	if (CreateDelay <= 0)
 	{
