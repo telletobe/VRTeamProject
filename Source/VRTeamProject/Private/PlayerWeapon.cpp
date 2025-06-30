@@ -15,6 +15,8 @@ APlayerWeapon::APlayerWeapon()
 
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> WeaponMeshData(TEXT("/Script/Engine.Skeleton'/Game/Asset/Weapon/rifle_001_Skeleton.rifle_001_Skeleton'"));
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh> WeaponSkeletalData(TEXT("/Script/Engine.SkeletalMesh'/Game/Asset/Weapon/rifle_001.rifle_001'"));
+	/// Script / Engine.Skeleton'/Game/Asset/Weapon/pistol_001_Skeleton.pistol_001_Skeleton'
+	///Script/Engine.SkeletalMesh'/Game/Asset/Weapon/pistol_001.pistol_001'
 
 	WeaponCollision = CreateDefaultSubobject<USphereComponent>(TEXT("WeaponCollision"));
 	SetRootComponent(WeaponCollision);
