@@ -52,6 +52,12 @@ void AEnemyCharacter::BeginPlay()
 
 	FindSpawnPoint();
 	FindDeSpawnPoint();
+		
+	if (EnemyMesh && EnemyMesh->GetMaterial(0))
+	{
+		DynamicMaterial = UMaterialInstanceDynamic::Create(EnemyMesh->GetMaterial(0), this);
+		EnemyMesh->SetMaterial(0, DynamicMaterial);
+	}
 }
 
 // Called every frame
@@ -220,6 +226,23 @@ void AEnemyCharacter::EnemyDeathAnimEnded()
 	DeSpawn();
 }
 
+void AEnemyCharacter::PlayHitEffect()
+{
+	if (DynamicMaterial)
+	{
+		DynamicMaterial->SetScalarParameterValue(TEXT("HitBlend"), 0.5f);
+
+		FTimerHandle ColorResetTimerHandle;
+		GetWorldTimerManager().SetTimer(ColorResetTimerHandle, [this]()
+			{
+				if (DynamicMaterial)
+				{
+					DynamicMaterial->SetScalarParameterValue(TEXT("HitBlend"), 0.0f);
+				}
+			}, 0.2f, false); // 0.2초 후 원래 색으로 복구
+	}
+}
+
 void AEnemyCharacter::PlayDeathMontage()
 {
 	if (const USkeletalMeshComponent* MeshComp = GetMesh())
@@ -289,6 +312,7 @@ void AEnemyCharacter::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, A
 	{
 		if (GetCurrentHp() > 0)
 		{
+			PlayHitEffect();
 			PlayHitMontage(); // 피격 반응 추가
 			float EnemyHp = GetCurrentHp() - (Bullet->GetDamage() - GetDef());
 			if (EnemyHp > 0)

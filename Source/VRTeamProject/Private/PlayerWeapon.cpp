@@ -38,6 +38,8 @@ APlayerWeapon::APlayerWeapon()
 		WeaponSkeletal->SetRelativeScale3D(FVector(0.4f,0.4f,0.4));
 		WeaponSkeletal->SetRelativeRotation(FRotator(180.0f,180.0f,0));
 		WeaponSkeletal->SetRelativeLocation(FVector(0,0,0.3f));
+		WeaponSkeletal->SetMobility(EComponentMobility::Movable);
+
 
 	}
 
@@ -54,10 +56,12 @@ void APlayerWeapon::BeginPlay()
 		WeaponMesh->SetStaticMesh(WeaponMeshAsset);
 	}
 
-	WeaponMesh->AttachToComponent(WeaponCollision, FAttachmentTransformRules::KeepRelativeTransform);
+	//WeaponMesh->AttachToComponent(WeaponCollision, FAttachmentTransformRules::KeepRelativeTransform);
 	WeaponMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	WeaponMesh->SetSimulatePhysics(false);
 
+	
+	
 }
 
 

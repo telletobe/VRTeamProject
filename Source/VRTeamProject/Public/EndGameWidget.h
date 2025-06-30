@@ -21,12 +21,7 @@ protected:
 	virtual void NativeConstruct() override;
 
 private:
-	UPROPERTY(meta = (Bindwidget))
-	TObjectPtr<UButton> BT_RestartButton;
-
-	UPROPERTY(meta = (Bindwidget))
-	TObjectPtr<UButton> BT_QuitButton;
-
+	
 	
 
 	

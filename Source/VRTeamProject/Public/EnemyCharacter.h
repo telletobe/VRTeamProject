@@ -81,6 +81,10 @@ public:
 
 	UFUNCTION()
 	void EnemyDeathAnimEnded();
+
+	UFUNCTION()
+	void PlayHitEffect();
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -147,6 +151,8 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Anim")
 	bool bIsHitReacting = false;
 
+	UPROPERTY()
+	UMaterialInstanceDynamic* DynamicMaterial;
 
 	//¾Ö´Ô°ü·Ã Death/Attack/Hit
 	UPROPERTY(EditAnywhere, Category = "Animation")
