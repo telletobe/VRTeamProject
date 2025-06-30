@@ -24,7 +24,7 @@ APlayerCharacter::APlayerCharacter()
 	PrimaryActorTick.bCanEverTick = true;
 
 	SetHp(100.0f);
-	SetAtk(5);
+	SetAtk(5.0f);
 	SetDef(1);
 	bIsActive = false;
 	bMouseClickEnable = false;

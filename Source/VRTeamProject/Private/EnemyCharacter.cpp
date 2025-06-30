@@ -16,10 +16,10 @@ AEnemyCharacter::AEnemyCharacter()
 	PrimaryActorTick.bCanEverTick = true;
 
 	//기본 값 세팅
-	SetCurrentHp(1);
+	SetCurrentHp(10);
 	SetDef(1.0f);
-	SetAtk(3.0f);
-	SetSpawnDelay(2.0f);
+	SetAtk(5.0f);
+	SetSpawnDelay(5.0f);
 
 	NavInvoker = CreateDefaultSubobject<UNavigationInvokerComponent>(TEXT("NavInvoker"));
 
@@ -189,6 +189,7 @@ void AEnemyCharacter::Spawn()
 
 	bIsActive = true;
 	bIsDeathAnim = false;
+	bIsAttacking = false;
 
 	if (IsValid(SpawnPoint))
 	{
@@ -238,6 +239,43 @@ void AEnemyCharacter::PlayDeathMontage()
 	}
 }
 
+void AEnemyCharacter::PlayHitMontage()
+{
+	if (const USkeletalMeshComponent* MeshComp = GetMesh())
+	{
+		if (UAnimInstance* AnimInstance = MeshComp->GetAnimInstance())
+		{
+			if (HitMontage && !AnimInstance->Montage_IsPlaying(HitMontage))
+			{
+				bIsHitReacting = true;
+				AnimInstance->Montage_Play(HitMontage);
+				
+				return;
+			}
+		}
+	}
+}
+
+void AEnemyCharacter::PlayAttackMontage()
+{
+	if (const USkeletalMeshComponent* MeshComp = GetMesh())
+	{
+		if (UAnimInstance* AnimInstance = MeshComp->GetAnimInstance())
+		{
+			if (AttackMontage && !AnimInstance->Montage_IsPlaying(AttackMontage))
+			{
+				bIsAttacking = true;
+				AnimInstance->Montage_Play(AttackMontage);
+				
+				GetWorldTimerManager().SetTimer(AttackAnimTimerHandle, [this]()
+					{
+						bIsAttacking = false;
+					}, AttackMontage->GetPlayLength(), false);
+			}
+		}
+	}
+}
+
 void AEnemyCharacter::SetSpawnDelay(float EnemySpawnDelay)
 {
 	SpawnDelay = EnemySpawnDelay;
@@ -251,6 +289,7 @@ void AEnemyCharacter::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, A
 	{
 		if (GetCurrentHp() > 0)
 		{
+			PlayHitMontage(); // 피격 반응 추가
 			float EnemyHp = GetCurrentHp() - (Bullet->GetDamage() - GetDef());
 			if (EnemyHp > 0)
 			{
@@ -273,23 +312,70 @@ void AEnemyCharacter::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, A
 void AEnemyCharacter::OnComponentHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
 	APlayerCharacter* Player = Cast<APlayerCharacter>(OtherActor);
+	if (!IsValid(Player) || bIsDeathAnim || bIsAttacking)	return;
 
-	if (IsValid(Player))
+	// 1. 적 이동 멈추기
+	AEnemyAIController* EnemyController = Cast<AEnemyAIController>(GetController());
+	EnemyController->StopMovement();
+
+	// 2. 공격 애니메이션 재생
+	PlayAttackMontage();
+	bIsAttacking = true;
+
+	// 3. 애니메이션 끝날 때 데미지 처리 → 타이머 사용
+	if (AttackMontage)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Player IsValid"));
-		float PlayerCurrentHp = Player->GetHp();
-		float PlayerHp = PlayerCurrentHp - (GetAtk() - Player->GetDef());
-		if (PlayerHp > 0)
-		{
-			Player->SetHp(PlayerHp);
-			Player->NotifyPlayerChangeHealth();
-		}
-		else
-		{
-			Player->PlayerDeSpawn();
-			Player->NotifyPlayerDeath();
-			Player->ShowEndGame();
-		}
-		DeSpawn();
+		float Duration = AttackMontage->GetPlayLength(); // 애니메이션 길이
+	
+		GetWorldTimerManager().SetTimer(AttackAnimTimerHandle, [this, Player]()
+			{
+				if (!IsValid(Player)) return;
+
+				float PlayerCurrentHp = Player->GetHp();
+				float PlayerHp = PlayerCurrentHp - (GetAtk() - Player->GetDef());
+
+				if (PlayerHp > 0)
+				{
+					Player->SetHp(PlayerHp);
+					Player->NotifyPlayerChangeHealth();
+				}
+				else
+				{
+					Player->PlayerDeSpawn();
+					Player->NotifyPlayerDeath();
+					Player->ShowEndGame();
+				}
+
+				// 4. 적 비활성화
+				this->DeSpawn();
+
+			}, Duration, false);
 	}
+	//APlayerCharacter* Player = Cast<APlayerCharacter>(OtherActor);
+
+	//if (!bIsDeathAnim)
+	//{
+	//	PlayAttackMontage();
+	//	// 데미지 처리 로직
+	//}
+
+	//if (IsValid(Player))
+	//{
+	//	UE_LOG(LogTemp, Warning, TEXT("Player IsValid"));
+	//	float PlayerCurrentHp = Player->GetHp();
+	//	float PlayerHp = PlayerCurrentHp - (GetAtk() - Player->GetDef());
+	//	if (PlayerHp > 0)
+	//	{
+	//		Player->SetHp(PlayerHp);
+	//		Player->NotifyPlayerChangeHealth();
+	//		
+	//	}
+	//	else
+	//	{
+	//		Player->PlayerDeSpawn();
+	//		Player->NotifyPlayerDeath();
+	//		Player->ShowEndGame();
+	//	}
+	//	DeSpawn();
+	//}
 }

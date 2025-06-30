@@ -42,6 +42,12 @@ public:
 	bool IsActive() const { return bIsActive; }
 	bool IsDeathAnim() const { return bIsDeathAnim; }
 
+	UFUNCTION(BlueprintCallable, Category = "Anim")
+	bool IsAttacking() const { return bIsAttacking; }
+
+	UFUNCTION(BlueprintCallable, Category = "Anim")
+	bool IsHitReacting() const { return bIsHitReacting; }
+
 	UFUNCTION()
 	void OnComponentHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
@@ -66,6 +72,12 @@ public:
 
 	UFUNCTION()
 	void PlayDeathMontage();
+
+	UFUNCTION()
+	void PlayHitMontage();
+
+	UFUNCTION()
+	void PlayAttackMontage();
 
 	UFUNCTION()
 	void EnemyDeathAnimEnded();
@@ -129,11 +141,27 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Anim")
 	bool bIsDeathAnim = false;
 
+	UPROPERTY(EditAnywhere, Category = "Anim")
+	bool bIsAttacking = false;
 
-	//Death 局丛包访
+	UPROPERTY(EditAnywhere, Category = "Anim")
+	bool bIsHitReacting = false;
+
+
+	//局丛包访 Death/Attack/Hit
 	UPROPERTY(EditAnywhere, Category = "Animation")
 	TObjectPtr<UAnimMontage> DeathMontage;
 	
 	FTimerHandle DeathAnimTimerHandle;
+
+	UPROPERTY(EditAnywhere, Category = "Animation")
+	TObjectPtr<UAnimMontage> HitMontage;
+
+	FTimerHandle HitAnimTimerHandle;
+
+	UPROPERTY(EditAnywhere, Category = "Animation")
+	TObjectPtr<UAnimMontage> AttackMontage;
+
+	FTimerHandle AttackAnimTimerHandle;
 
 };
