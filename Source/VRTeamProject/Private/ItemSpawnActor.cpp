@@ -74,6 +74,7 @@ void AItemSpawnActor::FindTartgetPoint()
 {
 	TArray<AActor*> TargetPoint;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ATargetPoint::StaticClass(), TargetPoint);
+
 	for (const auto& ItemPoint : TargetPoint)
 	{
 		if (ATargetPoint* tempPoint = Cast<ATargetPoint>(ItemPoint))
@@ -173,6 +174,7 @@ void AItemSpawnActor::BeginPlay()
 	}
 
 
+
 	ItemSpawnerCollision->SetCollisionObjectType(ECollisionChannel::ECC_WorldDynamic);
 	ItemSpawnerMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	ItemSpawnerCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
@@ -181,7 +183,7 @@ void AItemSpawnActor::BeginPlay()
 
 	SetActorHiddenInGame(true);
 	PrimaryActorTick.bCanEverTick = false;
-	FindTartgetPoint();
+	//FindTartgetPoint();
 
 	if (!bIsActive)
 	{
