@@ -23,6 +23,8 @@ public :
 	void TriggerGameStart();
 	bool IsClear() { return bIsClear; }
 	bool IsPlayerAlive() { return bPlayerAlive; }
+
+	UFUNCTION(BlueprintCallable)
 	void InitializeGameObjects();
 
 	UFUNCTION()

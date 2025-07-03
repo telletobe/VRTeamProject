@@ -52,11 +52,13 @@ void APlayerHUD::BeginPlay()
 	if (MapSelect && !MapSelectInstance)
 	{
 		MapSelectInstance = CreateWidget<UMapSelectWidget>(GetWorld(), MapSelect);
+		MapSelectInstance->SetVisibility(ESlateVisibility::Visible);
 	}
 
 	if (PlayerState && !PlayerStateInstance)
 	{
 		PlayerStateInstance = CreateWidget<UPlayerStateWidget>(GetWorld(), PlayerState);
+		PlayerStateInstance->SetVisibility(ESlateVisibility::Hidden);
 	}
 
 	if (StageInfo && !StageInfoInstance)
@@ -77,34 +79,34 @@ void APlayerHUD::BeginPlay()
 void APlayerHUD::ToggleMapSelect()
 {
 	
-	if (IsValid(MapSelectInstance))
-	{
-		if (MapSelectInstance->IsInViewport())
-		{
-			MapSelectInstance->RemoveFromParent();      // 目辑 OFF
-			if (PC)
-			{
-				PC->bShowMouseCursor = false;
-				PC->SetInputMode(FInputModeGameOnly());
-				
-			}
-			
-		}
-		else
-		{
-			if (PlayerStateInstance->IsInViewport())
-			{
-				PlayerStateInstance->RemoveFromParent();
-			}
-			MapSelectInstance->AddToViewport();      // 目辑 ON
-			if (PC) 
-			{
-				PC->bShowMouseCursor = true;
-				PC->SetInputMode(Mode);
-			}
-			
-		}
-	}
+	//if (IsValid(MapSelectInstance))
+	//{
+	//	if (MapSelectInstance->IsInViewport())
+	//	{
+	//		MapSelectInstance->RemoveFromParent();      // 目辑 OFF
+	//		if (PC)
+	//		{
+	//			PC->bShowMouseCursor = false;
+	//			PC->SetInputMode(FInputModeGameOnly());
+	//			
+	//		}
+	//		
+	//	}
+	//	else
+	//	{
+	//		if (PlayerStateInstance->IsInViewport())
+	//		{
+	//			PlayerStateInstance->RemoveFromParent();
+	//		}
+	//		MapSelectInstance->AddToViewport();      // 目辑 ON
+	//		if (PC) 
+	//		{
+	//			PC->bShowMouseCursor = true;
+	//			PC->SetInputMode(Mode);
+	//		}
+	//		
+	//	}
+	//}
 }
 
 void APlayerHUD::PlayerStateShow()
@@ -126,6 +128,7 @@ void APlayerHUD::PlayerStateShow()
 					MapSelectInstance->RemoveFromParent();
 				}
 				PlayerStateInstance->AddToViewport();
+				PlayerStateInstance->SetVisibility(ESlateVisibility::Hidden);
 				PC->bShowMouseCursor = true;
 				if (PC) PC->SetInputMode(Mode);
 			}

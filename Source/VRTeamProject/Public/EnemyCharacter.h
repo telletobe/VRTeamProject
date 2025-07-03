@@ -85,12 +85,15 @@ public:
 	UFUNCTION()
 	void PlayHitEffect();
 
+	UFUNCTION(BlueprintCallable)
+	void FindSpawnPoint();
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 private :
-	void FindSpawnPoint();
+
 	void FindDeSpawnPoint();
 
 

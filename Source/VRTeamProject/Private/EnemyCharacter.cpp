@@ -124,7 +124,43 @@ void AEnemyCharacter::FindSpawnPoint()
 {
 	TArray<AActor*> FoundEndPoint;
 	TArray<AActor*> RandomPoint;
+
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ATargetPoint::StaticClass(), FoundEndPoint);
+
+	if (FoundEndPoint.Num() == 0)
+	{
+		UE_LOG(LogTemp, Error, TEXT("FindSpawnPoint failed: No ATargetPoint actors in level!"));
+		return;
+	}
+
+	for (const auto& StartPoint : FoundEndPoint)
+	{
+		if (StartPoint && StartPoint->ActorHasTag(TEXT("EnemySpawnPoint")))
+		{
+			RandomPoint.Add(StartPoint);
+		}
+	}
+
+	if (RandomPoint.Num() == 0)
+	{
+		UE_LOG(LogTemp, Error, TEXT("FindSpawnPoint failed: No points with tag 'EnemySpawnPoint' found!"));
+		return;
+	}
+
+	const int32 Index = FMath::RandRange(0, RandomPoint.Num() - 1);
+	SpawnPoint = RandomPoint[Index];
+
+	UE_LOG(LogTemp, Warning, TEXT("SpawnPoint assigned: %s"), *SpawnPoint->GetName());
+	
+	/*TArray<AActor*> FoundEndPoint;
+	TArray<AActor*> RandomPoint;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ATargetPoint::StaticClass(), FoundEndPoint);
+	
+	if (FoundEndPoint.Num() == 0)
+	{
+		UE_LOG(LogTemp, Error, TEXT("FindSpawnPoint failed: No ATargetPoint actors in level!"));
+		return;
+	}
 
 	for (const auto& StartPoint : FoundEndPoint)
 	{
@@ -140,7 +176,16 @@ void AEnemyCharacter::FindSpawnPoint()
 		}
 	}
 
-	SpawnPoint = RandomPoint[FMath::RandRange(0,RandomPoint.Num()-1)];
+	if (RandomPoint.Num() == 0)
+	{
+		UE_LOG(LogTemp, Error, TEXT(" FindSpawnPoint failed: No points with tag 'EnemySpawnPoint' found!"));
+		return;
+	}
+
+	const int32 Index = FMath::RandRange(0, RandomPoint.Num() - 1);
+	SpawnPoint = RandomPoint[Index];
+
+	SpawnPoint = RandomPoint[FMath::RandRange(0,RandomPoint.Num()-1)];*/
 }
 
 void AEnemyCharacter::FindDeSpawnPoint()

@@ -188,7 +188,7 @@ void UInputManager::ToggleMap(const FInputActionValue& Value)
 	}*/
 
 	// VR
-	if (IsValid(Player))
+	/*if (IsValid(Player))
 	{
 		UWidgetComponent* UserWidgetComp = Player->GetWidgetComponent();
 		UMapSelectWidget* MapSelectInstance = MyHUD->GetMapSelectInstance();
@@ -210,7 +210,7 @@ void UInputManager::ToggleMap(const FInputActionValue& Value)
 		}
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("MapSelect"));
+	UE_LOG(LogTemp, Warning, TEXT("MapSelect"));*/
 }
 
 void UInputManager::PlayerStat(const FInputActionValue& Value)
@@ -220,7 +220,7 @@ void UInputManager::PlayerStat(const FInputActionValue& Value)
 	//if (PlayerController != nullptr)
 	//{
 	//	if (IsValid(MyHUD.Get()))
-	//	{
+	//	{ 
 	//		MyHUD.Get()->PlayerStateShow();         // HUD 쪽 함수 호출
 
 	//	}

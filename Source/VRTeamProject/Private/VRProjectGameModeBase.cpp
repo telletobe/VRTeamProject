@@ -96,7 +96,7 @@ void AVRProjectGameModeBase::BeginPlay()
 {
 	Super::BeginPlay();
 
-	InitializeGameObjects();
+	//InitializeGameObjects();
 
 	APlayerCharacter* Player = Cast<APlayerCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn());
 	if (Player)

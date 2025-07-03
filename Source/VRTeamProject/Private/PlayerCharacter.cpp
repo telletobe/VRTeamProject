@@ -77,6 +77,8 @@ APlayerCharacter::APlayerCharacter()
 	WidgetComponent->SetWidgetSpace(EWidgetSpace::World);
 	WidgetComponent->SetDrawSize(FVector2D(768.0f,1150.0f));
 	WidgetComponent->SetRelativeLocation(FVector(200.0f,0.0f,0.0f));
+	WidgetComponent->SetVisibility(false);
+	
 }
 
 void APlayerCharacter::ShowEndGame()
