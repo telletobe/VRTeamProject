@@ -58,6 +58,7 @@ void AEnemyCharacter::BeginPlay()
 	if (APlayerCharacter* Player = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(this, 0)))
 	{
 		OnEnemyAttack.AddDynamic(Player, &APlayerCharacter::TakenDamage);
+		Player->OnPlayerDeath.AddDynamic(this,&AEnemyCharacter::DeSpawn);
 	}
 
 
@@ -66,9 +67,6 @@ void AEnemyCharacter::BeginPlay()
 		DynamicMaterial = UMaterialInstanceDynamic::Create(EnemyMesh->GetMaterial(0), this);
 		EnemyMesh->SetMaterial(0, DynamicMaterial);
 	}
-
-	// FindSpawnPoint();
-	// FindDeSpawnPoint();
 }
 
 // Called every frame
@@ -160,7 +158,7 @@ void AEnemyCharacter::FindSpawnPoint()
 	}
 
 	const int32 Index = FMath::RandRange(0, RandomPoint.Num() - 1);
-	SpawnPoint = RandomPoint[Index];
+	SetSpawnPoint(RandomPoint[Index]);
 
 	UE_LOG(LogTemp, Warning, TEXT("SpawnPoint assigned: %s"), *SpawnPoint->GetName());
 
@@ -208,7 +206,6 @@ void AEnemyCharacter::DeSpawn()
 
 void AEnemyCharacter::Spawn()
 {
-	//�޸𸮿� �������� �����͸� Ȱ�����·� ����
 	SetActorTickEnabled(true);
 	SetActorHiddenInGame(false);
 	GetMesh()->SetSimulatePhysics(true);
@@ -265,7 +262,7 @@ void AEnemyCharacter::PlayHitEffect()
 				{
 					DynamicMaterial->SetScalarParameterValue(TEXT("HitBlend"), 0.0f);
 				}
-			}, 0.2f, false); // 0.2�� �� ���� ������ ����
+			}, 0.2f, false); 
 	}
 }
 
@@ -330,6 +327,11 @@ void AEnemyCharacter::SetSpawnDelay(float EnemySpawnDelay)
 	SpawnDelay = EnemySpawnDelay;
 }
 
+void AEnemyCharacter::SetSpawnPoint(AActor* TargetPoint)
+{
+	SpawnPoint = TargetPoint;
+}
+
 void AEnemyCharacter::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	APlayerBulletActor* Bullet = Cast<APlayerBulletActor>(OtherActor);
@@ -365,23 +367,34 @@ void AEnemyCharacter::OnComponentHit(UPrimitiveComponent* HitComponent, AActor* 
 	APlayerCharacter* Player = Cast<APlayerCharacter>(OtherActor);
 	if (!IsValid(Player) || bIsDeathAnim || bIsAttacking)	return;
 
-	// 1. �� �̵� ���߱�
 	AEnemyAIController* EnemyController = Cast<AEnemyAIController>(GetController());
 	EnemyController->StopMovement();
 
-	// 2. ���� �ִϸ��̼� ���
-	PlayAttackMontage();
-	bIsAttacking = true;
-
-	// 3. �ִϸ��̼� ���� �� ������ ó�� �� Ÿ�̸� ���
 	if (AttackMontage)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Player IsValid"));
-		float PlayerCurrentHp = Player->GetHp();
-		float PlayerHp = PlayerCurrentHp - (GetAtk() - Player->GetDef());
+		PlayAttackMontage();
 
-		BoradCastEnemyAttack();
-		DeSpawn();
+		float Duration = AttackMontage->GetPlayLength(); // 애니메이션 길이
 
+		GetWorldTimerManager().SetTimer(AttackAnimTimerHandle, [this, Player]()
+			{
+				float PlayerCurrentHp = Player->GetHp();
+				float PlayerHp = PlayerCurrentHp - (GetAtk() - Player->GetDef());
+
+				if (PlayerHp > 0)
+				{
+					Player->SetHp(PlayerHp);
+					Player->NotifyPlayerChangeHealth();
+				}
+				else
+				{
+					Player->NotifyPlayerDeath();
+					Player->PlayerDeSpawn();
+				}
+
+				// 4. 적 비활성화
+				DeSpawn();
+
+			}, Duration, false);
 	}
 }

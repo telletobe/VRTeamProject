@@ -32,12 +32,15 @@ public:
 	void SetDef(float EnemyDef);
 	void SetAtk(float EnemyAtk);
 	void SetSpawnDelay(float EnemySpawnDelay);
+	void SetSpawnPoint(AActor* TargetPoint);
 
 	float GetCurrentHp() const { return CurrentHp; }
 	float GetMaxHp() const { return MaxHp; }
 	float GetDef() const { return Def; }
 	float GetAtk() const { return Atk; }
 	float GetSpawnDelay() const { return SpawnDelay; }
+
+
 
 	bool IsActive() const { return bIsActive; }
 	bool IsDeathAnim() const { return bIsDeathAnim; }
@@ -54,6 +57,7 @@ public:
 	UFUNCTION()
 	void OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
+	UFUNCTION()
 	void DeSpawn();
 	void Spawn();
 

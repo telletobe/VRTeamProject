@@ -28,11 +28,21 @@ void AVRProjectGameModeBase::BeginPlay()
 {
 	Super::BeginPlay();
 
-	APlayerCharacter* Player = Cast<APlayerCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn());
-	if (Player)
+	TArray<AActor*> FoundActor;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AActor::StaticClass(), FoundActor);
+
+	for (AActor* AllActor : FoundActor)
 	{
-		Player->OnPlayerDeath.AddDynamic(this, &AVRProjectGameModeBase::ChangePlayerAliveState);
-		Player->OnPlayerDeath.AddDynamic(this, &AVRProjectGameModeBase::CleanupGameItem);
+		if (APlayerCharacter* PlayerActor = Cast<APlayerCharacter>(AllActor))
+		{
+			if (PlayerActor)
+			{
+				OnRestart.AddUniqueDynamic(PlayerActor, &APlayerCharacter::InVisibleRezerMesh);
+				OnRestart.AddUniqueDynamic(PlayerActor, &APlayerCharacter::PlayerReSpawn);
+				PlayerActor->OnPlayerDeath.AddDynamic(this, &AVRProjectGameModeBase::ChangePlayerAliveState);
+				PlayerActor->OnPlayerDeath.AddDynamic(this, &AVRProjectGameModeBase::CleanupGameItem);
+			}
+		}
 	}
 }
 
@@ -131,17 +141,12 @@ void AVRProjectGameModeBase::CleanupGameItem() // �÷��̾� �����
 	}
 }
 
-void AVRProjectGameModeBase::InitializeGameObjects() // ���� start�� ������Ʈ�� �ʱ�ȭ
+void AVRProjectGameModeBase::InitializeGameObjects()
 {
-	/*
-		���������� �������� ������Ʈ �Ҵ� �� ����������.
-	*/
-
 
 	TArray<AActor*> FoundActor;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AActor::StaticClass(), FoundActor);
 
-	//���带 ��ȸ�ؼ� �̹� �޸𸮿� �Ҵ�Ǿ��ִ� �����Ͱ� �ִٸ� ����.
 
 	for (AActor* Spawner : FoundActor)
 	{
@@ -169,9 +174,11 @@ void AVRProjectGameModeBase::InitializeGameObjects() // ���� start��
 		{
 			if (!Spanwer)
 			{
-				Spanwer = GetWorld()->SpawnActor<AEnemySpawner>(BPEnemySpawner, FVector(-1350.0f, 3200.0f, 350.0f), FRotator(0, 0, 0));
+				Spanwer = GetWorld()->SpawnActor<AEnemySpawner>(BPEnemySpawner, FVector(FVector::ZeroVector), FRotator(0, 0, 0));
+				GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Blue, TEXT("Create EnemySpanwer"));
 				Spanwer->CreateEnemy();
 				GetWorldTimerManager().SetTimer(Spanwer->GetSpawnHandle(), Spanwer.Get(), &AEnemySpawner::SpawnEnemy, Spanwer->GetSpawnDelay(), true);
+
 			}			
 			bEnemySpawnerExists = true;
 		}
@@ -199,7 +206,7 @@ void AVRProjectGameModeBase::CheckGameClear()
 {
 	CurrentKillCnt++;
 	UE_LOG(LogTemp,Warning,TEXT("call CheckGameClear"));
-	if (RequiredKillCnt >= CurrentKillCnt)
+	if (RequiredKillCnt <= CurrentKillCnt)
 	{
 		TriggerGameClear();
 	}
@@ -207,6 +214,11 @@ void AVRProjectGameModeBase::CheckGameClear()
 	{
 		return;
 	}
+}
+
+void AVRProjectGameModeBase::OnEnemySpawned(AEnemyCharacter* SpawnedEnemy)
+{
+	SpawnedEnemy->OnEnemyKilled.AddDynamic(this, &AVRProjectGameModeBase::CheckGameClear);
 }
 
 void AVRProjectGameModeBase::ChangePlayerAliveState()

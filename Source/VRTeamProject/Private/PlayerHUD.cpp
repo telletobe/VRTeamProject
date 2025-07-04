@@ -61,7 +61,7 @@ void APlayerHUD::BeginPlay()
 	if (PlayerState && !PlayerStateInstance)
 	{
 		PlayerStateInstance = CreateWidget<UPlayerStateWidget>(GetWorld(), PlayerState);
-		PlayerStateInstance->SetVisibility(ESlateVisibility::Hidden);
+		PlayerStateInstance->SetVisibility(ESlateVisibility::Visible);
 	}
 
 	if (StageInfo && !StageInfoInstance)
@@ -77,36 +77,31 @@ void APlayerHUD::BeginPlay()
 	Mode.SetHideCursorDuringCapture(false);
 	Mode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
 
-	if (PlayerStateInstance)
-	{
-		PlayerStateInstance->AddToViewport();
-		PlayerStateInstance->RemoveFromParent();
-	}
 }
 
 TObjectPtr<UMapSelectWidget> APlayerHUD::GetMapSelectInstance() const
 {
-	if(MapSelectInstance) return MapSelectInstance;
+	if(MapSelectInstance) return MapSelectInstance.Get();
 
 	return nullptr;
 }
 
 TObjectPtr<UPlayerStateWidget> APlayerHUD::GetPlayerStateInstance() const
 {
-	if (PlayerStateInstance) return PlayerStateInstance;
+	if (PlayerStateInstance) return PlayerStateInstance.Get();
 	
 	return nullptr;
 }
 
 TObjectPtr<UStageInfoWidget> APlayerHUD::GetStageInfoInstance() const
 {
-	if (StageInfoInstance) return StageInfoInstance;
+	if (StageInfoInstance) return StageInfoInstance.Get();
 	return nullptr;
 }
 
 TObjectPtr<UEndGameWidget> APlayerHUD::GetEndGameInstance() const
 {
-	if (EndGameInstance) return EndGameInstance;
+	if (EndGameInstance) return EndGameInstance.Get();
 	return nullptr;
 }
  

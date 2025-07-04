@@ -28,10 +28,12 @@ public :
 	bool IsClear() const { return bIsClear; }
 	bool IsPlayerAlive() const { return bPlayerAlive; }
 
-
 	void InitializeGameObjects();
 	UFUNCTION()
 	void CheckGameClear();
+
+	UFUNCTION()
+	void OnEnemySpawned(class AEnemyCharacter* SpawnedEnemy);
 
 
 	UFUNCTION()
@@ -43,6 +45,8 @@ public :
 	UFUNCTION()
 	void NotifyReStart();
 
+
+	UPROPERTY()
 	FOnReStart OnRestart;
 protected:
 
@@ -59,8 +63,6 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<AItemSpawnActor> BPItemSpawner;
-
-
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<AEnemySpawner> BPEnemySpawner;
 

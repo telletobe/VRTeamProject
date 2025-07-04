@@ -59,7 +59,7 @@ void AEnemyAIController::Tick(float DeltaTime)
 				/*플레이어의 안쪽으로 들어오기위한 식*/
 				FVector PlayerLocation = TargetActor->GetActorLocation();
 				FVector Dir = (PlayerLocation - ControlledPawn->GetActorLocation().GetSafeNormal());
-				FVector Destination = PlayerLocation - Dir * 50.0f;  // 플레이어 안쪽으로 50cm 들어감
+				FVector Destination = PlayerLocation - Dir * 10.0f;  // 플레이어 안쪽으로 수치 cm 들어감
 
 				MoveToLocation(TargetActor->GetActorLocation(), AcceptRadius);
 			}

@@ -6,6 +6,8 @@
 #include "GameFramework/Actor.h"
 #include "EnemySpawner.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnEnemySpawned, AEnemyCharacter*, Enemy);
+
 class UBoxComponent;
 class AEnemyCharacter;
 class AVRProjectGameModeBase;
@@ -20,12 +22,15 @@ public:
 	// Sets default values for this actor's properties
 	AEnemySpawner();
 	void CreateEnemy();
-	void SpawnEnemy();
 	TArray<AEnemyCharacter*>& GetEnemyPool() { return EnemyPool; }
 	FTimerHandle& GetSpawnHandle() { return SpawnHandle; }
 	float GetSpawnDelay() const { return SpawnDelay; }
 
+	UFUNCTION()
+	void SpawnEnemy();
 
+	UPROPERTY()
+	FOnEnemySpawned OnEnemySpawned;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -56,4 +61,5 @@ private :
 	int32 PoolIndex = 0;
 
 	bool bIsClear = false;
+
 };

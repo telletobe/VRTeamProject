@@ -98,10 +98,7 @@ UInputManager* UInputManager::GetInstance() {
 
 void UInputManager::Initialize(APlayerCharacter* PlayerCharacter, APlayerController* PC)
 {
-	/*
-		ó�� ȣ��� �� �����ϴ� �Լ�.
-		Ŭ���� �������� �̰����� ������.  
-	*/
+
 	Player = PlayerCharacter;
 
 	if (PC)
@@ -173,7 +170,7 @@ void UInputManager::Attack(const FInputActionValue& Value)
 void UInputManager::ToggleMap(const FInputActionValue& Value)
 {
 	// VR
-	/*if (IsValid(Player))
+	if (IsValid(Player))
 	{
 		if (Player->IsActive())
 		{
@@ -182,16 +179,18 @@ void UInputManager::ToggleMap(const FInputActionValue& Value)
 		
 			if (IsValid(UserWidgetComp))
 			{
-				if (UserWidgetComp->GetUserWidgetObject() == MapSelectInstance) // ����������Ʈ�� Ŭ������ ��忡 �ִ� Ŭ������ ��
+				if (UserWidgetComp->GetUserWidgetObject() == MapSelectInstance) 
 				{
-					ToggleWidgetVisibility(UserWidgetComp); // ������ ���ٸ� COMPONENT�� visible �Ӽ��� ����
+					ToggleWidgetVisibility(UserWidgetComp);
+
 				}
 				else 
 				{
-					UserWidgetComp->SetWidget(MapSelectInstance); //������ �ٸ��ٸ� component�� Ŭ������ ���� �� visible�� ������.
-					if (!UserWidgetComp->GetVisibleFlag())
+					UserWidgetComp->SetWidget(MapSelectInstance);
+					if (!UserWidgetComp->IsWidgetVisible())
 					{
 						ToggleWidgetVisibility(UserWidgetComp);
+						UE_LOG(LogTemp, Warning, TEXT("Player Map"));
 					}
 				}
 			}
@@ -201,20 +200,11 @@ void UInputManager::ToggleMap(const FInputActionValue& Value)
 			UE_LOG(LogTemp, Warning, TEXT("Player is Dead"));
 		}
 	}
-*/
+
 }
 
 void UInputManager::PlayerStat(const FInputActionValue& Value)
 {
-	//if (PlayerController != nullptr)
-	//{
-	//	if (IsValid(MyHUD.Get()))
-	//	{ 
-	//		MyHUD.Get()->PlayerStateShow();         // HUD �� �Լ� ȣ��
-
-	//	}
-	//}
-
 	//VR
 	if (IsValid(Player))
 	{
@@ -225,15 +215,17 @@ void UInputManager::PlayerStat(const FInputActionValue& Value)
 
 			if (IsValid(UserWidgetComp))
 			{
-				if (UserWidgetComp->GetUserWidgetObject() == PlayerStateInstance) // ����������Ʈ�� Ŭ������ ��忡 �ִ� Ŭ������ ��
+				if (UserWidgetComp->GetUserWidgetObject() == PlayerStateInstance)
 				{
-					ToggleWidgetVisibility(UserWidgetComp); // ������ ���ٸ� COMPONENT�� visible �Ӽ��� ����
+					ToggleWidgetVisibility(UserWidgetComp);
+					
 				}
 				else
 				{
-					UserWidgetComp->SetWidget(PlayerStateInstance);  //������ �ٸ��ٸ� component�� Ŭ������ ���� �� visible�� ������.
-					if (!UserWidgetComp->GetVisibleFlag())
+					UserWidgetComp->SetWidget(PlayerStateInstance);
+					if (!UserWidgetComp->IsWidgetVisible())
 					{
+						UE_LOG(LogTemp, Warning, TEXT("Player Stat"));
 						ToggleWidgetVisibility(UserWidgetComp);
 					}
 				}

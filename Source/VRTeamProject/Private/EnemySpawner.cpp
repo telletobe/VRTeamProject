@@ -33,8 +33,6 @@ void AEnemySpawner::CreateEnemy()
 	const FVector SpawnPoint = FMath::RandPointInBox(SpawnBox->Bounds.GetBox());
 	bool bIsSpawn = true;
 
-	AVRProjectGameModeBase* GameMode = Cast<AVRProjectGameModeBase>(GetWorld()->GetAuthGameMode());
-
 	if (bIsSpawn)
 	{
 		TSubclassOf<AEnemyCharacter> CommonEnemy = LoadClass<AEnemyCharacter>(nullptr, TEXT("/Script/Engine.Blueprint'/Game/Character/Enemy/BP_EnemyCharacter.BP_EnemyCharacter_C'"));
@@ -48,11 +46,12 @@ void AEnemySpawner::CreateEnemy()
 
 				if (SpawnedEnemy)
 				{
+					GEngine->AddOnScreenDebugMessage(-1,10.0f,FColor::Blue,TEXT("Create Enemy"));
 					SpawnedEnemy->SpawnDefaultController();
 					SpawnedEnemy->FindSpawnPoint();
 					SpawnedEnemy->FindDeSpawnPoint();
 					SpawnedEnemy->DeSpawn();
-					SpawnedEnemy->OnEnemyKilled.AddDynamic(GameMode, &AVRProjectGameModeBase::CheckGameClear);
+					OnEnemySpawned.Broadcast(SpawnedEnemy);
 
 					EnemyPool.Add(SpawnedEnemy);
 				}

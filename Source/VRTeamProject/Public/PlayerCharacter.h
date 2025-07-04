@@ -61,8 +61,6 @@ public:
 	void NotifyPlayerDeath();
 	void NotifyPlayerChangeHealth();
 
-	UPROPERTY()
-	FOnPlayerDeath OnPlayerDeath;
 
 	UPROPERTY()
 	FOnHealthChange OnHealthChange;
@@ -82,6 +80,9 @@ public:
 
 	UFUNCTION()
 	void InVisibleRezerMesh();
+
+	UPROPERTY()
+	FOnPlayerDeath OnPlayerDeath;
 
 protected:
 	// Called when the game starts or when spawned
@@ -127,7 +128,6 @@ private:
 
 	UPROPERTY()
 	TObjectPtr<UInputManager> InputManager;
-
 
 	//////// VR
 
