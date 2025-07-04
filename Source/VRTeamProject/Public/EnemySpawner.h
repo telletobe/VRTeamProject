@@ -26,6 +26,12 @@ public:
 	FTimerHandle& GetSpawnHandle() { return SpawnHandle; }
 	float GetSpawnDelay() const { return SpawnDelay; }
 
+
+	void DeActivateEnemySpawner();
+
+	UFUNCTION()
+	void ActivateEnemySpawner();
+
 	UFUNCTION()
 	void SpawnEnemy();
 
@@ -36,10 +42,6 @@ protected:
 	virtual void BeginPlay() override;
 private:
 
-	void DeActivateEnemySpawner();
-
-	UFUNCTION()
-	void ActivateEnemySpawner();
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

@@ -10,6 +10,15 @@
 #include <ItemSpawnActor.h>
 #include <WeatherManager.h>
 
+/*
+OnRestart.AddUniqueDynamic(PlayerActor, &APlayerCharacter::InVisibleRezerMesh);
+OnRestart.AddUniqueDynamic(PlayerActor, &APlayerCharacter::PlayerReSpawn);
+PlayerActor->OnPlayerDeath.AddDynamic(this, &AVRProjectGameModeBase::OnPlayerDeath);
+PlayerActor->OnPlayerDeath.AddDynamic(this, &AVRProjectGameModeBase::CleanupGameItem);
+OnPlayerDied.AddDynamic(this,&AVRProjectGameModeBase::DeActivateEnemySpawner);
+Spanwer->OnEnemySpawned.AddDynamic(this,&AVRProjectGameModeBase::OnEnemySpawned);
+SpawnedEnemy->OnEnemyKilled.AddDynamic(this, &AVRProjectGameModeBase::CheckGameClear);
+*/
 
 
 AVRProjectGameModeBase::AVRProjectGameModeBase()
@@ -39,7 +48,7 @@ void AVRProjectGameModeBase::BeginPlay()
 			{
 				OnRestart.AddUniqueDynamic(PlayerActor, &APlayerCharacter::InVisibleRezerMesh);
 				OnRestart.AddUniqueDynamic(PlayerActor, &APlayerCharacter::PlayerReSpawn);
-				PlayerActor->OnPlayerDeath.AddDynamic(this, &AVRProjectGameModeBase::ChangePlayerAliveState);
+				PlayerActor->OnPlayerDeath.AddDynamic(this, &AVRProjectGameModeBase::OnPlayerDeath);
 				PlayerActor->OnPlayerDeath.AddDynamic(this, &AVRProjectGameModeBase::CleanupGameItem);
 			}
 		}
@@ -63,6 +72,13 @@ void AVRProjectGameModeBase::TriggerGameStart()
 
 	InitializeGameObjects();
 	CleanupGameItem();
+
+	// 플레이어가 죽으면 적 생성을 멈추는 델리게이트 설정
+	if (Spanwer)
+	{
+		OnPlayerDied.AddDynamic(this,&AVRProjectGameModeBase::DeActivateEnemySpawner);
+	}
+
 	return;
 }
 
@@ -78,7 +94,7 @@ void AVRProjectGameModeBase::TriggerGameReStart()
 	return;
 }
 
-void AVRProjectGameModeBase::CleanupAfterGameClear() //���� Ŭ���� �� �÷��̾ ������ �޸� �Ҵ� ����
+void AVRProjectGameModeBase::CleanupAfterGameClear()
 {
 	TArray<AActor*> FoundActor;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AActor::StaticClass(), FoundActor);
@@ -111,12 +127,13 @@ void AVRProjectGameModeBase::CleanupAfterGameClear() //���� Ŭ����
 			{
 				if (IsValid(Enemy))
 				{
-					Enemy->OnEnemyKilled.RemoveDynamic(this,&AVRProjectGameModeBase::CheckGameClear);
+					Enemy->OnEnemyKilled.RemoveDynamic(this,&AVRProjectGameModeBase::CheckGameClear); //설정 해둔 델리게이트 삭제
 					Enemy->Destroy();
 				}
 			}
 			if (IsValid(EnemySpanwer))
 			{
+				EnemySpanwer->OnEnemySpawned.RemoveDynamic(this, &AVRProjectGameModeBase::OnEnemySpawned);  //설정 해둔 델리게이트 삭제
 				EnemySpanwer->Destroy();
 				bEnemySpawnerExists = false;
 			}
@@ -175,9 +192,9 @@ void AVRProjectGameModeBase::InitializeGameObjects()
 			if (!Spanwer)
 			{
 				Spanwer = GetWorld()->SpawnActor<AEnemySpawner>(BPEnemySpawner, FVector(FVector::ZeroVector), FRotator(0, 0, 0));
-				GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Blue, TEXT("Create EnemySpanwer"));
 				Spanwer->CreateEnemy();
 				GetWorldTimerManager().SetTimer(Spanwer->GetSpawnHandle(), Spanwer.Get(), &AEnemySpawner::SpawnEnemy, Spanwer->GetSpawnDelay(), true);
+				Spanwer->OnEnemySpawned.AddDynamic(this,&AVRProjectGameModeBase::OnEnemySpawned);
 
 			}			
 			bEnemySpawnerExists = true;
@@ -221,14 +238,22 @@ void AVRProjectGameModeBase::OnEnemySpawned(AEnemyCharacter* SpawnedEnemy)
 	SpawnedEnemy->OnEnemyKilled.AddDynamic(this, &AVRProjectGameModeBase::CheckGameClear);
 }
 
-void AVRProjectGameModeBase::ChangePlayerAliveState()
+void AVRProjectGameModeBase::OnPlayerDeath()
 {
-	bPlayerAlive = !bPlayerAlive;
-	UE_LOG(LogTemp,Warning,TEXT("PlayerAlive : %s"), bPlayerAlive ? TEXT("true") : TEXT("false"));
+	bPlayerAlive = false;
+	OnPlayerDied.Broadcast();
 	return;
 }
 
 void AVRProjectGameModeBase::NotifyReStart()
 {
 	OnRestart.Broadcast();
+}
+
+void AVRProjectGameModeBase::DeActivateEnemySpawner()
+{
+	if (Spanwer)
+	{
+		Spanwer->DeActivateEnemySpawner();
+	}
 }

@@ -7,6 +7,7 @@
 #include "VRProjectGameModeBase.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnReStart);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPlayerDied);
 
 
 class AItemSpawnActor;
@@ -34,20 +35,23 @@ public :
 
 	UFUNCTION()
 	void OnEnemySpawned(class AEnemyCharacter* SpawnedEnemy);
-
-
 	UFUNCTION()
 	void CleanupGameItem();
 
 	UFUNCTION()
-	void ChangePlayerAliveState();
+	void OnPlayerDeath();
 
 	UFUNCTION()
 	void NotifyReStart();
 
+	UFUNCTION()
+	void DeActivateEnemySpawner();
 
 	UPROPERTY()
 	FOnReStart OnRestart;
+
+	UPROPERTY()
+	FOnPlayerDied OnPlayerDied;
 protected:
 
 	virtual void BeginPlay() override;

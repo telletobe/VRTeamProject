@@ -77,6 +77,9 @@ void APlayerHUD::BeginPlay()
 	Mode.SetHideCursorDuringCapture(false);
 	Mode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
 
+	EndGameInstance->AddToViewport();
+	EndGameInstance->RemoveFromParent();
+
 }
 
 TObjectPtr<UMapSelectWidget> APlayerHUD::GetMapSelectInstance() const

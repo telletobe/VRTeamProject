@@ -84,8 +84,6 @@ void AEnemySpawner::SpawnEnemy()
 void AEnemySpawner::DeActivateEnemySpawner()
 {
 	//메모리에 할당은 유지하면서, Enemy를 보이지않게 함.
-
-
 	if (EnemyPool.Num() != 0)
 	{
 		for (AEnemyCharacter* SpawnedEnemy : EnemyPool)
@@ -96,6 +94,7 @@ void AEnemySpawner::DeActivateEnemySpawner()
 			}
 		}
 	}
+	GetWorldTimerManager().ClearTimer(SpawnHandle);
 }
 
 void AEnemySpawner::ActivateEnemySpawner()
@@ -110,10 +109,12 @@ void AEnemySpawner::BeginPlay()
 	Super::BeginPlay();
 
 
+
 	if (SpawnDelay <= 0)
 	{
 		SpawnDelay = 0.7f;
 	}
+
 }
 
 // Called every frame
