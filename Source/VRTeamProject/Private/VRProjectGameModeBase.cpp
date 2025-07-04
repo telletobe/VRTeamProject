@@ -136,15 +136,7 @@ void AVRProjectGameModeBase::InitializeGameObjects() // ���� start��
 	/*
 		���������� �������� ������Ʈ �Ҵ� �� ����������.
 	*/
-	if (!WeatherManager)
-	{
-		WeatherManager = UWeatherManager::GetInstance();
-		if (WeatherManager)
-		{
-			WeatherManager->SetCurrentWorld(GetWorld());
-			WeatherManager->Init();
-		}
-	}
+
 
 	TArray<AActor*> FoundActor;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AActor::StaticClass(), FoundActor);

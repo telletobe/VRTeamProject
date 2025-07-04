@@ -19,15 +19,15 @@ void UEndGameWidget::NativeConstruct()
 		}
 	}
 
-	if (BT_RestartButton)
-	{
-		BT_RestartButton->OnClicked.AddUniqueDynamic(this, &UEndGameWidget::ReStart);
-	}
+	//if (BT_RestartButton)
+	//{
+	//	BT_RestartButton->OnClicked.AddUniqueDynamic(this, &UEndGameWidget::ReStart);
+	//}
 
-	if (BT_QuitButton)
-	{
-		BT_QuitButton->OnClicked.AddUniqueDynamic(this, &UEndGameWidget::Quit);
-	}
+	//if (BT_QuitButton)
+	//{
+	//	BT_QuitButton->OnClicked.AddUniqueDynamic(this, &UEndGameWidget::Quit);
+	//}
 
 }
 

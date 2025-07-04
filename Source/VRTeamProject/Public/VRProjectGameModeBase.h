@@ -11,7 +11,6 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnReStart);
 
 class AItemSpawnActor;
 class AEnemySpawner;
-class UWeatherManager;
 
 UCLASS()
 class VRTEAMPROJECT_API AVRProjectGameModeBase : public AGameModeBase
@@ -67,8 +66,5 @@ private:
 
 	UPROPERTY()
 	TObjectPtr<AEnemySpawner> Spanwer;
-
-	UPROPERTY()
-	TObjectPtr<UWeatherManager> WeatherManager;
 
 };

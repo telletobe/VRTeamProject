@@ -43,10 +43,11 @@ void AEnemyCharacter::BeginPlay()
 		OnEnemyDeathAnimEnded.AddDynamic(this, &AEnemyCharacter::EnemyDeathAnimEnded);
 	}
 
-	// NavInvoker ���� ����,���� ������ ����
+
 	NavGenerationRadius = 2000.0f;
 	NavRemovalRadius = 500.0f;
 	NavInvoker->SetGenerationRadii(NavGenerationRadius, NavRemovalRadius);
+
 
 	UCapsuleComponent* EnemyCollision = GetCapsuleComponent();
 	EnemyCollision->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
@@ -57,15 +58,17 @@ void AEnemyCharacter::BeginPlay()
 	if (APlayerCharacter* Player = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(this, 0)))
 	{
 		OnEnemyAttack.AddDynamic(Player, &APlayerCharacter::TakenDamage);
+	}
 
-	// FindSpawnPoint();
-	// FindDeSpawnPoint();
-		
+
 	if (EnemyMesh && EnemyMesh->GetMaterial(0))
 	{
 		DynamicMaterial = UMaterialInstanceDynamic::Create(EnemyMesh->GetMaterial(0), this);
 		EnemyMesh->SetMaterial(0, DynamicMaterial);
 	}
+
+	// FindSpawnPoint();
+	// FindDeSpawnPoint();
 }
 
 // Called every frame
@@ -134,15 +137,15 @@ void AEnemyCharacter::FindSpawnPoint()
 	TArray<AActor*> FoundPoint;
 	TArray<AActor*> RandomPoint;
 
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ATargetPoint::StaticClass(), FoundEndPoint);
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ATargetPoint::StaticClass(), FoundPoint);
 
-	if (FoundEndPoint.Num() == 0)
+	if (FoundPoint.Num() == 0)
 	{
 		UE_LOG(LogTemp, Error, TEXT("FindSpawnPoint failed: No ATargetPoint actors in level!"));
 		return;
 	}
 
-	for (const auto& StartPoint : FoundEndPoint)
+	for (const auto& StartPoint : FoundPoint)
 	{
 		if (StartPoint && StartPoint->ActorHasTag(TEXT("EnemySpawnPoint")))
 		{
