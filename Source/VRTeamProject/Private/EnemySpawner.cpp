@@ -100,7 +100,9 @@ void AEnemySpawner::DeActivateEnemySpawner()
 void AEnemySpawner::ActivateEnemySpawner()
 {
 	//EnemySpawner의 동작 활성코드
+	
 	GetWorld()->GetTimerManager().SetTimer(SpawnHandle, this, &AEnemySpawner::SpawnEnemy, SpawnDelay, true);
+	GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::MakeRandomColor(), TEXT("ActivateEnemySpawner"));
 }
 
 // Called when the game starts or when spawned
@@ -108,12 +110,12 @@ void AEnemySpawner::BeginPlay()
 {
 	Super::BeginPlay();
 
-
-
 	if (SpawnDelay <= 0)
 	{
 		SpawnDelay = 0.7f;
 	}
+
+	OnRestart.AddUniqueDynamic(this,&AEnemySpawner::ActivateEnemySpawner);
 
 }
 

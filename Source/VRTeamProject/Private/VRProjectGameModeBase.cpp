@@ -60,7 +60,7 @@ void AVRProjectGameModeBase::TriggerGameClear()
 {
 	GEngine->AddOnScreenDebugMessage(-1,3.0f,FColor::MakeRandomColor(), TEXT("Clear Game"));
 	bIsClear = true;
-	CleanupAfterGameClear();
+	CleanupAfterGame();
 	return;
 }
 
@@ -90,11 +90,13 @@ void AVRProjectGameModeBase::TriggerGameReStart()
 	bPlayerAlive = true;
 
 	CleanupGameItem();
-	NotifyReStart();
+	
+	if (Spanwer) Spanwer->OnRestart.Broadcast();
+
 	return;
 }
 
-void AVRProjectGameModeBase::CleanupAfterGameClear()
+void AVRProjectGameModeBase::CleanupAfterGame()
 {
 	TArray<AActor*> FoundActor;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AActor::StaticClass(), FoundActor);
@@ -134,6 +136,7 @@ void AVRProjectGameModeBase::CleanupAfterGameClear()
 			if (IsValid(EnemySpanwer))
 			{
 				EnemySpanwer->OnEnemySpawned.RemoveDynamic(this, &AVRProjectGameModeBase::OnEnemySpawned);  //설정 해둔 델리게이트 삭제
+				EnemySpanwer->OnRestart.RemoveDynamic(EnemySpanwer, &AEnemySpawner::ActivateEnemySpawner);	//설정 해둔 델리게이트 삭제
 				EnemySpanwer->Destroy();
 				bEnemySpawnerExists = false;
 			}
@@ -160,10 +163,8 @@ void AVRProjectGameModeBase::CleanupGameItem() // �÷��̾� �����
 
 void AVRProjectGameModeBase::InitializeGameObjects()
 {
-
 	TArray<AActor*> FoundActor;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AActor::StaticClass(), FoundActor);
-
 
 	for (AActor* Spawner : FoundActor)
 	{
