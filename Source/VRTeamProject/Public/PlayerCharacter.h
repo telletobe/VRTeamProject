@@ -60,6 +60,7 @@ public:
 	FOnHealthChange OnHealthChange;
 
 	// VR
+	//fdfd
 
 	TObjectPtr<UStaticMeshComponent> GetMotionControllerLeftLazerMesh() const { return MotionControllerLeftLazerMesh.Get(); }
 	TObjectPtr<UStaticMeshComponent> GetMotionControllerRightLazerMesh() const { return MotionControllerRightLazerMesh.Get(); }
