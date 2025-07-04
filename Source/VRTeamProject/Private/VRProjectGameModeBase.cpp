@@ -28,8 +28,6 @@ void AVRProjectGameModeBase::BeginPlay()
 {
 	Super::BeginPlay();
 
-	TriggerGameStart();
-
 	APlayerCharacter* Player = Cast<APlayerCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn());
 	if (Player)
 	{
@@ -70,7 +68,7 @@ void AVRProjectGameModeBase::TriggerGameReStart()
 	return;
 }
 
-void AVRProjectGameModeBase::CleanupAfterGameClear() //°ÔÀÓ Å¬¸®¾î ½Ã ÇÃ·¹ÀÌ¾î¸¦ Á¦¿ÜÇÑ ¸Þ¸ð¸® ÇÒ´ç ÇØÁ¦
+void AVRProjectGameModeBase::CleanupAfterGameClear() //ï¿½ï¿½ï¿½ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾î¸¦ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Þ¸ï¿½ ï¿½Ò´ï¿½ ï¿½ï¿½ï¿½ï¿½
 {
 	TArray<AActor*> FoundActor;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AActor::StaticClass(), FoundActor);
@@ -116,7 +114,7 @@ void AVRProjectGameModeBase::CleanupAfterGameClear() //°ÔÀÓ Å¬¸®¾î ½Ã ÇÃ·¹ÀÌ¾î¸¦
 	}
 }
 
-void AVRProjectGameModeBase::CleanupGameItem() // ÇÃ·¹ÀÌ¾î »ç¸Á½Ã ÇÊµå¿¡ÀÖ´Â ¾ÆÀÌÅÛ ¸Þ¸ð¸® ÇÒ´çÇØÁ¦
+void AVRProjectGameModeBase::CleanupGameItem() // ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Êµå¿¡ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Þ¸ï¿½ ï¿½Ò´ï¿½ï¿½ï¿½ï¿½ï¿½
 {
 	TArray<AActor*> FoundActor;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AActor::StaticClass(), FoundActor);
@@ -133,10 +131,10 @@ void AVRProjectGameModeBase::CleanupGameItem() // ÇÃ·¹ÀÌ¾î »ç¸Á½Ã ÇÊµå¿¡ÀÖ´Â ¾ÆÀ
 	}
 }
 
-void AVRProjectGameModeBase::InitializeGameObjects() // °ÔÀÓ start½Ã ¿ÀºêÁ§Æ®ÀÇ ÃÊ±âÈ­
+void AVRProjectGameModeBase::InitializeGameObjects() // ï¿½ï¿½ï¿½ï¿½ startï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½Ê±ï¿½È­
 {
 	/*
-		³¯¾¾Á¤º¸¸¦ °¡Á®¿À´Â ¿ÀºêÁ§Æ® ÇÒ´ç ¹× Á¤º¸°¡Á®¿È.
+		ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® ï¿½Ò´ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.
 	*/
 	if (!WeatherManager)
 	{
@@ -151,7 +149,7 @@ void AVRProjectGameModeBase::InitializeGameObjects() // °ÔÀÓ start½Ã ¿ÀºêÁ§Æ®ÀÇ 
 	TArray<AActor*> FoundActor;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AActor::StaticClass(), FoundActor);
 
-	//¿ùµå¸¦ ¼øÈ¸ÇØ¼­ ÀÌ¹Ì ¸Þ¸ð¸®¿¡ ÇÒ´çµÇ¾îÀÖ´Â µ¥ÀÌÅÍ°¡ ÀÖ´Ù¸é »ý·«.
+	//ï¿½ï¿½ï¿½å¸¦ ï¿½ï¿½È¸ï¿½Ø¼ï¿½ ï¿½Ì¹ï¿½ ï¿½Þ¸ð¸®¿ï¿½ ï¿½Ò´ï¿½Ç¾ï¿½ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Í°ï¿½ ï¿½Ö´Ù¸ï¿½ ï¿½ï¿½ï¿½ï¿½.
 
 	for (AActor* Spawner : FoundActor)
 	{

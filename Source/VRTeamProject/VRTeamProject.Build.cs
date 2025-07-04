@@ -9,7 +9,7 @@ public class VRTeamProject : ModuleRules
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
 		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput" , "AIModule", "NavigationSystem",
-			"GameplayTasks", "UMG" , "HeadMountedDisplay", "Weather"});
+			"GameplayTasks", "UMG" , "HeadMountedDisplay", "Weather", "HTTP"});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 

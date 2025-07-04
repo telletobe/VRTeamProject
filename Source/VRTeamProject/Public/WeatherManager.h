@@ -3,37 +3,32 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "UObject/NoExportTypes.h"
+#include "GameFramework/Actor.h"
+
+#include "Http.h"
 #include "WeatherManager.generated.h"
 
-struct FCurrentWeatherResult;
-/**
- * 
- */
 UCLASS()
-class VRTEAMPROJECT_API UWeatherManager : public UObject
+class VRTEAMPROJECT_API AWeatherManager : public AActor
 {
 	GENERATED_BODY()
 	
-public:
-	static UWeatherManager* GetInstance();
-	UWorld& GetCurrentWorld() const { return *CurrentWorld; }
-	void SetCurrentWorld(UWorld* CurWorld);
-
-	UFUNCTION()
-	void ReceivedPTYValue(int32 PTYValue, bool bIsSuccess, FString ErrorMessage, const FCurrentWeatherResult& RawResult);
-
-	UFUNCTION()
-	void ReceivedSKYValue(int32 SKYValue, bool bIsSuccess, FString ErrorMessage, const FCurrentWeatherResult& RawResult);
-
-	void Init();
+public:	
+	// Sets default values for this actor's properties
+	AWeatherManager();
 
 protected:
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
 
 private:
-	UWeatherManager();
 
-private:
-	static TObjectPtr<UWeatherManager> WeatherInstance;
-	TObjectPtr<UWorld> CurrentWorld;
+	void RequestKMAWeather(); 
+	void OnWeatherResponse(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful);
+
+	// Weather Data 
+	float CurrentTemp;
+	float CurrentRain;
+	float CurrentWindSpeed;
+
 };

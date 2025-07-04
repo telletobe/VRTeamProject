@@ -21,11 +21,15 @@ class VRTEAMPROJECT_API AVRProjectGameModeBase : public AGameModeBase
 	AVRProjectGameModeBase();
 public :
 	void TriggerGameClear();
+	
+	UFUNCTION(BlueprintCallable)
 	void TriggerGameStart();
 	void TriggerGameReStart();
 	void CleanupAfterGameClear();
 	bool IsClear() const { return bIsClear; }
 	bool IsPlayerAlive() const { return bPlayerAlive; }
+
+
 	void InitializeGameObjects();
 	UFUNCTION()
 	void CheckGameClear();

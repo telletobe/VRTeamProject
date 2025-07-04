@@ -9,7 +9,7 @@
 #include <EndGameWidget.h>
 
 /*
-	UserWidgetclassÀÇ °ü¸®
+	UserWidgetclassï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 */
 
 APlayerHUD::APlayerHUD()
@@ -55,11 +55,13 @@ void APlayerHUD::BeginPlay()
 	if (MapSelect && !MapSelectInstance)
 	{
 		MapSelectInstance = CreateWidget<UMapSelectWidget>(GetWorld(), MapSelect);
+		MapSelectInstance->SetVisibility(ESlateVisibility::Visible);
 	}
 
 	if (PlayerState && !PlayerStateInstance)
 	{
 		PlayerStateInstance = CreateWidget<UPlayerStateWidget>(GetWorld(), PlayerState);
+		PlayerStateInstance->SetVisibility(ESlateVisibility::Hidden);
 	}
 
 	if (StageInfo && !StageInfoInstance)
@@ -74,10 +76,71 @@ void APlayerHUD::BeginPlay()
 
 	Mode.SetHideCursorDuringCapture(false);
 	Mode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+
 	if (PlayerStateInstance)
 	{
 		PlayerStateInstance->AddToViewport();
 		PlayerStateInstance->RemoveFromParent();
+	}
+}
+
+void APlayerHUD::ToggleMapSelect()
+{
+	
+	//if (IsValid(MapSelectInstance))
+	//{
+	//	if (MapSelectInstance->IsInViewport())
+	//	{
+	//		MapSelectInstance->RemoveFromParent();      // Ä¿ï¿½ï¿½ OFF
+	//		if (PC)
+	//		{
+	//			PC->bShowMouseCursor = false;
+	//			PC->SetInputMode(FInputModeGameOnly());
+	//			
+	//		}
+	//		
+	//	}
+	//	else
+	//	{
+	//		if (PlayerStateInstance->IsInViewport())
+	//		{
+	//			PlayerStateInstance->RemoveFromParent();
+	//		}
+	//		MapSelectInstance->AddToViewport();      // Ä¿ï¿½ï¿½ ON
+	//		if (PC) 
+	//		{
+	//			PC->bShowMouseCursor = true;
+	//			PC->SetInputMode(Mode);
+	//		}
+	//		
+	//	}
+	//}
+}
+
+void APlayerHUD::PlayerStateShow()
+{
+	if (IsValid(PlayerStateInstance))
+	{
+		if (GetWorld()->GetMapName().Contains("Map"))
+		{
+			if (PlayerStateInstance->IsInViewport())
+			{
+				PlayerStateInstance->RemoveFromParent();
+				PC->bShowMouseCursor = false;
+				if (PC) PC->SetInputMode(FInputModeGameOnly());
+			}
+			else
+			{
+				if (MapSelectInstance->IsInViewport())
+				{
+					MapSelectInstance->RemoveFromParent();
+				}
+				PlayerStateInstance->AddToViewport();
+				PlayerStateInstance->SetVisibility(ESlateVisibility::Hidden);
+				PC->bShowMouseCursor = true;
+				if (PC) PC->SetInputMode(Mode);
+			}
+		}	
 	}
 	
 	if (EndGameInstance)
@@ -87,7 +150,7 @@ void APlayerHUD::BeginPlay()
 	}
 
 	
-	/*TEST ÄÚµå( Á¦°ÅÇØ¾ßÇÏ´Â ÄÚµå*/
+	/*TEST ï¿½Úµï¿½( ï¿½ï¿½ï¿½ï¿½ï¿½Ø¾ï¿½ï¿½Ï´ï¿½ ï¿½Úµï¿½*/
 	//PC->SetShowMouseCursor(true);
 	//MapSelectInstance->AddToViewport();
 

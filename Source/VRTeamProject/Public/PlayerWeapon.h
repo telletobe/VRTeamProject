@@ -40,10 +40,10 @@ private:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UStaticMeshComponent> WeaponMesh;
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere)
 	TObjectPtr<UStaticMesh> WeaponMeshAsset;
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere)
 	TObjectPtr<USkeletalMeshComponent> WeaponSkeletal;
 
 	bool bIsFire = true;

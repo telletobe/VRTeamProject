@@ -19,7 +19,10 @@ public:
 	AItemSpawnActor();
 	void SpawnItem();
 	void MoveToEndPoint(float DeltaTime);
+
+	UFUNCTION(BlueprintCallable)
 	void FindTartgetPoint();
+
 	void ChangeActiveState();
 	void SetDropTimer();
 	void ResetLocationToStartPoint();

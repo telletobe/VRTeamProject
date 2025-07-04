@@ -9,8 +9,8 @@
 #include "VRProjectGameModeBase.h"
 
 /*
-	¾ÆÀÌÅÛ ½ºÆ÷³Ê -> ºñÇà±â·Î Ç¥½Ã
-	¸Þ¸ð¸® ÇØÁ¦´Â °ÔÀÓ¸ðµå¿¡¼­ °ü¸®
+	ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ -> ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ç¥ï¿½ï¿½
+	ï¿½Þ¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ó¸ï¿½å¿¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 */
 
 // Sets default values
@@ -32,18 +32,18 @@ AItemSpawnActor::AItemSpawnActor()
 
 void AItemSpawnActor::SpawnItem()
 {
-	//°ÔÀÓ¸ðµå¿¡¼­ ÇÃ·¹ÀÌ¾îÀÇ »óÅÂ¸¦ ¹Þ¾Æ¿Í¼­ ºñÇà±â°¡ ³ªÅ¸ ³¯ ¶§, ÇÃ·¹ÀÌ¾î°¡ »ì¾Æ ÀÖ´Ù¸é ¾ÆÀÌÅÛÀ» µå¶ø.
+	//ï¿½ï¿½ï¿½Ó¸ï¿½å¿¡ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Â¸ï¿½ ï¿½Þ¾Æ¿Í¼ï¿½ ï¿½ï¿½ï¿½ï¿½â°¡ ï¿½ï¿½Å¸ ï¿½ï¿½ ï¿½ï¿½, ï¿½Ã·ï¿½ï¿½Ì¾î°¡ ï¿½ï¿½ï¿½ ï¿½Ö´Ù¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½.
 	if (GameMode->IsPlayerAlive())
 	{
 		const FVector SpawnPoint = FMath::RandPointInBox(ItemSpawnerCollision->Bounds.GetBox());
 
-		const int32 ItemDropTableCnt = 4; //ItemDropTable°ªÀº ItemTypeEnum º¯°æ½Ã ¼öÄ¡º¯°æ ÇÊ¿ä
+		const int32 ItemDropTableCnt = 4; //ItemDropTableï¿½ï¿½ï¿½ï¿½ ItemTypeEnum ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¿ï¿½
 
 		TSubclassOf<AGameItem> Item = LoadClass<AGameItem>(nullptr, TEXT("/Script/Engine.Blueprint'/Game/Actor/Item/MyGameItem.MyGameItem_C'"));
 		if (Item)
 		{
 			AGameItem* SpawnedItem = GetWorld()->SpawnActor<AGameItem>(Item, SpawnPoint, FRotator(0));
-			const int32 ItemType = FMath::RandRange(0, ItemDropTableCnt - 1); //¾ÆÀÌÅÛ µå¶øÀº ·£´ý. È®·üÀº ¾øÀ½.
+			const int32 ItemType = FMath::RandRange(0, ItemDropTableCnt - 1); //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½. È®ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.
 
 			switch (ItemType)
 			{
@@ -76,8 +76,8 @@ void AItemSpawnActor::SpawnItem()
 
 void AItemSpawnActor::ChangeActiveState()
 {
-	// beginPlay¿¡¼­ ¹ÙÀÎµù °É¾î µÐ ÇÔ¼ö 
-	// ÇöÀç °ÔÀÓÅ¬¸®¾î »óÅÂ¿¡ µû¶ó¼­ ¾ÆÀÌÅÛÀ» µå¶øÇØÁÖ´Â ºñÇà±â¸¦ ³ªÅ¸³ª°Ô ÇÏ°Å³ª, ³ªÅ¸³ªÁö ¾Ê°Ô ÇÔ.
+	// beginPlayï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Îµï¿½ ï¿½É¾ï¿½ ï¿½ï¿½ ï¿½Ô¼ï¿½ 
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Å¬ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Â¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ï¿½â¸¦ ï¿½ï¿½Å¸ï¿½ï¿½ï¿½ï¿½ ï¿½Ï°Å³ï¿½, ï¿½ï¿½Å¸ï¿½ï¿½ï¿½ï¿½ ï¿½Ê°ï¿½ ï¿½ï¿½.
 	if (!GameMode->IsClear()) 
 	{
 		if (!bIsActive)
@@ -108,7 +108,7 @@ void AItemSpawnActor::ChangeActiveState()
 
 void AItemSpawnActor::SetDropTimer()
 {
-	//ºñÇà±â´Â ÀÏÁ¤½Ã°£¸¶´Ù ¾ÆÀÌÅÛÀ» µå¶øÇÏ¸ç, ºñÇà±â°¡ È°¼ºÈ­µÇÀÖÁö¾ÊÀ¸¸é ¾ÆÀÌÅÛÀ» µå¶øÇÏÁö¾ÊÀ½.
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ã°ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ï¸ï¿½, ï¿½ï¿½ï¿½ï¿½â°¡ È°ï¿½ï¿½È­ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.
 	if (bIsActive)
 	{
 		GetWorld()->GetTimerManager().SetTimer(SpawnItemHandle, this, &AItemSpawnActor::SpawnItem, DropDelay, false);
@@ -155,7 +155,7 @@ void AItemSpawnActor::Tick(float DeltaTime)
 	}
 }
 
-//¾Æ·¡ÀÇ ÇÔ¼öµéÀº ºñÇà±âÀÇ ÀÌµ¿À» ´ã´çÇÏ´Â ÇÔ¼ö
+//ï¿½Æ·ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½Ô¼ï¿½
 
 void AItemSpawnActor::MoveToEndPoint(float DeltaTime)
 {
@@ -168,6 +168,7 @@ void AItemSpawnActor::FindTartgetPoint()
 {
 	TArray<AActor*> TargetPoint;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ATargetPoint::StaticClass(), TargetPoint);
+
 	for (const auto& ItemPoint : TargetPoint)
 	{
 		if (ATargetPoint* tempPoint = Cast<ATargetPoint>(ItemPoint))
@@ -201,5 +202,3 @@ void AItemSpawnActor::ResetLocationToStartPoint()
 		}
 	}
 }
-
-//////ÀÌµ¿ ÇÔ¼ö ³¡

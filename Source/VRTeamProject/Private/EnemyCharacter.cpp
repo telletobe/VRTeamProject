@@ -11,8 +11,8 @@
 #include "PlayerBulletActor.h"
 
 /*
-	Enemy class ÀÇ¸Þ¸ð¸®ÀÇ ÇÒ´çÀº Spawner Å¬·¡½º¿¡¼­ ´ã´çÇÔ.
-	¸Þ¸ð¸® ÇØÁ¦´Â °ÔÀÓ¸ðµå¿¡¼­ °ü¸®
+	Enemy class ï¿½Ç¸Þ¸ï¿½ï¿½ï¿½ ï¿½Ò´ï¿½ï¿½ï¿½ Spawner Å¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½.
+	ï¿½Þ¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ó¸ï¿½å¿¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 */
 
 AEnemyCharacter::AEnemyCharacter()
@@ -20,11 +20,11 @@ AEnemyCharacter::AEnemyCharacter()
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	//±âº» °ª ¼¼ÆÃ
-	SetCurrentHp(1);
+	//ï¿½âº» ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+	SetCurrentHp(10);
 	SetDef(1.0f);
-	SetAtk(3.0f);
-	SetSpawnDelay(2.0f);
+	SetAtk(5.0f);
+	SetSpawnDelay(5.0f);
 
 	NavInvoker = CreateDefaultSubobject<UNavigationInvokerComponent>(TEXT("NavInvoker"));
 
@@ -43,7 +43,7 @@ void AEnemyCharacter::BeginPlay()
 		OnEnemyDeathAnimEnded.AddDynamic(this, &AEnemyCharacter::EnemyDeathAnimEnded);
 	}
 
-	// NavInvoker °ü·Ã »ý¼º,»èÁ¦ º¯¼ö°ª ¼³Á¤
+	// NavInvoker ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	NavGenerationRadius = 2000.0f;
 	NavRemovalRadius = 500.0f;
 	NavInvoker->SetGenerationRadii(NavGenerationRadius, NavRemovalRadius);
@@ -54,10 +54,17 @@ void AEnemyCharacter::BeginPlay()
 	USkeletalMeshComponent* EnemyMesh = GetMesh();
 	EnemyMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
-
 	if (APlayerCharacter* Player = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(this, 0)))
 	{
 		OnEnemyAttack.AddDynamic(Player, &APlayerCharacter::TakenDamage);
+
+	// FindSpawnPoint();
+	// FindDeSpawnPoint();
+		
+	if (EnemyMesh && EnemyMesh->GetMaterial(0))
+	{
+		DynamicMaterial = UMaterialInstanceDynamic::Create(EnemyMesh->GetMaterial(0), this);
+		EnemyMesh->SetMaterial(0, DynamicMaterial);
 	}
 }
 
@@ -123,36 +130,42 @@ void AEnemyCharacter::SetAtk(float EnemyAtk)
 
 void AEnemyCharacter::FindSpawnPoint()
 {
-	////Enemy°¡ È°¼ºµÉ ¶§ À§Ä¡ÇÒ °÷
+	////Enemyï¿½ï¿½ È°ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½
 	TArray<AActor*> FoundPoint;
 	TArray<AActor*> RandomPoint;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ATargetPoint::StaticClass(), FoundPoint);
 
-	for (const auto& StartPoint : FoundPoint)
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ATargetPoint::StaticClass(), FoundEndPoint);
+
+	if (FoundEndPoint.Num() == 0)
 	{
-		if (Cast<ATargetPoint>(StartPoint))
-		{		
-			UE_LOG(LogTemp, Warning, TEXT("Found point"));
-			if (StartPoint->ActorHasTag(TEXT("EnemySpawnPoint")))
-			{
-				SpawnPoint = StartPoint;
-				RandomPoint.Add(StartPoint);
-			}	
+		UE_LOG(LogTemp, Error, TEXT("FindSpawnPoint failed: No ATargetPoint actors in level!"));
+		return;
+	}
+
+	for (const auto& StartPoint : FoundEndPoint)
+	{
+		if (StartPoint && StartPoint->ActorHasTag(TEXT("EnemySpawnPoint")))
+		{
+			RandomPoint.Add(StartPoint);
 		}
 	}
-	if (RandomPoint.Num() > 0)
+
+	if (RandomPoint.Num() == 0)
 	{
-		SpawnPoint = RandomPoint[FMath::RandRange(0,RandomPoint.Num()-1)];
+		UE_LOG(LogTemp, Error, TEXT("FindSpawnPoint failed: No points with tag 'EnemySpawnPoint' found!"));
+		return;
 	}
-	else
-	{
-		UE_LOG(LogTemp,Warning,TEXT("no valid spawn points with tag 'EnemySpawnPoint' found"));
-	}
+
+	const int32 Index = FMath::RandRange(0, RandomPoint.Num() - 1);
+	SpawnPoint = RandomPoint[Index];
+
+	UE_LOG(LogTemp, Warning, TEXT("SpawnPoint assigned: %s"), *SpawnPoint->GetName());
+
 }
 
 void AEnemyCharacter::FindDeSpawnPoint()
 {
-	//Enemy°¡ ºñÈ°¼º µÉ ¶§ ÀÌµ¿ÇÒ °÷
+	//Enemyï¿½ï¿½ ï¿½ï¿½È°ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ ï¿½Ìµï¿½ï¿½ï¿½ ï¿½ï¿½
 	TArray<AActor*> FoundEndPoint;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ATargetPoint::StaticClass(), FoundEndPoint);
 
@@ -173,7 +186,7 @@ void AEnemyCharacter::FindDeSpawnPoint()
 
 void AEnemyCharacter::DeSpawn()
 {
-	//¸Þ¸ð¸®¿¡¼­ Á¦°ÅÇÏÁö¾Ê°í ºñÈ°¼ºÀ¸·Î ÀüÈ¯
+	//ï¿½Þ¸ð¸®¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê°ï¿½ ï¿½ï¿½È°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯
 	if (IsValid(DeSpawnPoint))
 	{
 		SetActorLocation(DeSpawnPoint->GetActorLocation());
@@ -192,7 +205,7 @@ void AEnemyCharacter::DeSpawn()
 
 void AEnemyCharacter::Spawn()
 {
-	//¸Þ¸ð¸®¿¡ »óÁÖÁßÀÎ µ¥ÀÌÅÍ¸¦ È°¼º»óÅÂ·Î º¯°æ
+	//ï¿½Þ¸ð¸®¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ È°ï¿½ï¿½ï¿½ï¿½ï¿½Â·ï¿½ ï¿½ï¿½ï¿½ï¿½
 	SetActorTickEnabled(true);
 	SetActorHiddenInGame(false);
 	GetMesh()->SetSimulatePhysics(true);
@@ -206,6 +219,7 @@ void AEnemyCharacter::Spawn()
 
 	bIsActive = true;
 	bIsDeathAnim = false;
+	bIsAttacking = false;
 
 	if (IsValid(SpawnPoint))
 	{
@@ -235,6 +249,23 @@ void AEnemyCharacter::EnemyDeathAnimEnded()
 	DeSpawn();
 }
 
+void AEnemyCharacter::PlayHitEffect()
+{
+	if (DynamicMaterial)
+	{
+		DynamicMaterial->SetScalarParameterValue(TEXT("HitBlend"), 0.5f);
+
+		FTimerHandle ColorResetTimerHandle;
+		GetWorldTimerManager().SetTimer(ColorResetTimerHandle, [this]()
+			{
+				if (DynamicMaterial)
+				{
+					DynamicMaterial->SetScalarParameterValue(TEXT("HitBlend"), 0.0f);
+				}
+			}, 0.2f, false); // 0.2ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+	}
+}
+
 void AEnemyCharacter::PlayDeathMontage()
 {
 	if (const USkeletalMeshComponent* MeshComp = GetMesh())
@@ -254,6 +285,43 @@ void AEnemyCharacter::PlayDeathMontage()
 	}
 }
 
+void AEnemyCharacter::PlayHitMontage()
+{
+	if (const USkeletalMeshComponent* MeshComp = GetMesh())
+	{
+		if (UAnimInstance* AnimInstance = MeshComp->GetAnimInstance())
+		{
+			if (HitMontage && !AnimInstance->Montage_IsPlaying(HitMontage))
+			{
+				bIsHitReacting = true;
+				AnimInstance->Montage_Play(HitMontage);
+				
+				return;
+			}
+		}
+	}
+}
+
+void AEnemyCharacter::PlayAttackMontage()
+{
+	if (const USkeletalMeshComponent* MeshComp = GetMesh())
+	{
+		if (UAnimInstance* AnimInstance = MeshComp->GetAnimInstance())
+		{
+			if (AttackMontage && !AnimInstance->Montage_IsPlaying(AttackMontage))
+			{
+				bIsAttacking = true;
+				AnimInstance->Montage_Play(AttackMontage);
+				
+				GetWorldTimerManager().SetTimer(AttackAnimTimerHandle, [this]()
+					{
+						bIsAttacking = false;
+					}, AttackMontage->GetPlayLength(), false);
+			}
+		}
+	}
+}
+
 void AEnemyCharacter::SetSpawnDelay(float EnemySpawnDelay)
 {
 	SpawnDelay = EnemySpawnDelay;
@@ -267,6 +335,8 @@ void AEnemyCharacter::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, A
 	{
 		if (GetCurrentHp() > 0)
 		{
+			PlayHitEffect();
+			PlayHitMontage(); // ï¿½Ç°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½
 			float EnemyHp = GetCurrentHp() - (Bullet->GetDamage() - GetDef());
 			if (EnemyHp > 0)
 			{
@@ -290,8 +360,18 @@ void AEnemyCharacter::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, A
 void AEnemyCharacter::OnComponentHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
 	APlayerCharacter* Player = Cast<APlayerCharacter>(OtherActor);
+	if (!IsValid(Player) || bIsDeathAnim || bIsAttacking)	return;
 
-	if (IsValid(Player))
+	// 1. ï¿½ï¿½ ï¿½Ìµï¿½ ï¿½ï¿½ï¿½ß±ï¿½
+	AEnemyAIController* EnemyController = Cast<AEnemyAIController>(GetController());
+	EnemyController->StopMovement();
+
+	// 2. ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ ï¿½ï¿½ï¿½
+	PlayAttackMontage();
+	bIsAttacking = true;
+
+	// 3. ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½ ï¿½ï¿½ Å¸ï¿½Ì¸ï¿½ ï¿½ï¿½ï¿½
+	if (AttackMontage)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Player IsValid"));
 		float PlayerCurrentHp = Player->GetHp();
@@ -299,5 +379,6 @@ void AEnemyCharacter::OnComponentHit(UPrimitiveComponent* HitComponent, AActor* 
 
 		BoradCastEnemyAttack();
 		DeSpawn();
+
 	}
 }

@@ -8,7 +8,7 @@
 #include "MotionControllerComponent.h"
 
 /*
-	¹«±âÀÇ ¸Þ¸ð¸® ÇÒ´ç°ú ÇØÁ¦´Â PlayerCharacter¿¡¼­ Ã³¸®ÇÔ
+	ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Þ¸ï¿½ ï¿½Ò´ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ PlayerCharacterï¿½ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½ï¿½ï¿½
 */
 
 // Sets default values
@@ -19,6 +19,8 @@ APlayerWeapon::APlayerWeapon()
 
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> WeaponMeshData(TEXT("/Script/Engine.Skeleton'/Game/Asset/Weapon/rifle_001_Skeleton.rifle_001_Skeleton'"));
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh> WeaponSkeletalData(TEXT("/Script/Engine.SkeletalMesh'/Game/Asset/Weapon/rifle_001.rifle_001'"));
+	/// Script / Engine.Skeleton'/Game/Asset/Weapon/pistol_001_Skeleton.pistol_001_Skeleton'
+	///Script/Engine.SkeletalMesh'/Game/Asset/Weapon/pistol_001.pistol_001'
 
 	WeaponCollision = CreateDefaultSubobject<USphereComponent>(TEXT("WeaponCollision"));
 	SetRootComponent(WeaponCollision);
@@ -53,7 +55,7 @@ void APlayerWeapon::BeginPlay()
 		WeaponMesh->SetStaticMesh(WeaponMeshAsset);
 	}
 
-	WeaponMesh->AttachToComponent(WeaponCollision, FAttachmentTransformRules::KeepRelativeTransform);
+	//WeaponMesh->AttachToComponent(WeaponCollision, FAttachmentTransformRules::KeepRelativeTransform);
 	WeaponMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	WeaponMesh->SetSimulatePhysics(false);
 }
@@ -64,9 +66,9 @@ void APlayerWeapon::Fire(float Damage)
 	if (!bIsFire) return;
 
 	ChangeFireState();
-	//ÀÓ½Ã ÄÚµå.
-	//Ä«¸Þ¶óÀÇ È¸Àü°ªÀ» ¹Þ¾Æ¼­ ÃÑ¾ËÀÇ ¹æÇâÀ» Á¤ÇØÁÜ.
-	//VRÈ°¿ë ½Ã VRÄÁÆ®·Ñ·¯ÀÇ Á¤º¸¸¦ ¹Þ¾Æ¼­ ¹æÇâÀ» ´Ù½Ã ¼³Á¤ÇØÁÖ¾î¾ß ÇÒ¼öÀÖÀ½.
+	//ï¿½Ó½ï¿½ ï¿½Úµï¿½.
+	//Ä«ï¿½Þ¶ï¿½ï¿½ï¿½ È¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Þ¾Æ¼ï¿½ ï¿½Ñ¾ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.
+	//VRÈ°ï¿½ï¿½ ï¿½ï¿½ VRï¿½ï¿½Æ®ï¿½Ñ·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Þ¾Æ¼ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ù½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¾ï¿½ï¿½ ï¿½Ò¼ï¿½ï¿½ï¿½ï¿½ï¿½.
 	// 
 	//FRotator StartRotation = GetOwner()->GetInstigatorController()->GetControlRotation();
 	 
@@ -77,7 +79,7 @@ void APlayerWeapon::Fire(float Damage)
 	const FVector StartRightLocation = WeaponSkeletal->GetSocketLocation("rifle_shot");
 	 
 	FActorSpawnParameters SpawnParams;
-	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn; // Ç×»ó ½ºÆùÇã¿ë
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn; // ï¿½×»ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 	/////////////////////////////////////////////////////////////////////////////////////////
 	APlayerBulletActor* NewBullet = GetWorld()->SpawnActor<APlayerBulletActor>(APlayerBulletActor::StaticClass(), StartRightLocation, StartRightRotation, SpawnParams);
@@ -90,7 +92,7 @@ void APlayerWeapon::Fire(float Damage)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Bullet Data invalid"));
 	}
-	//ÃÑ¾ËÀÌ 0.2ÃÊ¸¶´Ù ¹ß»çµÉ ¼ö ÀÖµµ·Ï Å¸ÀÌ¸Ó¼³Á¤.
+	//ï¿½Ñ¾ï¿½ï¿½ï¿½ 0.2ï¿½Ê¸ï¿½ï¿½ï¿½ ï¿½ß»ï¿½ï¿½ ï¿½ï¿½ ï¿½Öµï¿½ï¿½ï¿½ Å¸ï¿½Ì¸Ó¼ï¿½ï¿½ï¿½.
 	GetWorld()->GetTimerManager().SetTimer(FireTimer,this,&APlayerWeapon::ChangeFireState, FireDelay,false);
 }
 

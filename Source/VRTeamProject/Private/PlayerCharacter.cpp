@@ -24,7 +24,7 @@ APlayerCharacter::APlayerCharacter()
 	PrimaryActorTick.bCanEverTick = true;
 
 	SetHp(100.0f);
-	SetAtk(5);
+	SetAtk(5.0f);
 	SetDef(1);
 	bIsActive = false;
 	bMouseClickEnable = false;
@@ -74,6 +74,8 @@ APlayerCharacter::APlayerCharacter()
 	WidgetComponent->SetWidgetSpace(EWidgetSpace::World);
 	WidgetComponent->SetDrawSize(FVector2D(768.0f,1150.0f));
 	WidgetComponent->SetRelativeLocation(FVector(200.0f,0.0f,0.0f));
+	WidgetComponent->SetVisibility(false);
+	
 }
 
 void APlayerCharacter::SetVisibleRazerMesh(bool visible)

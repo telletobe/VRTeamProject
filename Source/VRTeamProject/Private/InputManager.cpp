@@ -15,7 +15,7 @@
 #include "Components/WidgetInteractionComponent.h"
 
 /*
-	Àü¹ÝÀûÀÎ ÀÔ·ÂÀ» °ü¸®ÇÏ´Â Å¬·¡½º
+	ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ô·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½
 */
 
 TObjectPtr<UInputManager> UInputManager::Instance = nullptr;
@@ -99,8 +99,8 @@ UInputManager* UInputManager::GetInstance() {
 void UInputManager::Initialize(APlayerCharacter* PlayerCharacter, APlayerController* PC)
 {
 	/*
-		Ã³À½ È£ÃâµÉ ¶§ ¼³Á¤ÇÏ´Â ÇÔ¼ö.
-		Å¬·¡½º º¯¼öµéÀ» ÀÌ°÷¿¡¼­ ¼³Á¤ÇÔ.  
+		Ã³ï¿½ï¿½ È£ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½Ô¼ï¿½.
+		Å¬ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ì°ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.  
 	*/
 	Player = PlayerCharacter;
 
@@ -116,7 +116,7 @@ void UInputManager::Initialize(APlayerCharacter* PlayerCharacter, APlayerControl
 	}
 }
 
-//ÄÁÆ®·Ñ·¯ ¸ÅÇÎ ÇÔ¼ö
+//ï¿½ï¿½Æ®ï¿½Ñ·ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½
 void UInputManager::BindAction(UEnhancedInputComponent* InputComponent)
 {
 	if (!InputComponent || !Player) return;
@@ -173,7 +173,7 @@ void UInputManager::Attack(const FInputActionValue& Value)
 void UInputManager::ToggleMap(const FInputActionValue& Value)
 {
 	// VR
-	if (IsValid(Player))
+	/*if (IsValid(Player))
 	{
 		if (Player->IsActive())
 		{
@@ -182,13 +182,13 @@ void UInputManager::ToggleMap(const FInputActionValue& Value)
 		
 			if (IsValid(UserWidgetComp))
 			{
-				if (UserWidgetComp->GetUserWidgetObject() == MapSelectInstance) // À§Á¬ÄÄÆ÷³ÍÆ®ÀÇ Å¬·¡½º¿Í Çãµå¿¡ ÀÖ´Â Å¬·¡½º¸¦ ºñ±³
+				if (UserWidgetComp->GetUserWidgetObject() == MapSelectInstance) // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½å¿¡ ï¿½Ö´ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
 				{
-					ToggleWidgetVisibility(UserWidgetComp); // Á¤º¸°¡ °°´Ù¸é COMPONENTÀÇ visible ¼Ó¼º¸¸ Á¶Àý
+					ToggleWidgetVisibility(UserWidgetComp); // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ù¸ï¿½ COMPONENTï¿½ï¿½ visible ï¿½Ó¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 				}
 				else 
 				{
-					UserWidgetComp->SetWidget(MapSelectInstance); //Á¤º¸°¡ ´Ù¸£´Ù¸é componentÀÇ Å¬·¡½º¸¦ º¯°æ ÈÄ visibleÀ» Á¶ÀýÇÔ.
+					UserWidgetComp->SetWidget(MapSelectInstance); //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ù¸ï¿½ï¿½Ù¸ï¿½ componentï¿½ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ visibleï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.
 					if (!UserWidgetComp->GetVisibleFlag())
 					{
 						ToggleWidgetVisibility(UserWidgetComp);
@@ -201,10 +201,19 @@ void UInputManager::ToggleMap(const FInputActionValue& Value)
 			UE_LOG(LogTemp, Warning, TEXT("Player is Dead"));
 		}
 	}
+*/
 }
 
 void UInputManager::PlayerStat(const FInputActionValue& Value)
 {
+	//if (PlayerController != nullptr)
+	//{
+	//	if (IsValid(MyHUD.Get()))
+	//	{ 
+	//		MyHUD.Get()->PlayerStateShow();         // HUD ï¿½ï¿½ ï¿½Ô¼ï¿½ È£ï¿½ï¿½
+
+	//	}
+	//}
 
 	//VR
 	if (IsValid(Player))
@@ -216,13 +225,13 @@ void UInputManager::PlayerStat(const FInputActionValue& Value)
 
 			if (IsValid(UserWidgetComp))
 			{
-				if (UserWidgetComp->GetUserWidgetObject() == PlayerStateInstance) // À§Á¬ÄÄÆ÷³ÍÆ®ÀÇ Å¬·¡½º¿Í Çãµå¿¡ ÀÖ´Â Å¬·¡½º¸¦ ºñ±³
+				if (UserWidgetComp->GetUserWidgetObject() == PlayerStateInstance) // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½å¿¡ ï¿½Ö´ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
 				{
-					ToggleWidgetVisibility(UserWidgetComp); // Á¤º¸°¡ °°´Ù¸é COMPONENTÀÇ visible ¼Ó¼º¸¸ Á¶Àý
+					ToggleWidgetVisibility(UserWidgetComp); // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ù¸ï¿½ COMPONENTï¿½ï¿½ visible ï¿½Ó¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 				}
 				else
 				{
-					UserWidgetComp->SetWidget(PlayerStateInstance);  //Á¤º¸°¡ ´Ù¸£´Ù¸é componentÀÇ Å¬·¡½º¸¦ º¯°æ ÈÄ visibleÀ» Á¶ÀýÇÔ.
+					UserWidgetComp->SetWidget(PlayerStateInstance);  //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ù¸ï¿½ï¿½Ù¸ï¿½ componentï¿½ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ visibleï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.
 					if (!UserWidgetComp->GetVisibleFlag())
 					{
 						ToggleWidgetVisibility(UserWidgetComp);

@@ -42,6 +42,12 @@ public:
 	bool IsActive() const { return bIsActive; }
 	bool IsDeathAnim() const { return bIsDeathAnim; }
 
+	UFUNCTION(BlueprintCallable, Category = "Anim")
+	bool IsAttacking() const { return bIsAttacking; }
+
+	UFUNCTION(BlueprintCallable, Category = "Anim")
+	bool IsHitReacting() const { return bIsHitReacting; }
+
 	UFUNCTION()
 	void OnComponentHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
@@ -67,13 +73,25 @@ public:
 	void PlayDeathMontage();
 
 	UFUNCTION()
+	void PlayHitMontage();
+
+	UFUNCTION()
+	void PlayAttackMontage();
+
+	UFUNCTION()
 	void EnemyDeathAnimEnded();
 
+	UFUNCTION(BlueprintCallable)
 	void FindSpawnPoint();
 	void FindDeSpawnPoint();
+
+	UFUNCTION()
+	void PlayHitEffect();
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
 
 public :
 
@@ -97,8 +115,8 @@ private:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<AActor> SpawnPoint;
 
-	float NavGenerationRadius; // µ¿ÀûÀ¸·Î ÃÊ·Ï»ö Ä­À» »ý¼º
-	float NavRemovalRadius; // µ¿ÀûÀ¸·Î ÃÊ·Ï»ö Ä­À» Á¦°Å
+	float NavGenerationRadius; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê·Ï»ï¿½ Ä­ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+	float NavRemovalRadius; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê·Ï»ï¿½ Ä­ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 
 	UPROPERTY(EditAnywhere)
 	float CurrentHp;
@@ -125,9 +143,28 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Anim")
 	bool bIsDeathAnim = false;
 
-	//Death ¾Ö´Ô°ü·Ã
+
+	UPROPERTY(EditAnywhere, Category = "Anim")
+	bool bIsAttacking = false;
+
+	UPROPERTY(EditAnywhere, Category = "Anim")
+	bool bIsHitReacting = false;
+
+	UPROPERTY()
+	UMaterialInstanceDynamic* DynamicMaterial;
+
 	UPROPERTY(EditAnywhere, Category = "Animation")
 	TObjectPtr<UAnimMontage> DeathMontage;
 
+
+	UPROPERTY(EditAnywhere, Category = "Animation")
+	TObjectPtr<UAnimMontage> HitMontage;
+
+	FTimerHandle HitAnimTimerHandle;
+
+	UPROPERTY(EditAnywhere, Category = "Animation")
+	TObjectPtr<UAnimMontage> AttackMontage;
+
+	FTimerHandle AttackAnimTimerHandle;
 
 };

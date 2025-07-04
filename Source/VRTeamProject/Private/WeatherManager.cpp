@@ -1,77 +1,95 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "WeatherManager.h"
-#include "WeatherApiHelper.h"
-#include "WeatherBPLibrary.h"
+#include "HttpModule.h"
+#include "Interfaces/IHttpResponse.h"
+#include "Dom/JsonObject.h"
+#include "Misc/DateTime.h"
+#include "Misc/Paths.h"
+#include "HAL/FileManager.h"
+#include "Engine/Engine.h"
 
-TObjectPtr<UWeatherManager> UWeatherManager::WeatherInstance = nullptr;
-
-UWeatherManager::UWeatherManager()
+// Sets default values
+AWeatherManager::AWeatherManager()
 {
+ 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	PrimaryActorTick.bCanEverTick = false;
 
 }
 
-UWeatherManager* UWeatherManager::GetInstance()
+// Called when the game starts or when spawned
+void AWeatherManager::BeginPlay()
 {
-	if (!WeatherInstance)
-	{
-		WeatherInstance = NewObject<UWeatherManager>();
-		WeatherInstance->AddToRoot();
-	}
-	return WeatherInstance.Get();
+	Super::BeginPlay();
+	
+	RequestKMAWeather();
 }
 
-void UWeatherManager::Init()
+
+void AWeatherManager::RequestKMAWeather()
 {
-	FString apiKey = TEXT("PKLCjvKc2RgztD1XwdYUS7cHkacT3rE5cn1CvpTpFGxKyoIw79%2BMRd1M1O74w2fokbapdV7Maym5Kd%2BRS00vKw%3D%3D");
-	FLatentActionInfo LatenInfo;
-	FOnWeatherInfoReceivedPTY ReceivedPTY;
-	FOnWeatherInfoReceivedSKY ReceivedSKY;
+	// 현재 시간 기준 포맷된 기상청 시간 문자열 생성
+	FString FormattedTime = FDateTime::Now().ToString(TEXT("%Y%m%d%H00"));
 
-	ReceivedPTY.BindDynamic(this, &UWeatherManager::ReceivedPTYValue);
-	ReceivedSKY.BindDynamic(this, &UWeatherManager::ReceivedSKYValue);
+    FString URL = FString::Printf(
+        TEXT("https://apihub.kma.go.kr/api/typ01/url/kma_sfctm2.php?tm=%s&stn=0&authKey=Y1xuzi_oTlWcbs4v6M5Vjw"),
+        *FormattedTime
+    );
 
-	//Get Data
-	if (CurrentWorld)
-	{
-		//���ڴ� �浵,���� �׼� ����
-		UWeatherBPLibrary::GetPTY(CurrentWorld, apiKey, 60, 127, ReceivedPTY, LatenInfo);
-		UWeatherBPLibrary::GetSKY(CurrentWorld, apiKey, 60, 127, ReceivedSKY, LatenInfo);
-	}
-	else
-	{
-		UE_LOG(LogTemp,Warning,TEXT("World context is not set. Please call SetWorld() before using this Function."));
-		return;
-	}
+    TSharedRef<IHttpRequest, ESPMode::ThreadSafe> Request = FHttpModule::Get().CreateRequest();
+    Request->SetURL(URL);
+    Request->SetVerb("GET");
+    Request->SetHeader(TEXT("Content-Type"), TEXT("application/x-www-form-urlencoded; charset=UTF-8"));
+    Request->OnProcessRequestComplete().BindUObject(this, &AWeatherManager::OnWeatherResponse);
+    Request->ProcessRequest();
+
+    UE_LOG(LogTemp, Log, TEXT("[WeatherManager] 날씨 요청 보냄: %s"), *URL);
 }
 
-void UWeatherManager::SetCurrentWorld(UWorld* CurWorld)
+void AWeatherManager::OnWeatherResponse(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)
 {
-	CurrentWorld = CurWorld;
-}
+    if (!bWasSuccessful || !Response.IsValid())
+    {
+        UE_LOG(LogTemp, Error, TEXT("[WeatherManager] 날씨 요청 실패"));
+        return;
+    }
 
-void UWeatherManager::ReceivedPTYValue(int32 PTYValue, bool bIsSuccess, FString ErrorMessage, const FCurrentWeatherResult& RawResult)
-{
-	if (bIsSuccess)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Received PTY value = %d"), PTYValue);
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Failed to receive PTY value = %s"), *ErrorMessage);
-	}
-}
+    FString Content = Response->GetContentAsString();
 
-void UWeatherManager::ReceivedSKYValue(int32 SKYValue, bool bIsSuccess, FString ErrorMessage, const FCurrentWeatherResult& RawResult)
-{
-	if (bIsSuccess)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Received SKY value = %d"), SKYValue);
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Failed to receive SKY value = %s"), *ErrorMessage);
-	}
+   /* UE_LOG(LogTemp, Log, TEXT("[WeatherManager] 응답 수신:\n%s"), *Content);*/
+
+    // ✅ 응답은 JSON이 아니라 '텍스트 테이블'이므로 직접 파싱 필요
+    TArray<FString> Lines;
+    Content.ParseIntoArrayLines(Lines);
+
+    for (const FString& Line : Lines)
+    {
+        if (Line.StartsWith(TEXT("#")) || Line.Len() < 20)
+        {
+            continue; // 주석 또는 빈 줄 무시
+        }
+
+        TArray<FString> Columns;
+        Line.TrimStartAndEnd().ParseIntoArrayWS(Columns); // 공백 기준 분리
+
+        if (Columns.Num() >= 45)
+        {
+            float TA = FCString::Atof(*Columns[11]); // 기온 (TA)
+            float RN = FCString::Atof(*Columns[15]); // 강수량 (RN)
+            float WS = FCString::Atof(*Columns[4]);  // 풍속 (WS)
+
+            CurrentTemp = TA;
+            CurrentRain = RN;
+            CurrentWindSpeed = WS;
+
+            UE_LOG(LogTemp, Log, TEXT("[WeatherManager] 기온: %.1f°C, 강수량: %.1fmm, 풍속: %.1fm/s"), TA, RN, WS);
+
+            // 예: 게임 날씨 시스템에 적용 (UDS 연동)
+            // if (UltraDynamicSky) { UltraDynamicSky->SetRainAmount(FMath::Clamp(RN / 30.0f, 0.0f, 1.0f)); }
+
+            break; // 첫 데이터만 처리
+        }
+    }
 }
 
