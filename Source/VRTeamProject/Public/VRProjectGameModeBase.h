@@ -80,4 +80,8 @@ private:
 	UPROPERTY()
 	TObjectPtr<AEnemySpawner> Spanwer;
 
+	UPROPERTY(EditAnywhere, Category = "Sound")
+	USoundBase* MainBGM;
+
+
 };

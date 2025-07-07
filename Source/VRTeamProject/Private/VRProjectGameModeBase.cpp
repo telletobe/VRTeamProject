@@ -31,6 +31,13 @@ AVRProjectGameModeBase::AVRProjectGameModeBase()
 
 	CurrentKillCnt = 0;
 	RequiredKillCnt = 20;
+
+	ConstructorHelpers::FObjectFinder<USoundBase> BGMObject(TEXT("/Game/Audio/EffectSound/MainBGM.MainBGM"));
+	if (BGMObject.Succeeded())
+	{
+		MainBGM = BGMObject.Object;
+	}
+
 }
 
 void AVRProjectGameModeBase::BeginPlay()
@@ -52,6 +59,12 @@ void AVRProjectGameModeBase::BeginPlay()
 			}
 		}
 	}
+
+	if (MainBGM)
+	{
+		UGameplayStatics::PlaySound2D(this, MainBGM);
+	}
+
 }
 
 
