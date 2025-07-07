@@ -255,9 +255,7 @@ void APlayerCharacter::PlayerReSpawn()
 {
 	if (PlayerController)
 	{
-		FInputModeGameOnly InputMode;
 		PlayerController->SetIgnoreMoveInput(false);
-		PlayerController->SetInputMode(InputMode);
 		bMouseClickEnable = true;
 	} 
 
@@ -274,6 +272,17 @@ void APlayerCharacter::PlayerReSpawn()
 	SetActorHiddenInGame(false);
 }
 
+void APlayerCharacter::PlayerDeSpawn()
+{
+	if (PlayerController)
+	{
+		PlayerController->SetIgnoreMoveInput(true);
+		bMouseClickEnable = false;
+	}
+	if (Weapon) Weapon->SetActorHiddenInGame(true);
+	bIsActive = false;
+}
+
 void APlayerCharacter::TakenDamage(float Damage)
 {
 	float PlayerHp = GetHp();
@@ -287,17 +296,6 @@ void APlayerCharacter::TakenDamage(float Damage)
 		NotifyPlayerDeath();
 		PlayerDeSpawn();
 	}
-}
-
-void APlayerCharacter::PlayerDeSpawn()
-{
-	if (PlayerController)
-	{
-		PlayerController->SetIgnoreMoveInput(true);
-		bMouseClickEnable = false;
-	}
-	if (Weapon) Weapon->SetActorHiddenInGame(true);
-	bIsActive = false;
 }
 
 void APlayerCharacter::SetHp(float PlayerHp)

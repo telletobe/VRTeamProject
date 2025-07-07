@@ -23,6 +23,7 @@ APlayerWeapon::APlayerWeapon()
 
 	WeaponSkeletal = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WeaponSkeletal"));
 	WeaponSkeletal->SetupAttachment(WeaponCollision);
+	WeaponSkeletal->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	
 	if (WeaponSkeletalData.Succeeded())
 	{

@@ -35,7 +35,7 @@ APlayerHUD::APlayerHUD()
 		StageInfo = StageInfoWidget.Class;
 	}
 
-	static ConstructorHelpers::FClassFinder<UEndGameWidget> EndGameWidget(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UMG/EndGameWidget.EndGameWidget_C'"));
+	static ConstructorHelpers::FClassFinder<UEndGameWidget> EndGameWidget(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UMG/WBP_EndGameWidget.WBP_EndGameWidget_C'"));
 
 	if (EndGameWidget.Succeeded())
 	{
@@ -77,8 +77,16 @@ void APlayerHUD::BeginPlay()
 	Mode.SetHideCursorDuringCapture(false);
 	Mode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
 
-	EndGameInstance->AddToViewport();
-	EndGameInstance->RemoveFromParent();
+	if (EndGameInstance)
+	{
+		EndGameInstance->AddToViewport();
+		EndGameInstance->RemoveFromParent();
+	}
+	else
+	{
+		UE_LOG(LogTemp,Warning,TEXT("EndGameInstance Is Null"));
+	}
+
 
 }
 
