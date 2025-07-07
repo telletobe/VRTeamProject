@@ -162,7 +162,7 @@ void AVRProjectGameModeBase::CleanupAfterGameEnd()
 	}
 }
 
-void AVRProjectGameModeBase::CleanupGameItem() // �÷��̾� ����� �ʵ忡�ִ� ������ �޸� �Ҵ�����
+void AVRProjectGameModeBase::CleanupGameItem() 
 {
 	TArray<AActor*> FoundActor;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AActor::StaticClass(), FoundActor);
@@ -211,9 +211,10 @@ void AVRProjectGameModeBase::InitializeGameObjects()
 			if (!Spanwer)
 			{
 				Spanwer = GetWorld()->SpawnActor<AEnemySpawner>(BPEnemySpawner, FVector(FVector::ZeroVector), FRotator(0, 0, 0));
-				Spanwer->CreateEnemy();
 				GetWorldTimerManager().SetTimer(Spanwer->GetSpawnHandle(), Spanwer.Get(), &AEnemySpawner::SpawnEnemy, Spanwer->GetSpawnDelay(), true);
 				Spanwer->OnEnemySpawned.AddDynamic(this,&AVRProjectGameModeBase::OnEnemySpawned);
+				Spanwer->CreateEnemy();
+				UE_LOG(LogTemp, Warning, TEXT("Bind OnEnemySpawned"));			
 
 			}			
 			bEnemySpawnerExists = true;
@@ -255,6 +256,7 @@ void AVRProjectGameModeBase::CheckGameClear()
 void AVRProjectGameModeBase::OnEnemySpawned(AEnemyCharacter* SpawnedEnemy)
 {
 	SpawnedEnemy->OnEnemyKilled.AddDynamic(this, &AVRProjectGameModeBase::CheckGameClear);
+	UE_LOG(LogTemp,Warning,TEXT("KillCnt Enable"));
 }
 
 void AVRProjectGameModeBase::OnPlayerDeath()

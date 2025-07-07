@@ -69,7 +69,9 @@ private:
 	bool bItemSpawnerExists = false;
 	bool bEnemySpawnerExists = false;
 
+	UPROPERTY(VisibleAnywhere)
 	int32 CurrentKillCnt = 0;
+	UPROPERTY(EditAnywhere)
 	int32 RequiredKillCnt = 20;
 
 	UPROPERTY(EditAnywhere)
