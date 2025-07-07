@@ -133,10 +133,8 @@ void UInputManager::Move(const FInputActionValue& Value)
 {
 	const APlayerController* PlayerController = Cast<APlayerController>(Player->GetController());
 	FVector2D MovementVector = Value.Get<FVector2D>();
-	//if exist Controller, is bound inputMappingContext
 	if (PlayerController != nullptr)
 	{
-		// add movement 
 		PlayerController->GetPawn()->AddMovementInput(PlayerController->GetPawn()->GetActorRightVector(), MovementVector.X);
 	}
 }

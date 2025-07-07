@@ -365,6 +365,7 @@ void AEnemyCharacter::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, A
 void AEnemyCharacter::OnComponentHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
 	APlayerCharacter* Player = Cast<APlayerCharacter>(OtherActor);
+
 	if (!IsValid(Player) || bIsDeathAnim || bIsAttacking)	return;
 
 	AEnemyAIController* EnemyController = Cast<AEnemyAIController>(GetController());
@@ -397,4 +398,5 @@ void AEnemyCharacter::OnComponentHit(UPrimitiveComponent* HitComponent, AActor* 
 
 			}, Duration, false);
 	}
+
 }

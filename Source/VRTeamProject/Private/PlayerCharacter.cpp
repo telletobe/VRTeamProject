@@ -256,6 +256,7 @@ void APlayerCharacter::PlayerReSpawn()
 	if (PlayerController)
 	{
 		PlayerController->SetIgnoreMoveInput(false);
+		EnableInput(PlayerController);
 		bMouseClickEnable = true;
 	} 
 
@@ -266,10 +267,12 @@ void APlayerCharacter::PlayerReSpawn()
 	}
 
 	SetHp(GetMaxHp());
+	NotifyPlayerChangeHealth();
 
 	if (Weapon) Weapon->SetActorHiddenInGame(false);
 	bIsActive = true;
 	SetActorHiddenInGame(false);
+	SetActorEnableCollision(true);
 }
 
 void APlayerCharacter::PlayerDeSpawn()

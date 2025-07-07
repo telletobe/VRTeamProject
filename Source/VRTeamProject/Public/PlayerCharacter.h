@@ -59,6 +59,7 @@ public:
 
 	void PlayerDeSpawn();
 	void NotifyPlayerDeath();
+
 	void NotifyPlayerChangeHealth();
 
 

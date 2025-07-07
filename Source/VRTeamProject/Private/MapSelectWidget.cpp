@@ -32,18 +32,17 @@ void UMapSelectWidget::NativeConstruct()
 
 void UMapSelectWidget::HandleRegionClicked()
 {
-#if WITH_EDITOR
-    //if (APlayerController* PC = Cast<APlayerController>(GetOwningPlayer()))
-    //{
-    //    PC->SetShowMouseCursor(true);
-    //    if (WBP_StageInfoWidget)
-    //    {
-    //        WBP_StageInfoWidget->SetVisibility(ESlateVisibility::Visible);
-    //        UE_LOG(LogTemp,Warning,TEXT("Call StageInfo"));
-    //    }
-    //}
 
-#endif
+    if (APlayerController* PC = Cast<APlayerController>(GetOwningPlayer()))
+    {
+        if (WBP_StageInfoWidget)
+        {
+            WBP_StageInfoWidget->SetVisibility(ESlateVisibility::Visible);
+            UE_LOG(LogTemp,Warning,TEXT("Call StageInfo"));
+        }
+    }
+
+
 
 
     /* 어떤 버튼인지 이름(FName)으로 구분 */

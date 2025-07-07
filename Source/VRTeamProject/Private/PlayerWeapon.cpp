@@ -23,7 +23,7 @@ APlayerWeapon::APlayerWeapon()
 
 	WeaponSkeletal = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WeaponSkeletal"));
 	WeaponSkeletal->SetupAttachment(WeaponCollision);
-	WeaponSkeletal->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	WeaponSkeletal->SetGenerateOverlapEvents(false);
 	
 	if (WeaponSkeletalData.Succeeded())
 	{
@@ -70,7 +70,7 @@ void APlayerWeapon::Fire(float Damage)
 	else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Bullet Data invalid"));
-		Destroy();
+		GetWorld()->GetTimerManager().SetTimer(FireTimer, this, &APlayerWeapon::ChangeFireState, FireDelay, false);
 		return;
 	}
 	GetWorld()->GetTimerManager().SetTimer(FireTimer,this,&APlayerWeapon::ChangeFireState, FireDelay,false);
