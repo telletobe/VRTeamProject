@@ -115,8 +115,6 @@ void AEnemySpawner::BeginPlay()
 		SpawnDelay = 0.7f;
 	}
 
-	OnRestart.AddUniqueDynamic(this,&AEnemySpawner::ActivateEnemySpawner);
-
 }
 
 // Called every frame

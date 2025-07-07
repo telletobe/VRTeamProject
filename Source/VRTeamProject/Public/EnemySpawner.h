@@ -7,7 +7,6 @@
 #include "EnemySpawner.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnEnemySpawned, AEnemyCharacter*, Enemy);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnRestart);
 
 class UBoxComponent;
 class AEnemyCharacter;
@@ -27,7 +26,6 @@ public:
 	FTimerHandle& GetSpawnHandle() { return SpawnHandle; }
 	float GetSpawnDelay() const { return SpawnDelay; }
 
-
 	void DeActivateEnemySpawner();
 
 	UFUNCTION()
@@ -39,8 +37,6 @@ public:
 	UPROPERTY()
 	FOnEnemySpawned OnEnemySpawned;
 
-	UPROPERTY()
-	FOnRestart OnRestart;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

@@ -30,7 +30,7 @@ public :
 	void TriggerGameReStart();
 
 	UFUNCTION(BlueprintCallable)
-	void CleanupAfterGame();
+	void CleanupAfterGameEnd();
 
 	bool IsClear() const { return bIsClear; }
 

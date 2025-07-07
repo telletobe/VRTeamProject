@@ -255,9 +255,17 @@ void APlayerCharacter::PlayerReSpawn()
 {
 	if (PlayerController)
 	{
+		FInputModeGameOnly InputMode;
 		PlayerController->SetIgnoreMoveInput(false);
+		PlayerController->SetInputMode(InputMode);
 		bMouseClickEnable = true;
 	} 
+
+	if (WidgetComponent->IsWidgetVisible())
+	{
+		WidgetComponent->SetVisibility(false);
+		InVisibleRezerMesh();
+	}
 
 	SetHp(GetMaxHp());
 

@@ -40,8 +40,6 @@ public:
 	float GetAtk() const { return Atk; }
 	float GetSpawnDelay() const { return SpawnDelay; }
 
-
-
 	bool IsActive() const { return bIsActive; }
 	bool IsDeathAnim() const { return bIsDeathAnim; }
 
@@ -153,6 +151,9 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Anim")
 	bool bIsHitReacting = false;
+
+	UPROPERTY(EditAnywhere, Category = "Anim")
+	bool bIsMoving = false;
 
 	UPROPERTY()
 	UMaterialInstanceDynamic* DynamicMaterial;
