@@ -8,11 +8,6 @@
 #include "Engine/TargetPoint.h"
 #include "VRProjectGameModeBase.h"
 
-/*
-	������ ������ -> ������ ǥ��
-	�޸� ������ ���Ӹ�忡�� ����
-*/
-
 // Sets default values
 AItemSpawnActor::AItemSpawnActor()
 {

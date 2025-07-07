@@ -57,11 +57,23 @@ void APlayerWeapon::Fire(float Damage)
 	const FRotator StartRightRotation = Player->GetMotionControllerRight()->GetRelativeRotation();
 	const FVector StartRightLocation = WeaponSkeletal->GetSocketLocation("rifle_shot");
 	 
+	//
+	// »êÅºÈ¿°ú
+	const FQuat BaseQuat = Player->GetMotionControllerRight()->GetRelativeRotation().Quaternion();
+	const float SpreadAngle = 5.0f;
+	//const float RandomPitch = FMath::FRandRange(-SpreadAngle, SpreadAngle); // Y
+	const float RandomYaw = FMath::FRandRange(-SpreadAngle, SpreadAngle); // Z
+	const float RandomRoll = FMath::FRandRange(-SpreadAngle, SpreadAngle); // X
+	const FQuat RandomQuat = FRotator(0.0f, RandomYaw, RandomRoll).Quaternion();
+	const FQuat FinalQuat = RandomQuat * BaseQuat;
+	const FRotator FinalRotator = FinalQuat.Rotator();
+	//
+
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
 	/////////////////////////////////////////////////////////////////////////////////////////
-	APlayerBulletActor* NewBullet = GetWorld()->SpawnActor<APlayerBulletActor>(APlayerBulletActor::StaticClass(), StartRightLocation, StartRightRotation, SpawnParams);
+	APlayerBulletActor* NewBullet = GetWorld()->SpawnActor<APlayerBulletActor>(APlayerBulletActor::StaticClass(), StartRightLocation, FinalRotator, SpawnParams);
 	if (IsValid(NewBullet))
 	{
 		NewBullet->SetOwner(this);

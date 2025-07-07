@@ -21,7 +21,7 @@ AEnemyCharacter::AEnemyCharacter()
 	PrimaryActorTick.bCanEverTick = true;
 
 	//�⺻ �� ����
-	SetCurrentHp(10);
+	SetCurrentHp(50);
 	SetDef(1.0f);
 	SetAtk(5.0f);
 	SetSpawnDelay(5.0f);

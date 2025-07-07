@@ -10,17 +10,6 @@
 #include <ItemSpawnActor.h>
 #include <WeatherManager.h>
 
-/*
-OnRestart.AddUniqueDynamic(PlayerActor, &APlayerCharacter::InVisibleRezerMesh);
-OnRestart.AddUniqueDynamic(PlayerActor, &APlayerCharacter::PlayerReSpawn);
-PlayerActor->OnPlayerDeath.AddDynamic(this, &AVRProjectGameModeBase::OnPlayerDeath);
-PlayerActor->OnPlayerDeath.AddDynamic(this, &AVRProjectGameModeBase::CleanupGameItem);
-OnPlayerDied.AddDynamic(this,&AVRProjectGameModeBase::DeActivateEnemySpawner);
-Spanwer->OnEnemySpawned.AddDynamic(this,&AVRProjectGameModeBase::OnEnemySpawned);
-SpawnedEnemy->OnEnemyKilled.AddDynamic(this, &AVRProjectGameModeBase::CheckGameClear);
-*/
-
-
 AVRProjectGameModeBase::AVRProjectGameModeBase()
 {
 
@@ -30,7 +19,7 @@ AVRProjectGameModeBase::AVRProjectGameModeBase()
 	HUDClass = APlayerHUD::StaticClass();
 
 	CurrentKillCnt = 0;
-	RequiredKillCnt = 20;
+	RequiredKillCnt = 40;
 
 	ConstructorHelpers::FObjectFinder<USoundBase> BGMObject(TEXT("/Game/Audio/EffectSound/MainBGM.MainBGM"));
 	if (BGMObject.Succeeded())

@@ -117,14 +117,14 @@ private:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<AActor> SpawnPoint;
 
-	float NavGenerationRadius; // �������� �ʷϻ� ĭ�� ����
-	float NavRemovalRadius; // �������� �ʷϻ� ĭ�� ����
+	float NavGenerationRadius;
+	float NavRemovalRadius;
 
 	UPROPERTY(EditAnywhere)
 	float CurrentHp;
 
 	UPROPERTY(EditAnywhere)
-	float MaxHp = 10.0f;
+	float MaxHp = 50.0f;
 
 	UPROPERTY(EditAnywhere)
 	float Def;
