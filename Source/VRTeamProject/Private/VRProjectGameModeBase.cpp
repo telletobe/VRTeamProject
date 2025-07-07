@@ -71,13 +71,6 @@ void AVRProjectGameModeBase::TriggerGameStart()
 
 	InitializeGameObjects();
 	CleanupGameItem();
-
-	// 플레이어가 죽으면 적 생성을 멈추는 델리게이트 설정
-	if (Spanwer)
-	{
-		OnPlayerDied.AddDynamic(this,&AVRProjectGameModeBase::DeActivateEnemySpawner);
-	}
-
 	return;
 }
 
@@ -254,7 +247,7 @@ void AVRProjectGameModeBase::OnEnemySpawned(AEnemyCharacter* SpawnedEnemy)
 void AVRProjectGameModeBase::OnPlayerDeath()
 {
 	bPlayerAlive = false;
-	OnPlayerDied.Broadcast();
+	DeActivateEnemySpawner();
 	return;
 }
 

@@ -20,7 +20,6 @@ public :
 	UFUNCTION()
 	void ShowEndGame();
 
-	void TestRemoveWidget();
 protected:
 	virtual void NativeConstruct() override;
 
