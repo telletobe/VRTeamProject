@@ -42,8 +42,15 @@ void UStageInfoWidget::GameStart()
         }
         else
         {
-            //로딩설정필요
-            GameMode->TriggerGameStart();
+            // 스트리밍 방식으로 로드
+            FLatentActionInfo LatentInfo;
+            LatentInfo.CallbackTarget = this;
+            LatentInfo.ExecutionFunction = "OnLevelLoaded";
+            LatentInfo.Linkage = 0;
+            LatentInfo.UUID = __LINE__;
+
+            UGameplayStatics::LoadStreamLevel(this, FName("M_Basic"), true, true, LatentInfo);
+                      
         }
     }
 
@@ -52,4 +59,11 @@ void UStageInfoWidget::GameStart()
 void UStageInfoWidget::BackToMenu()
 {
     SetVisibility(ESlateVisibility::Hidden);
+}
+
+void UStageInfoWidget::OnLevelLoaded()
+{
+    AVRProjectGameModeBase* GameMode = Cast<AVRProjectGameModeBase>(GetWorld()->GetAuthGameMode());
+    GameMode->TriggerGameStart();
+
 }
