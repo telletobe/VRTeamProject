@@ -32,12 +32,11 @@ AItemSpawnActor::AItemSpawnActor()
 
 void AItemSpawnActor::SpawnItem()
 {
-	//���Ӹ�忡�� �÷��̾��� ���¸� �޾ƿͼ� ����Ⱑ ��Ÿ �� ��, �÷��̾ ��� �ִٸ� �������� ���.
 	if (GameMode->IsPlayerAlive())
 	{
 		const FVector SpawnPoint = FMath::RandPointInBox(ItemSpawnerCollision->Bounds.GetBox());
 
-		const int32 ItemDropTableCnt = 4; //ItemDropTable���� ItemTypeEnum ����� ��ġ���� �ʿ�
+		const int32 ItemDropTableCnt = 4; 
 
 		TSubclassOf<AGameItem> Item = LoadClass<AGameItem>(nullptr, TEXT("/Script/Engine.Blueprint'/Game/Actor/Item/MyGameItem.MyGameItem_C'"));
 		if (Item)
@@ -76,8 +75,6 @@ void AItemSpawnActor::SpawnItem()
 
 void AItemSpawnActor::ChangeActiveState()
 {
-	// beginPlay���� ���ε� �ɾ� �� �Լ� 
-	// ���� ����Ŭ���� ���¿� ���� �������� ������ִ� ����⸦ ��Ÿ���� �ϰų�, ��Ÿ���� �ʰ� ��.
 	if (!GameMode->IsClear()) 
 	{
 		if (!bIsActive)
@@ -108,7 +105,6 @@ void AItemSpawnActor::ChangeActiveState()
 
 void AItemSpawnActor::SetDropTimer()
 {
-	//������ �����ð����� �������� ����ϸ�, ����Ⱑ Ȱ��ȭ������������ �������� �����������.
 	if (bIsActive)
 	{
 		GetWorld()->GetTimerManager().SetTimer(SpawnItemHandle, this, &AItemSpawnActor::SpawnItem, DropDelay, false);
