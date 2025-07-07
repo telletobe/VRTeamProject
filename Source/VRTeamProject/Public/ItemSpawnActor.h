@@ -8,6 +8,7 @@
 
 class UBoxComponent;
 class AVRProjectGameModeBase;
+class AGameItem;
 
 UCLASS()
 class VRTEAMPROJECT_API AItemSpawnActor : public AActor
@@ -63,4 +64,7 @@ private:
 	bool bIsActive = false;
 
 	TObjectPtr<AVRProjectGameModeBase> GameMode;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<AGameItem> GameItemClass;
 };

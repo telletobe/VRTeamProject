@@ -143,6 +143,7 @@ void APlayerCharacter::BeginPlay()
 		{
 			Weapon = NewWeapon;
 			Weapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, "RightHand");
+			//Weapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, "MotionControllerRight");
 		}
 	}
 	else

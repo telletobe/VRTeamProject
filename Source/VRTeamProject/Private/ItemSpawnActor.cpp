@@ -38,10 +38,10 @@ void AItemSpawnActor::SpawnItem()
 
 		const int32 ItemDropTableCnt = 4; 
 
-		TSubclassOf<AGameItem> Item = LoadClass<AGameItem>(nullptr, TEXT("/Script/Engine.Blueprint'/Game/Actor/Item/MyGameItem.MyGameItem_C'"));
-		if (Item)
+		
+		if (GameItemClass)
 		{
-			AGameItem* SpawnedItem = GetWorld()->SpawnActor<AGameItem>(Item, SpawnPoint, FRotator(0));
+			AGameItem* SpawnedItem = GetWorld()->SpawnActor<AGameItem>(GameItemClass, SpawnPoint, FRotator(0));
 			const int32 ItemType = FMath::RandRange(0, ItemDropTableCnt - 1); //������ ����� ����. Ȯ���� ����.
 
 			switch (ItemType)
@@ -63,6 +63,11 @@ void AItemSpawnActor::SpawnItem()
 				return;
 				break;
 			}
+			return;
+		}
+		else
+		{
+			UE_LOG(LogTemp,Warning,TEXT("Please assign item value in the editor. "));
 			return;
 		}
 	}
@@ -150,8 +155,6 @@ void AItemSpawnActor::Tick(float DeltaTime)
 		MoveToEndPoint(DeltaTime);
 	}
 }
-
-//�Ʒ��� �Լ����� ������� �̵��� ����ϴ� �Լ�
 
 void AItemSpawnActor::MoveToEndPoint(float DeltaTime)
 {
