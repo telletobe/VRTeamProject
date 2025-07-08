@@ -6,6 +6,8 @@
 #include "PlayerBulletActor.h"
 #include <PlayerCharacter.h>
 #include "MotionControllerComponent.h"
+#include "Kismet/GameplayStatics.h"
+#include "Sound/SoundCue.h"
 
 // Sets default values
 APlayerWeapon::APlayerWeapon()
@@ -14,6 +16,7 @@ APlayerWeapon::APlayerWeapon()
 	PrimaryActorTick.bCanEverTick = true;
 
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh> WeaponSkeletalData(TEXT("/Script/Engine.SkeletalMesh'/Game/Asset/Weapon/rifle_001.rifle_001'"));
+	static ConstructorHelpers::FObjectFinder<USoundCue> FireSoundData(TEXT("/Script/Engine.SoundCue'/Game/Audio/EffectSound/gunshot_Cue.gunshot_Cue'"));
 	///Script/Engine.SkeletalMesh'/Game/Asset/Weapon/pistol_001.pistol_001'
 
 	WeaponCollision = CreateDefaultSubobject<USphereComponent>(TEXT("WeaponCollision"));
@@ -31,6 +34,11 @@ APlayerWeapon::APlayerWeapon()
 		WeaponSkeletal->SetRelativeScale3D(FVector(9.0f, 9.0f, 9.0f));
 		WeaponSkeletal->SetRelativeRotation(FRotator(180.0f,-180.0f,-180.0f));
 		WeaponSkeletal->SetRelativeLocation(FVector(0,0,-15.0f));
+	}
+
+	if (FireSoundData.Succeeded())
+	{
+		FireSound = FireSoundData.Object;
 	}
 }
 
@@ -78,6 +86,15 @@ void APlayerWeapon::Fire(float Damage)
 
 	/////////////////////////////////////////////////////////////////////////////////////////
 	APlayerBulletActor* NewBullet = GetWorld()->SpawnActor<APlayerBulletActor>(APlayerBulletActor::StaticClass(), StartRightLocation, SpreadAngle, SpawnParams);
+	if (FireSound)
+	{
+		UGameplayStatics::SpawnSoundAtLocation(this, FireSound,GetActorLocation());
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("FireSound Data invalid"));
+	}
+
 	if (IsValid(NewBullet))
 	{
 		NewBullet->SetOwner(this);

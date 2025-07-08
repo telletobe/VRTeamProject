@@ -50,7 +50,7 @@ void UStageInfoWidget::GameStart()
             LatentInfo.UUID = __LINE__;
 
             UGameplayStatics::LoadStreamLevel(this, FName("M_Basic"), true, true, LatentInfo);
-                      
+            OnLevelLoaded();
         }
     }
 

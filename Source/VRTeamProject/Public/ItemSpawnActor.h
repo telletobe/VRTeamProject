@@ -67,4 +67,7 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<AGameItem> GameItemClass;
+
+	UPROPERTY()
+	TObjectPtr<USoundBase> AirPlaneSound;
 };

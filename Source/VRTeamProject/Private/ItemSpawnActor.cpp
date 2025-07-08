@@ -7,12 +7,16 @@
 #include <Kismet/GameplayStatics.h>
 #include "Engine/TargetPoint.h"
 #include "VRProjectGameModeBase.h"
+#include "Sound/SoundCue.h"
+
 
 // Sets default values
 AItemSpawnActor::AItemSpawnActor()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	static ConstructorHelpers::FObjectFinder<USoundCue> AirPlaneSoundData(TEXT("/Script/Engine.SoundCue'/Game/Audio/EffectSound/Airplane_Cue.Airplane_Cue'"));
 
 	ItemSpawnerCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("ItemSpawnerCollision"));
 
@@ -23,6 +27,11 @@ AItemSpawnActor::AItemSpawnActor()
 
 	SpawnDelay = 3.0f;
 	DropDelay = 2.5f;
+
+	if (AirPlaneSoundData.Succeeded())
+	{
+		AirPlaneSound = AirPlaneSoundData.Object;
+	}
 }
 
 void AItemSpawnActor::SpawnItem()
@@ -84,6 +93,14 @@ void AItemSpawnActor::ChangeActiveState()
 			PrimaryActorTick.bCanEverTick = true;
 			GetWorld()->GetTimerManager().ClearTimer(ActorVisibleHandle);
 			SetDropTimer();
+			if (AirPlaneSound)
+			{
+				UGameplayStatics::PlaySound2D(this, AirPlaneSound);
+			}
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("AirPlaneSound Data invalid"));
+			}
 		}
 		else
 		{
