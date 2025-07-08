@@ -22,12 +22,6 @@ class VRTEAMPROJECT_API APlayerHUD : public AHUD
 public :
 	APlayerHUD();
 
-	UFUNCTION(BlueprintCallable)
-	void ToggleMapSelect();
-
-	UFUNCTION(BlueprintCallable)
-	void PlayerStateShow();
-
 	TObjectPtr<UMapSelectWidget> GetMapSelectInstance() const;
 	TObjectPtr<UPlayerStateWidget> GetPlayerStateInstance() const;
 	TObjectPtr<UStageInfoWidget> GetStageInfoInstance() const;

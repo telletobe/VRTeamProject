@@ -16,14 +16,13 @@ class VRTEAMPROJECT_API UEndGameWidget : public UUserWidget
 {
 	GENERATED_BODY()
 
+public :
+	UFUNCTION()
+	void ShowEndGame();
 
 protected:
 	virtual void NativeConstruct() override;
 
 private:
-	
-	
-
-	
 	
 };

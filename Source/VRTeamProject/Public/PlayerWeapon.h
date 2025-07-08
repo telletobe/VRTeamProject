@@ -24,6 +24,7 @@ public:
 	float GetFireDelay() const { return FireDelay; }
 	float GetDefaultFireDelay() const { return DefaultFireDelay; }
 	TObjectPtr<UStaticMeshComponent> GetMesh() const { return WeaponMesh.Get(); }
+	const FRotator FireWithSpread(float Pitch, float Yaw, float Roll);
 
 protected:
 	// Called when the game starts or when spawned
@@ -41,17 +42,14 @@ private:
 	TObjectPtr<UStaticMeshComponent> WeaponMesh;
 
 	UPROPERTY(EditAnywhere)
-	TObjectPtr<UStaticMesh> WeaponMeshAsset;
-
-	UPROPERTY(EditAnywhere)
 	TObjectPtr<USkeletalMeshComponent> WeaponSkeletal;
 
 	bool bIsFire = true;
 
 	UPROPERTY(EditAnywhere)
-	float FireDelay = 0.2;
+	float FireDelay = 0.02f;
 
-	float DefaultFireDelay = 0.2f;
+	float DefaultFireDelay = 0.02f;
 	FTimerHandle FireTimer;
 
 };

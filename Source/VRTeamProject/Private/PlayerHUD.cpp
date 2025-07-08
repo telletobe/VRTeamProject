@@ -8,6 +8,10 @@
 #include "Blueprint/UserWidget.h"
 #include <EndGameWidget.h>
 
+/*
+	UserWidgetclassï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+*/
+
 APlayerHUD::APlayerHUD()
 {
 	static ConstructorHelpers::FClassFinder<UMapSelectWidget> Selectwidget(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UMG/MapUI/WBP_MapSelectWidget.WBP_MapSelectWidget_C'"));
@@ -31,7 +35,7 @@ APlayerHUD::APlayerHUD()
 		StageInfo = StageInfoWidget.Class;
 	}
 
-	static ConstructorHelpers::FClassFinder<UEndGameWidget> EndGameWidget(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UMG/EndGameWidget.EndGameWidget_C'"));
+	static ConstructorHelpers::FClassFinder<UEndGameWidget> EndGameWidget(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UMG/WBP_EndGameWidget.WBP_EndGameWidget_C'"));
 
 	if (EndGameWidget.Succeeded())
 	{
@@ -39,7 +43,6 @@ APlayerHUD::APlayerHUD()
 	}
 
 }
-
 
 void APlayerHUD::BeginPlay()
 {
@@ -58,7 +61,7 @@ void APlayerHUD::BeginPlay()
 	if (PlayerState && !PlayerStateInstance)
 	{
 		PlayerStateInstance = CreateWidget<UPlayerStateWidget>(GetWorld(), PlayerState);
-		PlayerStateInstance->SetVisibility(ESlateVisibility::Hidden);
+		PlayerStateInstance->SetVisibility(ESlateVisibility::Visible);
 	}
 
 	if (StageInfo && !StageInfoInstance)
@@ -74,92 +77,52 @@ void APlayerHUD::BeginPlay()
 	Mode.SetHideCursorDuringCapture(false);
 	Mode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
 
-}
-
-void APlayerHUD::ToggleMapSelect()
-{
-	
-	//if (IsValid(MapSelectInstance))
-	//{
-	//	if (MapSelectInstance->IsInViewport())
-	//	{
-	//		MapSelectInstance->RemoveFromParent();      // Ä¿¼­ OFF
-	//		if (PC)
-	//		{
-	//			PC->bShowMouseCursor = false;
-	//			PC->SetInputMode(FInputModeGameOnly());
-	//			
-	//		}
-	//		
-	//	}
-	//	else
-	//	{
-	//		if (PlayerStateInstance->IsInViewport())
-	//		{
-	//			PlayerStateInstance->RemoveFromParent();
-	//		}
-	//		MapSelectInstance->AddToViewport();      // Ä¿¼­ ON
-	//		if (PC) 
-	//		{
-	//			PC->bShowMouseCursor = true;
-	//			PC->SetInputMode(Mode);
-	//		}
-	//		
-	//	}
-	//}
-}
-
-void APlayerHUD::PlayerStateShow()
-{
-	if (IsValid(PlayerStateInstance))
+	if (PlayerStateInstance)
 	{
-		if (GetWorld()->GetMapName().Contains("Map"))
-		{
-			if (PlayerStateInstance->IsInViewport())
-			{
-				PlayerStateInstance->RemoveFromParent();
-				PC->bShowMouseCursor = false;
-				if (PC) PC->SetInputMode(FInputModeGameOnly());
-			}
-			else
-			{
-				if (MapSelectInstance->IsInViewport())
-				{
-					MapSelectInstance->RemoveFromParent();
-				}
-				PlayerStateInstance->AddToViewport();
-				PlayerStateInstance->SetVisibility(ESlateVisibility::Hidden);
-				PC->bShowMouseCursor = true;
-				if (PC) PC->SetInputMode(Mode);
-			}
-		}	
+		PlayerStateInstance->AddToViewport();
+		PlayerStateInstance->RemoveFromParent();
 	}
-	
-	return;
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("PlayerStateInstance Is Null"));
+	}
+
+	if (EndGameInstance)
+	{
+		EndGameInstance->AddToViewport();
+		EndGameInstance->RemoveFromParent();
+	}
+	else
+	{
+		UE_LOG(LogTemp,Warning,TEXT("EndGameInstance Is Null"));
+	}
+
+
 }
 
 TObjectPtr<UMapSelectWidget> APlayerHUD::GetMapSelectInstance() const
 {
-	if(MapSelectInstance) return MapSelectInstance;
+	if(MapSelectInstance) return MapSelectInstance.Get();
 
 	return nullptr;
 }
 
 TObjectPtr<UPlayerStateWidget> APlayerHUD::GetPlayerStateInstance() const
 {
-	if (PlayerStateInstance) return PlayerStateInstance;
+	if (PlayerStateInstance) return PlayerStateInstance.Get();
 	
 	return nullptr;
 }
 
 TObjectPtr<UStageInfoWidget> APlayerHUD::GetStageInfoInstance() const
 {
-	if (StageInfoInstance) return StageInfoInstance;
+	if (StageInfoInstance) return StageInfoInstance.Get();
 	return nullptr;
 }
 
 TObjectPtr<UEndGameWidget> APlayerHUD::GetEndGameInstance() const
 {
-	if (EndGameInstance) return EndGameInstance;
+	if (EndGameInstance) return EndGameInstance.Get();
 	return nullptr;
 }
+ 

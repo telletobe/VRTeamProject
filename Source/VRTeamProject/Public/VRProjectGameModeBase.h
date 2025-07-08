@@ -6,12 +6,13 @@
 #include "GameFramework/GameModeBase.h"
 #include "VRProjectGameModeBase.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnReStart);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPlayerDied);
+
+
 class AItemSpawnActor;
 class AEnemySpawner;
 
-/**
- * 
- */
 UCLASS()
 class VRTEAMPROJECT_API AVRProjectGameModeBase : public AGameModeBase
 {
@@ -19,29 +20,69 @@ class VRTEAMPROJECT_API AVRProjectGameModeBase : public AGameModeBase
 	
 	AVRProjectGameModeBase();
 public :
+	UFUNCTION(BlueprintCallable)
 	void TriggerGameClear();
+	
+	UFUNCTION(BlueprintCallable)
 	void TriggerGameStart();
-	bool IsClear() { return bIsClear; }
-	bool IsPlayerAlive() { return bPlayerAlive; }
 
 	UFUNCTION(BlueprintCallable)
+	void TriggerGameReStart();
+
+	UFUNCTION(BlueprintCallable)
+	void CleanupAfterGameEnd();
+
+	bool IsClear() const { return bIsClear; }
+
+	bool IsPlayerAlive() const { return bPlayerAlive; }
+
 	void InitializeGameObjects();
+	UFUNCTION()
+	void CheckGameClear();
 
 	UFUNCTION()
-	void ChangePlayerAliveState();
+	void OnEnemySpawned(class AEnemyCharacter* SpawnedEnemy);
+	UFUNCTION()
+	void CleanupGameItem();
+
+	UFUNCTION()
+	void OnPlayerDeath();
+
+	UFUNCTION()
+	void NotifyReStart();
+
+	UFUNCTION()
+	void DeActivateEnemySpawner();
+
+	UPROPERTY()
+	FOnReStart OnRestart;
+
+	UPROPERTY()
+	FOnPlayerDied OnPlayerDied;
 protected:
 
 	virtual void BeginPlay() override;
-
+	void PlayMainBGM();
 private:
 	bool bIsClear = false;
 	bool bPlayerAlive = true;
+	bool bItemSpawnerExists = false;
+	bool bEnemySpawnerExists = false;
+
+	UPROPERTY(VisibleAnywhere)
+	int32 CurrentKillCnt = 0;
+	UPROPERTY(EditAnywhere)
+	int32 RequiredKillCnt = 20;
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<AItemSpawnActor> BPItemSpawner;
-
-
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<AEnemySpawner> BPEnemySpawner;
+
+	UPROPERTY()
+	TObjectPtr<AEnemySpawner> Spanwer;
+
+	UPROPERTY(EditAnywhere, Category = "Sound")
+	TObjectPtr<USoundBase> MainBGM;
 
 };

@@ -7,6 +7,7 @@
 #include <Kismet/GameplayStatics.h>
 #include "Engine/TargetPoint.h"
 #include "VRProjectGameModeBase.h"
+
 // Sets default values
 AItemSpawnActor::AItemSpawnActor()
 {
@@ -22,45 +23,132 @@ AItemSpawnActor::AItemSpawnActor()
 
 	SpawnDelay = 3.0f;
 	DropDelay = 2.5f;
-
 }
 
 void AItemSpawnActor::SpawnItem()
 {
-	const FVector SpawnPoint = FMath::RandPointInBox(ItemSpawnerCollision->Bounds.GetBox());
-
-	const int32 ItemDropTableCnt = 4; 
-
-	TSubclassOf<AGameItem> Item = LoadClass<AGameItem>(nullptr, TEXT("/Script/Engine.Blueprint'/Game/Actor/Item/MyGameItem.MyGameItem_C'"));
-	if (Item)
+	if (GameMode->IsPlayerAlive())
 	{
-		AGameItem* SpawnedItem = GetWorld()->SpawnActor<AGameItem>(Item, SpawnPoint, FRotator(0));
-		const int32 ItemType = FMath::RandRange(0,ItemDropTableCnt-1);
+		const FVector SpawnPoint = FMath::RandPointInBox(ItemSpawnerCollision->Bounds.GetBox());
 
-		switch (ItemType)
-		{
-		case 0 :
-			SpawnedItem->SetItemData(EItemEffectData::HEAL);
-			break;
-		case 1:
-			SpawnedItem->SetItemData(EItemEffectData::AtkUp);
-			break;
-		case 2:
-			SpawnedItem->SetItemData(EItemEffectData::DefUp);
-			break;
-		case 3:
-			SpawnedItem->SetItemData(EItemEffectData::AttackSpeed);
-			break;
-
-		default:
-			return;
-			break;
-		}
+		const int32 ItemDropTableCnt = 4; 
 
 		
+		if (GameItemClass)
+		{
+			AGameItem* SpawnedItem = GetWorld()->SpawnActor<AGameItem>(GameItemClass, SpawnPoint, FRotator(0));
+			const int32 ItemType = FMath::RandRange(0, ItemDropTableCnt - 1); //������ ����� ����. Ȯ���� ����.
+
+			switch (ItemType)
+			{
+			case 0:
+				SpawnedItem->SetItemData(EItemEffectData::HEAL);
+				break;
+			case 1:
+				SpawnedItem->SetItemData(EItemEffectData::AtkUp);
+				break;
+			case 2:
+				SpawnedItem->SetItemData(EItemEffectData::DefUp);
+				break;
+			case 3:
+				SpawnedItem->SetItemData(EItemEffectData::AttackSpeed);
+				break;
+
+			default:
+				return;
+				break;
+			}
+			return;
+		}
+		else
+		{
+			UE_LOG(LogTemp,Warning,TEXT("Please assign item value in the editor. "));
+			return;
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp,Warning,TEXT("ItemSpawnActor(SpawnItem()) : Player IS Dead"));
 		return;
 	}
+}
 
+void AItemSpawnActor::ChangeActiveState()
+{
+	if (!GameMode->IsClear()) 
+	{
+		if (!bIsActive)
+		{
+			bIsActive = true;
+			SetActorHiddenInGame(false);
+			PrimaryActorTick.bCanEverTick = true;
+			GetWorld()->GetTimerManager().ClearTimer(ActorVisibleHandle);
+			SetDropTimer();
+		}
+		else
+		{
+			bIsActive = false;
+			SetActorHiddenInGame(true);
+			PrimaryActorTick.bCanEverTick = false;
+			GetWorld()->GetTimerManager().SetTimer(ActorVisibleHandle, this, &AItemSpawnActor::ChangeActiveState, SpawnDelay, true);
+			SetDropTimer();
+		}
+	}
+	else
+	{
+		bIsActive = false;
+		SetActorHiddenInGame(true);
+		PrimaryActorTick.bCanEverTick = false;
+		GetWorldTimerManager().ClearTimer(ActorVisibleHandle);
+	}
+}
+
+void AItemSpawnActor::SetDropTimer()
+{
+	if (bIsActive)
+	{
+		GetWorld()->GetTimerManager().SetTimer(SpawnItemHandle, this, &AItemSpawnActor::SpawnItem, DropDelay, false);
+	}
+	else
+	{
+		GetWorld()->GetTimerManager().ClearTimer(SpawnItemHandle);
+	}
+}
+
+// Called when the game starts or when spawned
+void AItemSpawnActor::BeginPlay()
+{
+	Super::BeginPlay();
+
+	if (GameMode == nullptr)
+	{
+		GameMode = Cast<AVRProjectGameModeBase>(GetWorld()->GetAuthGameMode());
+	}
+	ItemSpawnerCollision->SetCollisionObjectType(ECollisionChannel::ECC_WorldDynamic);
+	ItemSpawnerMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	ItemSpawnerCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	MoveForce = FVector(-1200, 0, 0);
+
+	SetActorHiddenInGame(true);
+	PrimaryActorTick.bCanEverTick = false;
+	FindTartgetPoint();
+
+	if (!bIsActive)
+	{
+		GetWorld()->GetTimerManager().SetTimer(ActorVisibleHandle, this, &AItemSpawnActor::ChangeActiveState, SpawnDelay, true);
+	}
+}
+
+// Called every frame
+void AItemSpawnActor::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	if (bIsActive)
+	{
+		MoveToEndPoint(DeltaTime);
+	}
 }
 
 void AItemSpawnActor::MoveToEndPoint(float DeltaTime)
@@ -92,52 +180,8 @@ void AItemSpawnActor::FindTartgetPoint()
 	}
 }
 
-void AItemSpawnActor::ChangeActiveState()
-{
-	if (!GameMode->IsClear())
-	{
-		if (!bIsActive)
-		{
-			bIsActive = true;
-			SetActorHiddenInGame(false);
-			PrimaryActorTick.bCanEverTick = true;
-			GetWorld()->GetTimerManager().ClearTimer(ActorVisibleHandle);
-			SetDropTimer();
-		}
-		else
-		{
-			bIsActive = false;
-			SetActorHiddenInGame(true);
-			PrimaryActorTick.bCanEverTick = false;
-			GetWorld()->GetTimerManager().SetTimer(ActorVisibleHandle, this, &AItemSpawnActor::ChangeActiveState, SpawnDelay, true);
-			SetDropTimer();
-		}
-	}
-	else
-	{
-		bIsActive = false;
-		SetActorHiddenInGame(true);
-		PrimaryActorTick.bCanEverTick = false;
-		GetWorldTimerManager().ClearTimer(ActorVisibleHandle);
-	}
-	
-}
-
-void AItemSpawnActor::SetDropTimer()
-{
-	if (bIsActive)
-	{
-		GetWorld()->GetTimerManager().SetTimer(SpawnItemHandle, this, &AItemSpawnActor::SpawnItem, DropDelay, false);
-	}
-	else
-	{
-		GetWorld()->GetTimerManager().ClearTimer(SpawnItemHandle);
-	}
-}
-
 void AItemSpawnActor::ResetLocationToStartPoint()
 {
-
 	if (IsValid(EndPoint))
 	{
 		if (IsValid(StartPoint))
@@ -149,60 +193,6 @@ void AItemSpawnActor::ResetLocationToStartPoint()
 				ChangeActiveState();
 				return;
 			}
-
 		}
 	}
-
 }
-
-//void AItemSpawnActor::CreateItemSpawnActor()
-//{
-//	if (BPItemSpawner)
-//	{
-//		AItemSpawnActor* ItemSpawner = GetWorld()->SpawnActor<AItemSpawnActor>(BPItemSpawner, FVector(0, 0, 0),FRotator(0,90.0f,0));
-//	}
-//}
-
-// Called when the game starts or when spawned
-void AItemSpawnActor::BeginPlay()
-{
-	Super::BeginPlay();
-
-	if (GameMode == nullptr)
-	{
-		GameMode = Cast<AVRProjectGameModeBase>(GetWorld()->GetAuthGameMode());
-	}
-
-
-
-	ItemSpawnerCollision->SetCollisionObjectType(ECollisionChannel::ECC_WorldDynamic);
-	ItemSpawnerMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	ItemSpawnerCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-
-	MoveForce = FVector(-1200, 0, 0);
-
-	SetActorHiddenInGame(true);
-	PrimaryActorTick.bCanEverTick = false;
-	//FindTartgetPoint();
-
-	if (!bIsActive)
-	{
-		GetWorld()->GetTimerManager().SetTimer(ActorVisibleHandle, this, &AItemSpawnActor::ChangeActiveState, SpawnDelay, true);
-
-	}
-
-}
-
-// Called every frame
-void AItemSpawnActor::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-	if (bIsActive)
-	{
-		MoveToEndPoint(DeltaTime);
-	}
-
-
-}
-

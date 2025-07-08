@@ -6,6 +6,8 @@
 #include "GameFramework/Actor.h"
 #include "EnemySpawner.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnEnemySpawned, AEnemyCharacter*, Enemy);
+
 class UBoxComponent;
 class AEnemyCharacter;
 class AVRProjectGameModeBase;
@@ -19,25 +21,27 @@ class VRTEAMPROJECT_API AEnemySpawner : public AActor
 public:	
 	// Sets default values for this actor's properties
 	AEnemySpawner();
-	//void CreateEnemySpawner();
 	void CreateEnemy();
-	void SpawnEnemy();
 	TArray<AEnemyCharacter*>& GetEnemyPool() { return EnemyPool; }
+	FTimerHandle& GetSpawnHandle() { return SpawnHandle; }
+	float GetSpawnDelay() const { return SpawnDelay; }
 
+	void DeActivateEnemySpawner();
 
 	UFUNCTION()
-	void CheckGameClear();
+	void ActivateEnemySpawner();
 
 	UFUNCTION()
-	void IncreaseKillCount();
-	
+	void SpawnEnemy();
+
+	UPROPERTY()
+	FOnEnemySpawned OnEnemySpawned;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 private:
 
-	void DeActivateEnemySpawner();
-	void ActivateEnemySpawner();
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -49,25 +53,15 @@ private :
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UBoxComponent> SpawnBox;
 
-	FTimerHandle CreateHandle;
 	FTimerHandle SpawnHandle;
 
 	TArray<AEnemyCharacter*> EnemyPool;
 
 	UPROPERTY(EditAnywhere, category = "EnemyPool")
-	float CreateDelay;
+	float SpawnDelay = 0.7f;
 
-	UPROPERTY(EditAnywhere, category = "EnemyPool")
-	float SpawnDelay;
-
-	int32 CurrentKillCnt;
-	int32 RequiredKillCnt;
 	int32 PoolIndex = 0;
+
 	bool bIsClear = false;
-
-	TObjectPtr<AVRProjectGameModeBase> GameMode;
-
-	//UPROPERTY(EditAnywhere)
-	//TSubclassOf<AEnemySpawner> BPEnemySpawner;
 
 };

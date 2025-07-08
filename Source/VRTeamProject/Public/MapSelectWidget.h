@@ -10,6 +10,7 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnRegionSelected, FName, RegionID);
 
 class UButton;
+class UImage;
 class UStageInfoWidget;
 
 /**
@@ -37,6 +38,13 @@ private:
 
 	UPROPERTY(meta = (Bindwidget))
 	TObjectPtr<UButton> SelectButton_3;
+
+	UPROPERTY(meta = (Bindwidget))
+	TObjectPtr<UImage> IM_Map;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UStageInfoWidget> WBP_StageInfoWidget;
+
 
 	UFUNCTION()
 	void HandleRegionClicked();

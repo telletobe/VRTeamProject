@@ -7,6 +7,9 @@
 #include "PlayerBulletActor.h"
 #include "Engine/StaticMeshActor.h"
 
+/*
+	게임아이템의 메모리 할당은 Itemspanwer에서 담당함.
+*/
 
 // Sets default values
 AGameItem::AGameItem()
@@ -71,7 +74,7 @@ void AGameItem::BeginPlay()
 //이벤트 발생자(EventInstigator)는 null값이 들어오니 사용하면 안됨.
 float AGameItem::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
-	if ((Player = Cast<APlayerCharacter>(DamageCauser->GetOwner())))
+	if ((Player = Cast<APlayerCharacter>(DamageCauser->GetOwner()))) // 발생자(Weapon)의 Owner(Player)
 	{
 		UE_LOG(LogTemp,Warning,TEXT("GameItem.cpp : TakeDamage Get Player Info!"));
 	}
@@ -91,6 +94,7 @@ void AGameItem::Destroyed()
 
 void AGameItem::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
+	//아이템이 어딘가에 닿는다면 낙하산 Mesh를 가려줌
 	UE_LOG(LogTemp, Warning, TEXT("OnGroundHit"));
 
 	if (OtherActor)
@@ -98,7 +102,6 @@ void AGameItem::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPr
 		ParachuteMesh->SetVisibility(false);
 		ItemMesh->OnComponentHit.RemoveDynamic(this,&AGameItem::OnHit);
 	}
-
 	return;
 }
 

@@ -34,12 +34,15 @@ public:
 	void SetAtk(float PlayerAtk);
 	void SetDef(float PlayerDef);
 	void SetExp(float PlayerExp);
+	void HideWidgetComponent();
 
 	float GetHp() const { return Hp; }
 	float GetAtk() const { return Atk; }
 	float GetDef() const { return Def; }
 	float GetExp() const { return Exp; }
 	float GetMaxHp() const { return MaxHp; }
+
+	bool IsActive() const { return bIsActive; }
 
 	TObjectPtr<APlayerWeapon> GetWeapon() const { return *Weapon; }
 	bool IsMouseClickedEnable() const {	return bMouseClickEnable;}
@@ -48,13 +51,18 @@ public:
 	float GetDefaultDef () const { return DefaultDef; }
 
 	void ApplyEffectItem(const EItemEffectData& Data);
+
+	UFUNCTION()
 	void PlayerReSpawn();
+
+	UFUNCTION()
+	void TakenDamage(float Damage);
+
 	void PlayerDeSpawn();
 	void NotifyPlayerDeath();
+
 	void NotifyPlayerChangeHealth();
 
-	UPROPERTY()
-	FOnPlayerDeath OnPlayerDeath;
 
 	UPROPERTY()
 	FOnHealthChange OnHealthChange;
@@ -70,7 +78,15 @@ public:
 	TObjectPtr<UWidgetInteractionComponent> GetWidgetInteractionRight() const { return *WidgetInteractionRight; }
 	TObjectPtr<UWidgetComponent> GetWidgetComponent() const { return *WidgetComponent; }
 
-	void ShowEndGame();
+	UFUNCTION()
+	void SetVisibleRazerMesh(bool visible);
+
+	UFUNCTION()
+	void InVisibleRezerMesh();
+
+	UPROPERTY()
+	FOnPlayerDeath OnPlayerDeath;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -115,9 +131,6 @@ private:
 
 	UPROPERTY()
 	TObjectPtr<UInputManager> InputManager;
-
-	FTimerHandle RestoreTimerHandle;
-
 
 	//////// VR
 

@@ -4,6 +4,7 @@
 #include "StageInfoWidget.h"
 #include "Components/Button.h"
 #include <Kismet/GameplayStatics.h>
+#include <VRProjectGameModeBase.h>
 
 void UStageInfoWidget::Init(const FName& InRegionID, UTexture2D* Thumbnail, int32 Difficulty)
 {
@@ -32,15 +33,37 @@ void UStageInfoWidget::NativeConstruct()
 
 void UStageInfoWidget::GameStart()
 {
+    AVRProjectGameModeBase* GameMode = Cast<AVRProjectGameModeBase>(GetWorld()->GetAuthGameMode());
+    if (GameMode)
+    {
+        if (!GameMode->IsClear())
+        {
+            return;
+        }
+        else
+        {
+            // 스트리밍 방식으로 로드
+            FLatentActionInfo LatentInfo;
+            LatentInfo.CallbackTarget = this;
+            LatentInfo.ExecutionFunction = "OnLevelLoaded";
+            LatentInfo.Linkage = 0;
+            LatentInfo.UUID = __LINE__;
 
-    FLatentActionInfo Latent;
-    Latent.CallbackTarget = this;
-    Latent.ExecutionFunction = "OnStreamLevelLoaded";
-    Latent.Linkage = 0;
-    Latent.UUID = __LINE__;
-    UGameplayStatics::LoadStreamLevel(this, FName(TEXT("FirstMap")), true, true, Latent);
+            UGameplayStatics::LoadStreamLevel(this, FName("M_Basic"), true, true, LatentInfo);
+                      
+        }
+    }
+
 }
 
 void UStageInfoWidget::BackToMenu()
 {
+    SetVisibility(ESlateVisibility::Hidden);
+}
+
+void UStageInfoWidget::OnLevelLoaded()
+{
+    AVRProjectGameModeBase* GameMode = Cast<AVRProjectGameModeBase>(GetWorld()->GetAuthGameMode());
+    GameMode->TriggerGameStart();
+
 }

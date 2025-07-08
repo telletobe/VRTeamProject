@@ -7,6 +7,11 @@
 #include <VRProjectGameModeBase.h>
 #include "Engine/TargetPoint.h"
 
+
+/*
+	메모리 해제는 게임모드에서 처리
+*/
+
 const int32 AEnemySpawner::EnemyPoolSize = 20;
 
 // Sets default values
@@ -18,27 +23,14 @@ AEnemySpawner::AEnemySpawner()
 	SpawnBox = CreateDefaultSubobject<UBoxComponent>(TEXT("SpawnBox"));
 	SetRootComponent(SpawnBox);
 
-	CurrentKillCnt = 1;
-	RequiredKillCnt = 200;
-	CreateDelay = 0.1f;
 	SpawnDelay = 0.7f;
 	PoolIndex = EnemyPoolSize - 1;
 }
 
-
-//void AEnemySpawner::CreateEnemySpawner()
-//{
-//	if (BPEnemySpawner)
-//	{
-//		AEnemySpawner* Spanwer = GetWorld()->SpawnActor<AEnemySpawner>(BPEnemySpawner,FVector(-1350.0f,3200.0f,350.0f),FRotator(0,0,0));
-//	}
-//}
-
-
 void AEnemySpawner::CreateEnemy()
 {
+	//메모리에 Enemy를 할당하는 코드
 	const FVector SpawnPoint = FMath::RandPointInBox(SpawnBox->Bounds.GetBox());
-
 	bool bIsSpawn = true;
 
 	if (bIsSpawn)
@@ -46,23 +38,23 @@ void AEnemySpawner::CreateEnemy()
 		TSubclassOf<AEnemyCharacter> CommonEnemy = LoadClass<AEnemyCharacter>(nullptr, TEXT("/Script/Engine.Blueprint'/Game/Character/Enemy/BP_EnemyCharacter.BP_EnemyCharacter_C'"));
 		if (CommonEnemy)
 		{
-
-			if (EnemyPool.Num() < EnemyPoolSize)
+			for (int32 i = 0; i < EnemyPoolSize; i++)
 			{
-				AEnemyCharacter* SpawnedEnemy = GetWorld()->SpawnActor<AEnemyCharacter>(CommonEnemy, SpawnPoint, FRotator(0));
+				FActorSpawnParameters SpawnParams;
+				SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+				AEnemyCharacter* SpawnedEnemy = GetWorld()->SpawnActor<AEnemyCharacter>(CommonEnemy, SpawnPoint, FRotator(0),SpawnParams);
 
 				if (SpawnedEnemy)
 				{
+					GEngine->AddOnScreenDebugMessage(-1,10.0f,FColor::Blue,TEXT("Create Enemy"));
 					SpawnedEnemy->SpawnDefaultController();
+					SpawnedEnemy->FindSpawnPoint();
+					SpawnedEnemy->FindDeSpawnPoint();
 					SpawnedEnemy->DeSpawn();
-					SpawnedEnemy->OnEnemyDespawned.AddDynamic(this, &AEnemySpawner::CheckGameClear);
-					SpawnedEnemy->OnEnemyDeath.AddDynamic(this,&AEnemySpawner::IncreaseKillCount);
+					OnEnemySpawned.Broadcast(SpawnedEnemy);
+
 					EnemyPool.Add(SpawnedEnemy);
-				}				
-			}
-			else
-			{
-				GetWorld()->GetTimerManager().ClearTimer(CreateHandle);
+				}
 			}
 		}
 		else
@@ -74,7 +66,8 @@ void AEnemySpawner::CreateEnemy()
 
 void AEnemySpawner::SpawnEnemy()
 {
-	if (EnemyPool.Num() == 0) return;
+	// 메모리에 할당되어있는 Enemy를 활성화 시키는 코드
+	if (EnemyPool.Num() <= 0) return;
 
 	for (int32 i = 0; i < EnemyPool.Num(); ++i)
 	{
@@ -90,8 +83,7 @@ void AEnemySpawner::SpawnEnemy()
 
 void AEnemySpawner::DeActivateEnemySpawner()
 {
-	GetWorld()->GetTimerManager().ClearTimer(SpawnHandle);
-
+	//메모리에 할당은 유지하면서, Enemy를 보이지않게 함.
 	if (EnemyPool.Num() != 0)
 	{
 		for (AEnemyCharacter* SpawnedEnemy : EnemyPool)
@@ -102,67 +94,32 @@ void AEnemySpawner::DeActivateEnemySpawner()
 			}
 		}
 	}
+	GetWorldTimerManager().ClearTimer(SpawnHandle);
 }
 
 void AEnemySpawner::ActivateEnemySpawner()
 {
-	GameMode->TriggerGameStart();
+	//EnemySpawner의 동작 활성코드
+	
 	GetWorld()->GetTimerManager().SetTimer(SpawnHandle, this, &AEnemySpawner::SpawnEnemy, SpawnDelay, true);
+	GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::MakeRandomColor(), TEXT("ActivateEnemySpawner"));
 }
-
-
-void AEnemySpawner::CheckGameClear()
-{
-	if (IsValid(GameMode))
-	{
-
-		if (!(GameMode->IsClear()))
-		{
-			UE_LOG(LogTemp, Warning, TEXT("GameMode:Player Alive : %s"), GameMode->IsPlayerAlive() ? TEXT("true") : TEXT("False"));
-			if (CurrentKillCnt >= RequiredKillCnt)
-			{			
-				GameMode->TriggerGameClear();
-				CurrentKillCnt = 1;
-
-			}
-			 if (!(GameMode->IsPlayerAlive()))
-	  		 {
-				 DeActivateEnemySpawner();
-				 CurrentKillCnt = 1;
-			 }
-		}
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("GameMode Is not Valid"));
-		return;
-	}
-}
-
-void AEnemySpawner::IncreaseKillCount()
-{
-	CurrentKillCnt++;
-}
-
-
 
 // Called when the game starts or when spawned
 void AEnemySpawner::BeginPlay()
 {
 	Super::BeginPlay();
 
-	GameMode = Cast<AVRProjectGameModeBase>(GetWorld()->GetAuthGameMode());
+	if (SpawnDelay <= 0)
+	{
+		SpawnDelay = 0.7f;
+	}
 
-	CurrentKillCnt = 0;
-
-	GetWorld()->GetTimerManager().SetTimer(CreateHandle,this,&AEnemySpawner::CreateEnemy,CreateDelay,true);
-	GetWorld()->GetTimerManager().SetTimer(SpawnHandle, this, &AEnemySpawner::SpawnEnemy, SpawnDelay, true);
 }
 
 // Called every frame
 void AEnemySpawner::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 

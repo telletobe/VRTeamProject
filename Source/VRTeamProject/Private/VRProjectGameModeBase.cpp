@@ -8,6 +8,7 @@
 #include <EnemyCharacter.h>
 #include <EnemySpawner.h>
 #include <ItemSpawnActor.h>
+#include <WeatherManager.h>
 
 AVRProjectGameModeBase::AVRProjectGameModeBase()
 {
@@ -16,48 +17,50 @@ AVRProjectGameModeBase::AVRProjectGameModeBase()
 		
 	DefaultPawnClass = APlayerCharacter::StaticClass();
 	HUDClass = APlayerHUD::StaticClass();
-	
+
+	CurrentKillCnt = 0;
+	RequiredKillCnt = 40;
+
+	ConstructorHelpers::FObjectFinder<USoundBase> BGMObject(TEXT("/Game/Audio/EffectSound/MainBGM.MainBGM"));
+	if (BGMObject.Succeeded())
+	{
+		MainBGM = BGMObject.Object;
+	}
+
+}
+
+void AVRProjectGameModeBase::BeginPlay()
+{
+	Super::BeginPlay();
+
+	if (MainBGM)
+	{
+		UGameplayStatics::SpawnSound2D(this, MainBGM);
+	}
+
+	TArray<AActor*> FoundActor;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerCharacter::StaticClass(), FoundActor);
+
+	for (AActor* AllActor : FoundActor)
+	{
+		if (APlayerCharacter* PlayerActor = Cast<APlayerCharacter>(AllActor))
+		{
+			if (PlayerActor)
+			{
+				OnRestart.AddUniqueDynamic(PlayerActor, &APlayerCharacter::PlayerReSpawn);
+				PlayerActor->OnPlayerDeath.AddDynamic(this, &AVRProjectGameModeBase::OnPlayerDeath);
+				PlayerActor->OnPlayerDeath.AddDynamic(this, &AVRProjectGameModeBase::CleanupGameItem);
+			}
+		}
+	}
 }
 
 void AVRProjectGameModeBase::TriggerGameClear()
 {
-
 	GEngine->AddOnScreenDebugMessage(-1,3.0f,FColor::MakeRandomColor(), TEXT("Clear Game"));
 	bIsClear = true;
-
-	TArray<AActor*> FoundActor;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AActor::StaticClass(), FoundActor);
-	
-	for (AActor* AllActor : FoundActor)
-	{
-		if (const APlayerCharacter* PlayerActor = Cast<APlayerCharacter>(AllActor))
-		{
-			continue;
-		}
-		else if (AGameItem* GameItem = Cast<AGameItem>(AllActor))
-		{
-			if(IsValid(GameItem))
-			GameItem->Destroy();
-		}
-		else if (AItemSpawnActor* ItemSpanwer = Cast<AItemSpawnActor>(AllActor)) 
-		{
-			if (IsValid(ItemSpanwer)) ItemSpanwer->Destroy();
-		}
-		else if (AEnemySpawner* EnemySpanwer = Cast<AEnemySpawner>(AllActor)) {
-			TArray<AEnemyCharacter*> EnemyPool = EnemySpanwer->GetEnemyPool();
-			for (auto Enemy : EnemyPool)
-			{
-				if (IsValid(Enemy))
-				{
-					Enemy->OnEnemyDespawned.RemoveDynamic(EnemySpanwer, &AEnemySpawner::CheckGameClear);
-					Enemy->OnEnemyDeath.RemoveDynamic(EnemySpanwer, &AEnemySpawner::IncreaseKillCount);
-					Enemy->Destroy();
-				}
-			}
-			if (IsValid(EnemySpanwer)) EnemySpanwer->Destroy();
-		}
-	}
-
+	CurrentKillCnt = 0;
+	CleanupAfterGameEnd();
 	return;
 }
 
@@ -65,45 +68,202 @@ void AVRProjectGameModeBase::TriggerGameStart()
 {
 	GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::MakeRandomColor(), TEXT("Start Game"));
 	bIsClear = false;
-
+	bPlayerAlive = true;
+	APlayerCharacter* Player = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(this, 0));
+	if (Player)
+	{
+		Player->HideWidgetComponent();
+	}
+	CurrentKillCnt = 0;
 	InitializeGameObjects();
+	CleanupGameItem();
+	return;
+}
+
+void AVRProjectGameModeBase::TriggerGameReStart()
+{
+	GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::MakeRandomColor(), TEXT("ReStart Game"));
+
+	bIsClear = false;
+	bPlayerAlive = true;
+	CurrentKillCnt = 0;
+	CleanupGameItem();
+	
+	APlayerCharacter* Player = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(this, 0));
+	if (Player)
+	{
+		Player->PlayerReSpawn();
+	}
+
+	if (Spanwer) 
+	{
+		Spanwer->ActivateEnemySpawner();
+	}
 
 	return;
+}
+
+void AVRProjectGameModeBase::CleanupAfterGameEnd()
+{
+	TArray<AActor*> FoundActor;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AActor::StaticClass(), FoundActor);
+
+	for (AActor* AllActor : FoundActor)
+	{
+		if (APlayerCharacter* PlayerActor = Cast<APlayerCharacter>(AllActor))
+		{
+			PlayerActor->SetHp(PlayerActor->GetMaxHp());
+			continue;
+		}
+		else if (AItemSpawnActor* ItemSpanwer = Cast<AItemSpawnActor>(AllActor))
+		{
+			if (IsValid(ItemSpanwer))
+			{
+				ItemSpanwer->Destroy();
+				bItemSpawnerExists = false;
+			}
+		}
+		else if (AGameItem* GameItem = Cast<AGameItem>(AllActor))
+		{
+			if (IsValid(GameItem))
+			{
+				GameItem->Destroy();
+			}
+		}
+		else if (AEnemySpawner* EnemySpanwer = Cast<AEnemySpawner>(AllActor)) {
+			TArray<AEnemyCharacter*> EnemyPool = EnemySpanwer->GetEnemyPool();
+			for (auto Enemy : EnemyPool)
+			{
+				if (IsValid(Enemy))
+				{
+					Enemy->OnEnemyKilled.RemoveDynamic(this,&AVRProjectGameModeBase::CheckGameClear); //설정 해둔 델리게이트 삭제
+					Enemy->Destroy();
+				}
+			}
+			if (IsValid(EnemySpanwer))
+			{
+				EnemySpanwer->OnEnemySpawned.RemoveDynamic(this, &AVRProjectGameModeBase::OnEnemySpawned);  //설정 해둔 델리게이트 삭제
+				EnemySpanwer->Destroy();
+				bEnemySpawnerExists = false;
+			}
+		}
+	}
+}
+
+void AVRProjectGameModeBase::CleanupGameItem() 
+{
+	TArray<AActor*> FoundActor;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AGameItem::StaticClass(), FoundActor);
+
+	for (AActor* AllActor : FoundActor)
+	{
+		if (AGameItem* GameItem = Cast<AGameItem>(AllActor))
+		{
+			if (IsValid(GameItem))
+			{
+				GameItem->Destroy();
+			}
+		}
+	}
 }
 
 void AVRProjectGameModeBase::InitializeGameObjects()
 {
+	TArray<AActor*> FoundActor;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEnemySpawner::StaticClass(), FoundActor);
+
+	for (AActor* Spawner : FoundActor)
+	{
+		AEnemySpawner* ExsitSpawner = Cast<AEnemySpawner>(Spawner);
+		if (IsValid(ExsitSpawner))
+		{
+			bEnemySpawnerExists = true;
+			break;
+		}
+	}
+
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AItemSpawnActor::StaticClass(), FoundActor);
+	for (AActor* Spawner : FoundActor)
+	{
+		AItemSpawnActor* ExsitSpawner = Cast<AItemSpawnActor>(Spawner);
+		if (IsValid(ExsitSpawner))
+		{
+			bItemSpawnerExists = true;
+			break;
+		}
+	}
+
 	if (BPEnemySpawner)
 	{
-		AEnemySpawner* Spanwer = GetWorld()->SpawnActor<AEnemySpawner>(BPEnemySpawner, FVector(-1350.0f, 3200.0f, 350.0f), FRotator(0, 0, 0));
+		if (!bEnemySpawnerExists)
+		{
+			if (!Spanwer)
+			{
+				Spanwer = GetWorld()->SpawnActor<AEnemySpawner>(BPEnemySpawner, FVector(FVector::ZeroVector), FRotator(0, 0, 0));
+				GetWorldTimerManager().SetTimer(Spanwer->GetSpawnHandle(), Spanwer.Get(), &AEnemySpawner::SpawnEnemy, Spanwer->GetSpawnDelay(), true);
+				Spanwer->OnEnemySpawned.AddDynamic(this,&AVRProjectGameModeBase::OnEnemySpawned);
+				Spanwer->CreateEnemy();
+				UE_LOG(LogTemp, Warning, TEXT("Bind OnEnemySpawned"));			
+
+			}			
+			bEnemySpawnerExists = true;
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp,Warning,TEXT("Make sure to assign this in the editor before running the game."));
 	}
 
 	if (BPItemSpawner)
 	{
-		AItemSpawnActor* ItemSpawner = GetWorld()->SpawnActor<AItemSpawnActor>(BPItemSpawner, FVector(0, 0, 0), FRotator(0, 90.0f, 0));
+		if (!bItemSpawnerExists)
+		{
+			AItemSpawnActor* ItemSpawner = GetWorld()->SpawnActor<AItemSpawnActor>(BPItemSpawner, FVector(0, 0, 0), FRotator(0, 90.0f, 0));
+			bItemSpawnerExists = true;
+		}	
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Make sure to assign this in the editor before running the game."));
 	}
 }
 
-void AVRProjectGameModeBase::ChangePlayerAliveState()
+void AVRProjectGameModeBase::CheckGameClear()
 {
-	bPlayerAlive = !bPlayerAlive;
-	UE_LOG(LogTemp,Warning,TEXT("PlayerAlive : %s"), bPlayerAlive ? TEXT("true") : TEXT("false"));
+	CurrentKillCnt++;
+	UE_LOG(LogTemp,Warning,TEXT("call CheckGameClear"));
+	if (RequiredKillCnt <= CurrentKillCnt)
+	{
+		TriggerGameClear();
+	}
+	else
+	{
+		return;
+	}
+}
+
+void AVRProjectGameModeBase::OnEnemySpawned(AEnemyCharacter* SpawnedEnemy)
+{
+	SpawnedEnemy->OnEnemyKilled.AddDynamic(this, &AVRProjectGameModeBase::CheckGameClear);
+	UE_LOG(LogTemp,Warning,TEXT("KillCnt Enable"));
+}
+
+void AVRProjectGameModeBase::OnPlayerDeath()
+{
+	bPlayerAlive = false;
+	DeActivateEnemySpawner();
 	return;
 }
 
-
-void AVRProjectGameModeBase::BeginPlay()
+void AVRProjectGameModeBase::NotifyReStart()
 {
-	Super::BeginPlay();
+	OnRestart.Broadcast();
+}
 
-	//InitializeGameObjects();
-
-	APlayerCharacter* Player = Cast<APlayerCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn());
-	if (Player)
+void AVRProjectGameModeBase::DeActivateEnemySpawner()
+{
+	if (Spanwer)
 	{
-		Player->OnPlayerDeath.AddDynamic(this, &AVRProjectGameModeBase::ChangePlayerAliveState);
+		Spanwer->DeActivateEnemySpawner();
 	}
-
-	
-
 }

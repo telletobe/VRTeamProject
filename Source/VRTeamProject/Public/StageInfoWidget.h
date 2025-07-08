@@ -32,6 +32,8 @@ public:
 	void GameStart();
 	UFUNCTION()
 	void BackToMenu();
+	UFUNCTION()
+	void OnLevelLoaded();
 
 protected:
 	virtual void NativeConstruct() override;

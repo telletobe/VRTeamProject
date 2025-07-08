@@ -5,6 +5,8 @@
 #include "Components/Button.h"
 #include "Components/ProgressBar.h"
 #include "PlayerCharacter.h"
+#include "VRProjectGameModeBase.h"
+
 
 
 
@@ -19,13 +21,25 @@ void UPlayerStateWidget::NativeConstruct()
 		{
 			Player->OnHealthChange.AddUniqueDynamic(this,&UPlayerStateWidget::UpdatePlayerHP);
 		}
-	
 	}	
+
+	if (AVRProjectGameModeBase* GameMode = Cast<AVRProjectGameModeBase>(GetWorld()->GetAuthGameMode()))
+	{
+		GameMode->OnRestart.AddUniqueDynamic(this, &UPlayerStateWidget::ReSetHp);
+	}
+	
+}
+
+void UPlayerStateWidget::ReSetHp() //Restart 버튼을 눌럿을떄 활용
+{
+	if (HPBar)
+	{
+		HPBar->SetPercent(1.0f);
+	}
 }
 
 void UPlayerStateWidget::UpdatePlayerHP(float CurrentHp, float MaxHp)
 {
-
 	if (HPBar && MaxHp > 0.0f)
 	{
 		HPBar->SetPercent(CurrentHp/MaxHp);
@@ -48,6 +62,5 @@ void UPlayerStateWidget::UpdatePlayerExp(float CurrentExp)
 	{
 		ExpBar->SetPercent(0.0f);
 	}
-
 		//Set Text
 }

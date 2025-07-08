@@ -76,10 +76,10 @@ private:
 	EItemEffectData ItemData;
 
 	UPROPERTY(EditAnywhere)
-	float Hp = 100.0f;
+	float Hp = 50.0f;
 
 	UPROPERTY(VisibleAnywhere)
-	float MaxHp = 100.0f;
+	float MaxHp = 50.0f;
 
 
 };

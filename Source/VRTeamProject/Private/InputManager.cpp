@@ -14,8 +14,11 @@
 #include "StageInfoWidget.h"
 #include "Components/WidgetInteractionComponent.h"
 
+/*
+	ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ô·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½
+*/
 
-UInputManager* UInputManager::Instance = nullptr;
+TObjectPtr<UInputManager> UInputManager::Instance = nullptr;
 
 UInputManager::UInputManager()
 {
@@ -27,7 +30,6 @@ UInputManager::UInputManager()
 	static ConstructorHelpers::FObjectFinder<UInputAction> ToggleMapObject(TEXT("'/Game/Map/System/Input/IA_ToggleMap.IA_ToggleMap'"));
 	static ConstructorHelpers::FObjectFinder<UInputAction> PlayerStatObject(TEXT("'/Game/Map/System/Input/IA_PlayerStat.IA_PlayerStat'"));
 	static ConstructorHelpers::FObjectFinder<UInputAction> ClickObject(TEXT("'/Game/Map/System/Input/IA_Click.IA_Click'"));
-
 
 	if (IMCObject.Succeeded())
 	{
@@ -75,15 +77,13 @@ void UInputManager::ToggleWidgetVisibility(UWidgetComponent* Widget)
 	if (Widget->IsVisible())
 	{
 		Widget->SetVisibility(false);
-		Player->GetMotionControllerLeftLazerMesh()->SetVisibility(false);
-		Player->GetMotionControllerRightLazerMesh()->SetVisibility(false);
+		Player->SetVisibleRazerMesh(false);
 
 	}
 	else
 	{
 		Widget->SetVisibility(true);
-		Player->GetMotionControllerLeftLazerMesh()->SetVisibility(true);
-		Player->GetMotionControllerRightLazerMesh()->SetVisibility(true);
+		Player->SetVisibleRazerMesh(true);
 	}
 }
 
@@ -93,11 +93,12 @@ UInputManager* UInputManager::GetInstance() {
 		Instance = NewObject<UInputManager>();
 		Instance->AddToRoot();
 	}
-	return Instance;
+	return Instance.Get();
 }
 
 void UInputManager::Initialize(APlayerCharacter* PlayerCharacter, APlayerController* PC)
 {
+
 	Player = PlayerCharacter;
 
 	if (PC)
@@ -109,13 +110,10 @@ void UInputManager::Initialize(APlayerCharacter* PlayerCharacter, APlayerControl
 		}
 
 		if(!IsValid(MyHUD.Get())) MyHUD = Cast<APlayerHUD>(PC->GetHUD());
-
-		
 	}
-
 }
 
-//ÄÁÆ®·Ñ·¯ ¸ÅÇÎ ÇÔ¼ö
+//ï¿½ï¿½Æ®ï¿½Ñ·ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½
 void UInputManager::BindAction(UEnhancedInputComponent* InputComponent)
 {
 	if (!InputComponent || !Player) return;
@@ -135,13 +133,10 @@ void UInputManager::Move(const FInputActionValue& Value)
 {
 	const APlayerController* PlayerController = Cast<APlayerController>(Player->GetController());
 	FVector2D MovementVector = Value.Get<FVector2D>();
-	//if exist Controller, is bound inputMappingContext
 	if (PlayerController != nullptr)
 	{
-		// add movement 
 		PlayerController->GetPawn()->AddMovementInput(PlayerController->GetPawn()->GetActorRightVector(), MovementVector.X);
 	}
-
 }
 
 void UInputManager::Look(const FInputActionValue& Value)
@@ -160,7 +155,6 @@ void UInputManager::Look(const FInputActionValue& Value)
 
 void UInputManager::Attack(const FInputActionValue& Value)
 {
-
 	if (Player->GetWeapon() && Player->IsMouseClickedEnable())
 	{
 		Player->GetWeapon()->Fire(Player->GetAtk());
@@ -168,87 +162,78 @@ void UInputManager::Attack(const FInputActionValue& Value)
 	else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Player Weapon inValid"));
-		return;
 	}
 }
 
 void UInputManager::ToggleMap(const FInputActionValue& Value)
 {
-	
-	// PC
-	/*APlayerController* PlayerController = Cast<APlayerController>(Player->GetController());
-
-	if (PlayerController != nullptr)
-	{
-		if (IsValid(MyHUD.Get()))
-		{
-			MyHUD.Get()->ToggleMapSelect();       
-
-		}
-	}*/
-
 	// VR
-	/*if (IsValid(Player))
+	if (IsValid(Player))
 	{
+		if (Player->IsActive())
+		{
 		UWidgetComponent* UserWidgetComp = Player->GetWidgetComponent();
 		UMapSelectWidget* MapSelectInstance = MyHUD->GetMapSelectInstance();
-
-		if (IsValid(UserWidgetComp))
-		{
-			if (UserWidgetComp->GetUserWidgetObject() == MapSelectInstance)
+		
+			if (IsValid(UserWidgetComp))
 			{
-				ToggleWidgetVisibility(UserWidgetComp);
-			}
-			else
-			{
-				UserWidgetComp->SetWidget(MapSelectInstance);
-				if (!UserWidgetComp->GetVisibleFlag())
+				if (UserWidgetComp->GetUserWidgetObject() == MapSelectInstance) 
 				{
 					ToggleWidgetVisibility(UserWidgetComp);
+
+				}
+				else 
+				{
+					UserWidgetComp->SetWidget(MapSelectInstance);
+					if (!UserWidgetComp->IsWidgetVisible())
+					{
+						ToggleWidgetVisibility(UserWidgetComp);
+						UE_LOG(LogTemp, Warning, TEXT("Player Map"));
+					}
 				}
 			}
+		} 
+		else 
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Player is Dead"));
 		}
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("MapSelect"));*/
 }
 
 void UInputManager::PlayerStat(const FInputActionValue& Value)
 {
-	//APlayerController* PlayerController = Cast<APlayerController>(Player->GetController());
-
-	//if (PlayerController != nullptr)
-	//{
-	//	if (IsValid(MyHUD.Get()))
-	//	{ 
-	//		MyHUD.Get()->PlayerStateShow();         // HUD ÂÊ ÇÔ¼ö È£Ãâ
-
-	//	}
-	//}
-	
 	//VR
 	if (IsValid(Player))
 	{
-		UWidgetComponent* UserWidgetComp = Player->GetWidgetComponent();
-		UPlayerStateWidget* PlayerStateInstance = MyHUD->GetPlayerStateInstance();
-
-		if (IsValid(UserWidgetComp))
+		if (Player->IsActive())
 		{
-			if (UserWidgetComp->GetUserWidgetObject() == PlayerStateInstance)
+			UWidgetComponent* UserWidgetComp = Player->GetWidgetComponent();
+			UPlayerStateWidget* PlayerStateInstance = MyHUD->GetPlayerStateInstance();
+
+			if (IsValid(UserWidgetComp))
 			{
-				ToggleWidgetVisibility(UserWidgetComp);
-			}
-			else
-			{
-				UserWidgetComp->SetWidget(PlayerStateInstance);
-				if (!UserWidgetComp->GetVisibleFlag())
+				if (UserWidgetComp->GetUserWidgetObject() == PlayerStateInstance)
 				{
 					ToggleWidgetVisibility(UserWidgetComp);
+					
+				}
+				else
+				{
+					UserWidgetComp->SetWidget(PlayerStateInstance);
+					if (!UserWidgetComp->IsWidgetVisible())
+					{
+						UE_LOG(LogTemp, Warning, TEXT("Player Stat"));
+						ToggleWidgetVisibility(UserWidgetComp);
+					}
 				}
 			}
 		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Player Is Dead"));
+		}
 	}
-	UE_LOG(LogTemp,Warning,TEXT("PlayerStat"));
 }
 
 void UInputManager::onRightTriggerPressed()
@@ -274,4 +259,3 @@ void UInputManager::onRightTriggerReleased()
 		}
 	}
 }
-

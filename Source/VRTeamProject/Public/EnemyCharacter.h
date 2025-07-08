@@ -6,9 +6,9 @@
 #include "GameFramework/Character.h"
 #include "EnemyCharacter.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnEnemyDespawned);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnEnemyDeath);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnEnemyKilled);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnEnemyDeathAnimEnded);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnEnemyAttack,float, Atk);
 
 class AAIController;
 class UNavigationInvokerComponent;
@@ -32,6 +32,7 @@ public:
 	void SetDef(float EnemyDef);
 	void SetAtk(float EnemyAtk);
 	void SetSpawnDelay(float EnemySpawnDelay);
+	void SetSpawnPoint(AActor* TargetPoint);
 
 	float GetCurrentHp() const { return CurrentHp; }
 	float GetMaxHp() const { return MaxHp; }
@@ -54,18 +55,18 @@ public:
 	UFUNCTION()
 	void OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
+	UFUNCTION()
 	void DeSpawn();
 	void Spawn();
 
-	void NotifyEnemyDespawn();
-	void NotifyEnemyDeath();
-
-
-	UPROPERTY()
-	FOnEnemyDespawned OnEnemyDespawned;
+	void BroadcastEnemyKilled();
+	void BoradCastEnemyAttack();
 
 	UPROPERTY()
-	FOnEnemyDeath OnEnemyDeath;
+	FOnEnemyAttack OnEnemyAttack;
+
+	UPROPERTY()
+	FOnEnemyKilled OnEnemyKilled;
 
 	UPROPERTY()
 	FOnEnemyDeathAnimEnded OnEnemyDeathAnimEnded;
@@ -82,20 +83,16 @@ public:
 	UFUNCTION()
 	void EnemyDeathAnimEnded();
 
-	UFUNCTION()
-	void PlayHitEffect();
-
 	UFUNCTION(BlueprintCallable)
 	void FindSpawnPoint();
+	void FindDeSpawnPoint();
+
+	UFUNCTION()
+	void PlayHitEffect();
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
-private :
-
-	void FindDeSpawnPoint();
-
 
 
 public :
@@ -120,14 +117,14 @@ private:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<AActor> SpawnPoint;
 
-	float NavGenerationRadius; // 동적으로 초록색 칸을 생성
-	float NavRemovalRadius; // 동적으로 초록색 칸을 제거
+	float NavGenerationRadius;
+	float NavRemovalRadius;
 
 	UPROPERTY(EditAnywhere)
 	float CurrentHp;
 
 	UPROPERTY(EditAnywhere)
-	float MaxHp = 10.0f;
+	float MaxHp = 50.0f;
 
 	UPROPERTY(EditAnywhere)
 	float Def;
@@ -148,20 +145,22 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Anim")
 	bool bIsDeathAnim = false;
 
+
 	UPROPERTY(EditAnywhere, Category = "Anim")
 	bool bIsAttacking = false;
 
 	UPROPERTY(EditAnywhere, Category = "Anim")
 	bool bIsHitReacting = false;
 
+	UPROPERTY(EditAnywhere, Category = "Anim")
+	bool bIsMoving = false;
+
 	UPROPERTY()
 	UMaterialInstanceDynamic* DynamicMaterial;
 
-	//애님관련 Death/Attack/Hit
 	UPROPERTY(EditAnywhere, Category = "Animation")
 	TObjectPtr<UAnimMontage> DeathMontage;
-	
-	FTimerHandle DeathAnimTimerHandle;
+
 
 	UPROPERTY(EditAnywhere, Category = "Animation")
 	TObjectPtr<UAnimMontage> HitMontage;
