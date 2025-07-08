@@ -33,6 +33,7 @@ void UStageInfoWidget::NativeConstruct()
 
 void UStageInfoWidget::GameStart()
 {
+    UE_LOG(LogTemp, Warning, TEXT("GameStart Button Clicked"));
     AVRProjectGameModeBase* GameMode = Cast<AVRProjectGameModeBase>(GetWorld()->GetAuthGameMode());
     if (GameMode)
     {
