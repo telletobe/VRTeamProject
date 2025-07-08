@@ -28,9 +28,9 @@ APlayerWeapon::APlayerWeapon()
 	if (WeaponSkeletalData.Succeeded())
 	{
 		WeaponSkeletal->SetSkeletalMesh(WeaponSkeletalData.Object);
-		WeaponSkeletal->SetRelativeScale3D(FVector(0.6f, 0.6f, 0.6f));
-		WeaponSkeletal->SetRelativeRotation(FRotator(180.0f,180.0f,0));
-		WeaponSkeletal->SetRelativeLocation(FVector(0,0,0.3f));
+		WeaponSkeletal->SetRelativeScale3D(FVector(9.0f, 9.0f, 9.0f));
+		WeaponSkeletal->SetRelativeRotation(FRotator(180.0f,-180.0f,-180.0f));
+		WeaponSkeletal->SetRelativeLocation(FVector(0,0,-15.0f));
 	}
 }
 
@@ -43,37 +43,41 @@ void APlayerWeapon::BeginPlay()
 	WeaponSkeletal->SetSimulatePhysics(false);
 }
 
+const FRotator APlayerWeapon::FireWithSpread(float Pitch, float Yaw, float Roll)
+{
+	
+	const APlayerCharacter* Player = Cast<APlayerCharacter>(GetOwner()->GetInstigatorController()->GetPawn());
+	const FQuat BaseQuat = Player->GetMotionControllerRight()->GetRelativeRotation().Quaternion();
+	
+	const float RandomPitch = FMath::FRandRange(-Pitch, Pitch); // Y
+	const float RandomYaw = FMath::FRandRange(-Yaw, Yaw); // Z
+	const float RandomRoll = FMath::FRandRange(-Roll, Roll); // X
+	const FQuat RandomQuat = FRotator(RandomPitch, RandomYaw, RandomRoll).Quaternion();
+	const FQuat FinalQuat = RandomQuat * BaseQuat;
+	const FRotator FinalRotator = FinalQuat.Rotator();
+	
+	return FinalRotator;
+}
+
 
 void APlayerWeapon::Fire(float Damage)
 {
 	if (!bIsFire) return;
 
 	ChangeFireState();
-	//FRotator StartRotation = GetOwner()->GetInstigatorController()->GetControlRotation();
-	 
 	//VR
-	//const FRotator StartLeftRotation = Player->GetMotionControllerLeft()->GetRelativeRotation();
 	const APlayerCharacter* Player = Cast<APlayerCharacter>(GetOwner()->GetInstigatorController()->GetPawn());
-	const FRotator StartRightRotation = Player->GetMotionControllerRight()->GetRelativeRotation();
+	//const FRotator StartLeftRotation = Player->GetMotionControllerLeft()->GetRelativeRotation();
+	//const FRotator StartRightRotation = Player->GetMotionControllerRight()->GetRelativeRotation();
 	const FVector StartRightLocation = WeaponSkeletal->GetSocketLocation("rifle_shot");
+	const FRotator SpreadAngle = FireWithSpread(0.0f, 5.0f, 5.0f);
 	 
-	//
-	// »êÅºÈ¿°ú
-	const FQuat BaseQuat = Player->GetMotionControllerRight()->GetRelativeRotation().Quaternion();
-	const float SpreadAngle = 5.0f;
-	//const float RandomPitch = FMath::FRandRange(-SpreadAngle, SpreadAngle); // Y
-	const float RandomYaw = FMath::FRandRange(-SpreadAngle, SpreadAngle); // Z
-	const float RandomRoll = FMath::FRandRange(-SpreadAngle, SpreadAngle); // X
-	const FQuat RandomQuat = FRotator(0.0f, RandomYaw, RandomRoll).Quaternion();
-	const FQuat FinalQuat = RandomQuat * BaseQuat;
-	const FRotator FinalRotator = FinalQuat.Rotator();
-	//
 
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
 	/////////////////////////////////////////////////////////////////////////////////////////
-	APlayerBulletActor* NewBullet = GetWorld()->SpawnActor<APlayerBulletActor>(APlayerBulletActor::StaticClass(), StartRightLocation, FinalRotator, SpawnParams);
+	APlayerBulletActor* NewBullet = GetWorld()->SpawnActor<APlayerBulletActor>(APlayerBulletActor::StaticClass(), StartRightLocation, SpreadAngle, SpawnParams);
 	if (IsValid(NewBullet))
 	{
 		NewBullet->SetOwner(this);
