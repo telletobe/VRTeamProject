@@ -34,6 +34,7 @@ public:
 	void SetAtk(float PlayerAtk);
 	void SetDef(float PlayerDef);
 	void SetExp(float PlayerExp);
+	void HideWidgetComponent();
 
 	float GetHp() const { return Hp; }
 	float GetAtk() const { return Atk; }

@@ -33,8 +33,13 @@ void AVRProjectGameModeBase::BeginPlay()
 {
 	Super::BeginPlay();
 
+	if (MainBGM)
+	{
+		UGameplayStatics::SpawnSound2D(this, MainBGM);
+	}
+
 	TArray<AActor*> FoundActor;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AActor::StaticClass(), FoundActor);
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerCharacter::StaticClass(), FoundActor);
 
 	for (AActor* AllActor : FoundActor)
 	{
@@ -48,19 +53,13 @@ void AVRProjectGameModeBase::BeginPlay()
 			}
 		}
 	}
-
-	if (MainBGM)
-	{
-		UGameplayStatics::PlaySound2D(this, MainBGM);
-	}
-
 }
-
 
 void AVRProjectGameModeBase::TriggerGameClear()
 {
 	GEngine->AddOnScreenDebugMessage(-1,3.0f,FColor::MakeRandomColor(), TEXT("Clear Game"));
 	bIsClear = true;
+	CurrentKillCnt = 0;
 	CleanupAfterGameEnd();
 	return;
 }
@@ -70,7 +69,12 @@ void AVRProjectGameModeBase::TriggerGameStart()
 	GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::MakeRandomColor(), TEXT("Start Game"));
 	bIsClear = false;
 	bPlayerAlive = true;
-
+	APlayerCharacter* Player = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(this, 0));
+	if (Player)
+	{
+		Player->HideWidgetComponent();
+	}
+	CurrentKillCnt = 0;
 	InitializeGameObjects();
 	CleanupGameItem();
 	return;
@@ -82,18 +86,13 @@ void AVRProjectGameModeBase::TriggerGameReStart()
 
 	bIsClear = false;
 	bPlayerAlive = true;
-
+	CurrentKillCnt = 0;
 	CleanupGameItem();
 	
-	TArray<AActor*> FoundActor;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AActor::StaticClass(), FoundActor);
-
-	for (AActor* AllActor : FoundActor)
+	APlayerCharacter* Player = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(this, 0));
+	if (Player)
 	{
-		if (APlayerCharacter* PlayerActor = Cast<APlayerCharacter>(AllActor))
-		{
-			PlayerActor->PlayerReSpawn();
-		}
+		Player->PlayerReSpawn();
 	}
 
 	if (Spanwer) 
@@ -154,7 +153,7 @@ void AVRProjectGameModeBase::CleanupAfterGameEnd()
 void AVRProjectGameModeBase::CleanupGameItem() 
 {
 	TArray<AActor*> FoundActor;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AActor::StaticClass(), FoundActor);
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AGameItem::StaticClass(), FoundActor);
 
 	for (AActor* AllActor : FoundActor)
 	{
@@ -171,7 +170,7 @@ void AVRProjectGameModeBase::CleanupGameItem()
 void AVRProjectGameModeBase::InitializeGameObjects()
 {
 	TArray<AActor*> FoundActor;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AActor::StaticClass(), FoundActor);
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEnemySpawner::StaticClass(), FoundActor);
 
 	for (AActor* Spawner : FoundActor)
 	{
@@ -183,6 +182,7 @@ void AVRProjectGameModeBase::InitializeGameObjects()
 		}
 	}
 
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AItemSpawnActor::StaticClass(), FoundActor);
 	for (AActor* Spawner : FoundActor)
 	{
 		AItemSpawnActor* ExsitSpawner = Cast<AItemSpawnActor>(Spawner);

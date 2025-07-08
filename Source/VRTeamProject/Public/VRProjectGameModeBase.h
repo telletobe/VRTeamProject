@@ -62,7 +62,7 @@ public :
 protected:
 
 	virtual void BeginPlay() override;
-
+	void PlayMainBGM();
 private:
 	bool bIsClear = false;
 	bool bPlayerAlive = true;
@@ -84,6 +84,5 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Sound")
 	TObjectPtr<USoundBase> MainBGM;
-
 
 };

@@ -227,7 +227,7 @@ void APlayerCharacter::ApplyEffectItem(const EItemEffectData& Data)
 		}
 		else
 		{
-			GetWeapon()->SetFireDelay(0.005f);
+			GetWeapon()->SetFireDelay(0.0005f);
 		}
 
 		GetWorld()->GetTimerManager().ClearTimer(RestoreTimerHandle);
@@ -253,6 +253,10 @@ void APlayerCharacter::NotifyPlayerChangeHealth()
 
 void APlayerCharacter::PlayerReSpawn()
 {
+	if (Weapon) Weapon->SetActorHiddenInGame(false);
+	SetActorHiddenInGame(false);
+	SetActorEnableCollision(true);
+
 	if (PlayerController)
 	{
 		PlayerController->SetIgnoreMoveInput(false);
@@ -260,19 +264,11 @@ void APlayerCharacter::PlayerReSpawn()
 		bMouseClickEnable = true;
 	} 
 
-	if (WidgetComponent->IsWidgetVisible())
-	{
-		WidgetComponent->SetVisibility(false);
-		InVisibleRezerMesh();
-	}
-
+	HideWidgetComponent();
+	InVisibleRezerMesh();
 	SetHp(GetMaxHp());
 	NotifyPlayerChangeHealth();
-
-	if (Weapon) Weapon->SetActorHiddenInGame(false);
 	bIsActive = true;
-	SetActorHiddenInGame(false);
-	SetActorEnableCollision(true);
 }
 
 void APlayerCharacter::PlayerDeSpawn()
@@ -283,6 +279,7 @@ void APlayerCharacter::PlayerDeSpawn()
 		bMouseClickEnable = false;
 	}
 	if (Weapon) Weapon->SetActorHiddenInGame(true);
+	SetActorEnableCollision(false);
 	bIsActive = false;
 }
 
@@ -340,4 +337,12 @@ void APlayerCharacter::SetDef(float PlayerDef)
 void APlayerCharacter::SetExp(float PlayerExp)
 {
 	Exp = PlayerExp;
+}
+
+void APlayerCharacter::HideWidgetComponent()
+{
+	if (WidgetComponent && WidgetComponent->IsVisible())
+	{
+		WidgetComponent->SetVisibility(false);
+	}
 }
