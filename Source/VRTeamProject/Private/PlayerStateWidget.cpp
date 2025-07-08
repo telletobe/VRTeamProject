@@ -22,12 +22,6 @@ void UPlayerStateWidget::NativeConstruct()
 			Player->OnHealthChange.AddUniqueDynamic(this,&UPlayerStateWidget::UpdatePlayerHP);
 		}
 	}	
-
-	if (AVRProjectGameModeBase* GameMode = Cast<AVRProjectGameModeBase>(GetWorld()->GetAuthGameMode()))
-	{
-		GameMode->OnRestart.AddUniqueDynamic(this, &UPlayerStateWidget::ReSetHp);
-	}
-	
 }
 
 void UPlayerStateWidget::ReSetHp() //Restart 버튼을 눌럿을떄 활용

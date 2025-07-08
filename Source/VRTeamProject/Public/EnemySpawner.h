@@ -22,13 +22,12 @@ public:
 	// Sets default values for this actor's properties
 	AEnemySpawner();
 	void CreateEnemy();
+	void DestroyEnemy();
 	TArray<AEnemyCharacter*>& GetEnemyPool() { return EnemyPool; }
-	FTimerHandle& GetSpawnHandle() { return SpawnHandle; }
 	float GetSpawnDelay() const { return SpawnDelay; }
 
 	void DeActivateEnemySpawner();
 
-	UFUNCTION()
 	void ActivateEnemySpawner();
 
 	UFUNCTION()

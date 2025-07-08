@@ -50,7 +50,6 @@ void UStageInfoWidget::GameStart()
             LatentInfo.UUID = __LINE__;
 
             UGameplayStatics::LoadStreamLevel(this, FName("M_Basic"), true, true, LatentInfo);
-            OnLevelLoaded();
         }
     }
 
@@ -64,6 +63,9 @@ void UStageInfoWidget::BackToMenu()
 void UStageInfoWidget::OnLevelLoaded()
 {
     AVRProjectGameModeBase* GameMode = Cast<AVRProjectGameModeBase>(GetWorld()->GetAuthGameMode());
-    GameMode->TriggerGameStart();
+    if (GameMode)
+    {
+        GameMode->TriggerGameStart();
+    }
 
 }

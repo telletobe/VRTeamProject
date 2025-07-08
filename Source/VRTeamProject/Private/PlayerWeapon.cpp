@@ -49,6 +49,7 @@ void APlayerWeapon::BeginPlay()
 
 	WeaponSkeletal->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	WeaponSkeletal->SetSimulatePhysics(false);
+
 }
 
 const FRotator APlayerWeapon::FireWithSpread(float Pitch, float Yaw, float Roll)
@@ -78,7 +79,7 @@ void APlayerWeapon::Fire(float Damage)
 	//const FRotator StartLeftRotation = Player->GetMotionControllerLeft()->GetRelativeRotation();
 	//const FRotator StartRightRotation = Player->GetMotionControllerRight()->GetRelativeRotation();
 	const FVector StartRightLocation = WeaponSkeletal->GetSocketLocation("rifle_shot");
-	const FRotator SpreadAngle = FireWithSpread(0.0f, 5.0f, 5.0f);
+	const FRotator SpreadAngle = FireWithSpread(0.0f, 2.0f, 2.0f);
 	 
 
 	FActorSpawnParameters SpawnParams;

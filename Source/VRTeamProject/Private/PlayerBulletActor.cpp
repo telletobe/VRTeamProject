@@ -51,10 +51,7 @@ void APlayerBulletActor::BeginPlay()
 		BulletMesh->SetMaterial(0, BulletMeshMaterial);
 	}
 
-	//총알 메쉬의 충돌을 무시
 	BulletMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-
-	//총알 콜리전 충돌 활성화
 	BulletCollision->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 
 	if (IsValid(BulletCollision))
