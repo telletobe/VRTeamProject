@@ -6,6 +6,7 @@
 #include <EnemyCharacter.h>
 #include <VRProjectGameModeBase.h>
 #include "Engine/TargetPoint.h"
+#include <Kismet/GameplayStatics.h>
 
 
 /*
@@ -46,14 +47,17 @@ void AEnemySpawner::CreateEnemy()
 
 				if (SpawnedEnemy)
 				{
-					GEngine->AddOnScreenDebugMessage(-1,10.0f,FColor::Blue,TEXT("Create Enemy"));
+					AVRProjectGameModeBase* GM = Cast<AVRProjectGameModeBase>(UGameplayStatics::GetGameMode(this));
+					if (GM)
+					{
+						SpawnedEnemy->OnEnemyDie.AddDynamic(GM, &AVRProjectGameModeBase::OnEnemyDeath);
+					}
 					SpawnedEnemy->SpawnDefaultController();
 					SpawnedEnemy->FindSpawnPoint();
 					SpawnedEnemy->FindDeSpawnPoint();
 					SpawnedEnemy->DeSpawn();
-					OnEnemySpawned.Broadcast(SpawnedEnemy);
-
 					EnemyPool.Add(SpawnedEnemy);
+					GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Blue, TEXT("Create Enemy"));
 				}
 			}
 		}
@@ -61,6 +65,18 @@ void AEnemySpawner::CreateEnemy()
 		{
 			GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Red, TEXT("InValid Enemy!"));
 		}
+	}
+}
+
+void AEnemySpawner::DestroyEnemy()
+{
+	if (EnemyPool.Num() <= 0) return;
+	for (int32 i = 0; i < EnemyPool.Num(); i++)
+	{
+		EnemyPool[i]->OnEnemyDie.Clear();
+		EnemyPool[i]->OnEnemyDeathAnimEnded.Clear();
+		EnemyPool[i]->OnEnemyAttack.Clear();
+		EnemyPool[i]->Destroy();
 	}
 }
 
@@ -94,13 +110,13 @@ void AEnemySpawner::DeActivateEnemySpawner()
 			}
 		}
 	}
+	//스폰하지 않게 타이머 해제
 	GetWorldTimerManager().ClearTimer(SpawnHandle);
 }
 
 void AEnemySpawner::ActivateEnemySpawner()
 {
-	//EnemySpawner의 동작 활성코드
-	
+	//EnemySpawner의 스폰 활성화
 	GetWorld()->GetTimerManager().SetTimer(SpawnHandle, this, &AEnemySpawner::SpawnEnemy, SpawnDelay, true);
 	GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::MakeRandomColor(), TEXT("ActivateEnemySpawner"));
 }
@@ -114,7 +130,9 @@ void AEnemySpawner::BeginPlay()
 	{
 		SpawnDelay = 0.7f;
 	}
-
+	GetWorldTimerManager().SetTimer(SpawnHandle, this, &AEnemySpawner::SpawnEnemy, GetSpawnDelay(), true);
+	CreateEnemy();
+		
 }
 
 // Called every frame

@@ -41,15 +41,15 @@ void UEndGameWidget::ShowEndGame()
 		{
 			WidgetComp->SetWidget(this);
 			////////////////////
-			//#if WITH_EDITOR
-			//AddToViewport();
-			//PC->bShowMouseCursor = true;
+			#if WITH_EDITOR
+			AddToViewport();
+			PC->bShowMouseCursor = true;
 
-			//FInputModeUIOnly InputMode;
-			//InputMode.SetWidgetToFocus(TakeWidget()); // 현재 위젯에 포커스 설정
-			//InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
-			//PC->SetInputMode(InputMode);
-			//#endif
+			FInputModeUIOnly InputMode;
+			InputMode.SetWidgetToFocus(TakeWidget()); // 현재 위젯에 포커스 설정
+			InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+			PC->SetInputMode(InputMode);
+			#endif
 			/////////////////////
 			
 			if (WidgetComp->GetVisibleFlag() == false)

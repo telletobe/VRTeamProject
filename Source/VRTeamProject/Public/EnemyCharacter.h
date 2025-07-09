@@ -6,7 +6,7 @@
 #include "GameFramework/Character.h"
 #include "EnemyCharacter.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnEnemyKilled);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnEnemyDie);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnEnemyDeathAnimEnded);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnEnemyAttack,float, Atk);
 
@@ -66,7 +66,7 @@ public:
 	FOnEnemyAttack OnEnemyAttack;
 
 	UPROPERTY()
-	FOnEnemyKilled OnEnemyKilled;
+	FOnEnemyDie OnEnemyDie;
 
 	UPROPERTY()
 	FOnEnemyDeathAnimEnded OnEnemyDeathAnimEnded;

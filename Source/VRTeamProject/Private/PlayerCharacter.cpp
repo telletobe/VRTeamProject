@@ -279,7 +279,6 @@ void APlayerCharacter::PlayerDeSpawn()
 		bMouseClickEnable = false;
 	}
 	if (Weapon) Weapon->SetActorHiddenInGame(true);
-	SetActorEnableCollision(false);
 	bIsActive = false;
 }
 

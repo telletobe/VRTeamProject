@@ -6,10 +6,6 @@
 #include "GameFramework/GameModeBase.h"
 #include "VRProjectGameModeBase.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnReStart);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPlayerDied);
-
-
 class AItemSpawnActor;
 class AEnemySpawner;
 
@@ -27,9 +23,6 @@ public :
 	void TriggerGameStart();
 
 	UFUNCTION(BlueprintCallable)
-	void TriggerGameReStart();
-
-	UFUNCTION(BlueprintCallable)
 	void CleanupAfterGameEnd();
 
 	bool IsClear() const { return bIsClear; }
@@ -41,28 +34,19 @@ public :
 	void CheckGameClear();
 
 	UFUNCTION()
-	void OnEnemySpawned(class AEnemyCharacter* SpawnedEnemy);
-	UFUNCTION()
 	void CleanupGameItem();
+	void CleanupItemSpanwer();
+	void CleanupEnemySpawner();
 
 	UFUNCTION()
 	void OnPlayerDeath();
 
 	UFUNCTION()
-	void NotifyReStart();
+	void OnEnemyDeath();
 
-	UFUNCTION()
-	void DeActivateEnemySpawner();
-
-	UPROPERTY()
-	FOnReStart OnRestart;
-
-	UPROPERTY()
-	FOnPlayerDied OnPlayerDied;
 protected:
 
 	virtual void BeginPlay() override;
-	void PlayMainBGM();
 private:
 	bool bIsClear = false;
 	bool bPlayerAlive = true;
@@ -80,7 +64,10 @@ private:
 	TSubclassOf<AEnemySpawner> BPEnemySpawner;
 
 	UPROPERTY()
-	TObjectPtr<AEnemySpawner> Spanwer;
+	TObjectPtr<AEnemySpawner> EnemySpanwer;
+
+	UPROPERTY()
+	TObjectPtr<AItemSpawnActor> ItemSpanwer;
 
 	UPROPERTY(EditAnywhere, Category = "Sound")
 	TObjectPtr<USoundBase> MainBGM;

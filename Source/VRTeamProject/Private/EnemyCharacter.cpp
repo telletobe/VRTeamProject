@@ -131,7 +131,6 @@ void AEnemyCharacter::SetAtk(float EnemyAtk)
 
 void AEnemyCharacter::FindSpawnPoint()
 {
-	////Enemy�� Ȱ���� �� ��ġ�� ��
 	TArray<AActor*> FoundPoint;
 	TArray<AActor*> RandomPoint;
 
@@ -166,7 +165,6 @@ void AEnemyCharacter::FindSpawnPoint()
 
 void AEnemyCharacter::FindDeSpawnPoint()
 {
-	//Enemy�� ��Ȱ�� �� �� �̵��� ��
 	TArray<AActor*> FoundEndPoint;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ATargetPoint::StaticClass(), FoundEndPoint);
 
@@ -187,7 +185,6 @@ void AEnemyCharacter::FindDeSpawnPoint()
 
 void AEnemyCharacter::DeSpawn()
 {
-	//�޸𸮿��� ���������ʰ� ��Ȱ������ ��ȯ
 	if (IsValid(DeSpawnPoint))
 	{
 		SetActorLocation(DeSpawnPoint->GetActorLocation());
@@ -235,7 +232,7 @@ void AEnemyCharacter::Spawn()
 
 void AEnemyCharacter::BroadcastEnemyKilled()
 {
-	OnEnemyKilled.Broadcast();
+	OnEnemyDie.Broadcast();
 }
 
 void AEnemyCharacter::BoradCastEnemyAttack()

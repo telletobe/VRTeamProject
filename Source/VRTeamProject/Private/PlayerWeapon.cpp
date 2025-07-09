@@ -6,6 +6,8 @@
 #include "PlayerBulletActor.h"
 #include <PlayerCharacter.h>
 #include "MotionControllerComponent.h"
+#include "Kismet/GameplayStatics.h"
+#include "Sound/SoundCue.h"
 
 // Sets default values
 APlayerWeapon::APlayerWeapon()
@@ -14,6 +16,7 @@ APlayerWeapon::APlayerWeapon()
 	PrimaryActorTick.bCanEverTick = true;
 
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh> WeaponSkeletalData(TEXT("/Script/Engine.SkeletalMesh'/Game/Asset/Weapon/rifle_001.rifle_001'"));
+	static ConstructorHelpers::FObjectFinder<USoundCue> FireSoundData(TEXT("/Script/Engine.SoundCue'/Game/Audio/EffectSound/gunshot_Cue.gunshot_Cue'"));
 	///Script/Engine.SkeletalMesh'/Game/Asset/Weapon/pistol_001.pistol_001'
 
 	WeaponCollision = CreateDefaultSubobject<USphereComponent>(TEXT("WeaponCollision"));
@@ -32,6 +35,11 @@ APlayerWeapon::APlayerWeapon()
 		WeaponSkeletal->SetRelativeRotation(FRotator(180.0f,-180.0f,-180.0f));
 		WeaponSkeletal->SetRelativeLocation(FVector(0,0,-15.0f));
 	}
+
+	if (FireSoundData.Succeeded())
+	{
+		FireSound = FireSoundData.Object;
+	}
 }
 
 // Called when the game starts or when spawned
@@ -41,6 +49,7 @@ void APlayerWeapon::BeginPlay()
 
 	WeaponSkeletal->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	WeaponSkeletal->SetSimulatePhysics(false);
+
 }
 
 const FRotator APlayerWeapon::FireWithSpread(float Pitch, float Yaw, float Roll)
@@ -70,7 +79,7 @@ void APlayerWeapon::Fire(float Damage)
 	//const FRotator StartLeftRotation = Player->GetMotionControllerLeft()->GetRelativeRotation();
 	//const FRotator StartRightRotation = Player->GetMotionControllerRight()->GetRelativeRotation();
 	const FVector StartRightLocation = WeaponSkeletal->GetSocketLocation("rifle_shot");
-	const FRotator SpreadAngle = FireWithSpread(0.0f, 5.0f, 5.0f);
+	const FRotator SpreadAngle = FireWithSpread(0.0f, 2.0f, 2.0f);
 	 
 
 	FActorSpawnParameters SpawnParams;
@@ -78,6 +87,15 @@ void APlayerWeapon::Fire(float Damage)
 
 	/////////////////////////////////////////////////////////////////////////////////////////
 	APlayerBulletActor* NewBullet = GetWorld()->SpawnActor<APlayerBulletActor>(APlayerBulletActor::StaticClass(), StartRightLocation, SpreadAngle, SpawnParams);
+	if (FireSound)
+	{
+		UGameplayStatics::SpawnSoundAtLocation(this, FireSound,GetActorLocation());
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("FireSound Data invalid"));
+	}
+
 	if (IsValid(NewBullet))
 	{
 		NewBullet->SetOwner(this);

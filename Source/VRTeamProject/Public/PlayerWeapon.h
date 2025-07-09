@@ -52,4 +52,6 @@ private:
 	float DefaultFireDelay = 0.02f;
 	FTimerHandle FireTimer;
 
+	UPROPERTY(EditAnywhere, Category = "Sound")
+	TObjectPtr<USoundBase> FireSound;
 };

@@ -9,10 +9,10 @@
 #include <EnemySpawner.h>
 #include <ItemSpawnActor.h>
 #include <WeatherManager.h>
+#include "Sound/SoundCue.h"
 
 AVRProjectGameModeBase::AVRProjectGameModeBase()
 {
-
 	bIsClear = false;
 		
 	DefaultPawnClass = APlayerCharacter::StaticClass();
@@ -21,12 +21,11 @@ AVRProjectGameModeBase::AVRProjectGameModeBase()
 	CurrentKillCnt = 0;
 	RequiredKillCnt = 40;
 
-	ConstructorHelpers::FObjectFinder<USoundBase> BGMObject(TEXT("/Game/Audio/EffectSound/MainBGM.MainBGM"));
+	ConstructorHelpers::FObjectFinder<USoundCue> BGMObject(TEXT("/Script/Engine.SoundCue'/Game/Audio/EffectSound/MainBGM.MainBGM'"));
 	if (BGMObject.Succeeded())
 	{
 		MainBGM = BGMObject.Object;
 	}
-
 }
 
 void AVRProjectGameModeBase::BeginPlay()
@@ -36,6 +35,10 @@ void AVRProjectGameModeBase::BeginPlay()
 	if (MainBGM)
 	{
 		UGameplayStatics::SpawnSound2D(this, MainBGM);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("BGMSound Data invalid"));
 	}
 
 	TArray<AActor*> FoundActor;
@@ -47,7 +50,6 @@ void AVRProjectGameModeBase::BeginPlay()
 		{
 			if (PlayerActor)
 			{
-				OnRestart.AddUniqueDynamic(PlayerActor, &APlayerCharacter::PlayerReSpawn);
 				PlayerActor->OnPlayerDeath.AddDynamic(this, &AVRProjectGameModeBase::OnPlayerDeath);
 				PlayerActor->OnPlayerDeath.AddDynamic(this, &AVRProjectGameModeBase::CleanupGameItem);
 			}
@@ -67,90 +69,131 @@ void AVRProjectGameModeBase::TriggerGameClear()
 void AVRProjectGameModeBase::TriggerGameStart()
 {
 	GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::MakeRandomColor(), TEXT("Start Game"));
-	bIsClear = false;
-	bPlayerAlive = true;
+	CurrentKillCnt = 0;
 	APlayerCharacter* Player = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(this, 0));
+	bIsClear = false;
 	if (Player)
 	{
-		Player->HideWidgetComponent();
+		Player->PlayerReSpawn();
 	}
-	CurrentKillCnt = 0;
+	bPlayerAlive = true;
+
 	InitializeGameObjects();
 	CleanupGameItem();
 	return;
 }
 
-void AVRProjectGameModeBase::TriggerGameReStart()
-{
-	GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::MakeRandomColor(), TEXT("ReStart Game"));
-
-	bIsClear = false;
-	bPlayerAlive = true;
-	CurrentKillCnt = 0;
-	CleanupGameItem();
-	
-	APlayerCharacter* Player = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(this, 0));
-	if (Player)
-	{
-		Player->PlayerReSpawn();
-	}
-
-	if (Spanwer) 
-	{
-		Spanwer->ActivateEnemySpawner();
-	}
-
-	return;
-}
-
+//게임 클리어로 인한 종료시 플레이어의 HP회복, 사용하지않는 데이터 메모리 해제
 void AVRProjectGameModeBase::CleanupAfterGameEnd()
 {
 	TArray<AActor*> FoundActor;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AActor::StaticClass(), FoundActor);
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerCharacter::StaticClass(), FoundActor);
 
 	for (AActor* AllActor : FoundActor)
 	{
 		if (APlayerCharacter* PlayerActor = Cast<APlayerCharacter>(AllActor))
 		{
 			PlayerActor->SetHp(PlayerActor->GetMaxHp());
-			continue;
+			
 		}
-		else if (AItemSpawnActor* ItemSpanwer = Cast<AItemSpawnActor>(AllActor))
+	}
+	CleanupItemSpanwer();
+	CleanupEnemySpawner();
+	CleanupGameItem();
+}
+
+void AVRProjectGameModeBase::InitializeGameObjects()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Call InitializeGameObjects"));
+	//적 스포너가 존재하지않고, 스포너 정보가 없다면 새로 스폰
+	if (BPEnemySpawner)
+	{
+		if (bEnemySpawnerExists == false)
 		{
-			if (IsValid(ItemSpanwer))
+			if (!IsValid(EnemySpanwer))
 			{
-				ItemSpanwer->Destroy();
-				bItemSpawnerExists = false;
+				EnemySpanwer = GetWorld()->SpawnActor<AEnemySpawner>(BPEnemySpawner, FVector(FVector::ZeroVector), FRotator(0, 0, 0));		
+				UE_LOG(LogTemp, Warning, TEXT("Spawner InValid"));
 			}
+			
+			bEnemySpawnerExists = true;
 		}
-		else if (AGameItem* GameItem = Cast<AGameItem>(AllActor))
+		else // 스포너가 있다면, 비활성화 되있으므로, 재활성화
 		{
-			if (IsValid(GameItem))
-			{
-				GameItem->Destroy();
-			}
-		}
-		else if (AEnemySpawner* EnemySpanwer = Cast<AEnemySpawner>(AllActor)) {
-			TArray<AEnemyCharacter*> EnemyPool = EnemySpanwer->GetEnemyPool();
-			for (auto Enemy : EnemyPool)
-			{
-				if (IsValid(Enemy))
-				{
-					Enemy->OnEnemyKilled.RemoveDynamic(this,&AVRProjectGameModeBase::CheckGameClear); //설정 해둔 델리게이트 삭제
-					Enemy->Destroy();
-				}
-			}
 			if (IsValid(EnemySpanwer))
 			{
-				EnemySpanwer->OnEnemySpawned.RemoveDynamic(this, &AVRProjectGameModeBase::OnEnemySpawned);  //설정 해둔 델리게이트 삭제
-				EnemySpanwer->Destroy();
-				bEnemySpawnerExists = false;
+				UE_LOG(LogTemp, Warning, TEXT("Spawner Valid"));
+				EnemySpanwer->ActivateEnemySpawner();
 			}
-		}
+			else
+			{
+				EnemySpanwer = GetWorld()->SpawnActor<AEnemySpawner>(BPEnemySpawner, FVector(FVector::ZeroVector), FRotator(0, 0, 0));
+				UE_LOG(LogTemp, Warning, TEXT("Spawner InValid"));
+			}
+			
+		} 
+	}
+	else
+	{
+		UE_LOG(LogTemp,Warning,TEXT("Make sure to assign this in the editor before running the game."));
+	}
+
+	// 아이템 스포너가 존재하지 않고, 등록된 스포너가 없다면 아이템 스포너 스폰
+	if (BPItemSpawner)
+	{
+		if (bItemSpawnerExists == false)
+		{
+			if (!IsValid(ItemSpanwer))
+			{
+				AItemSpawnActor* ItemSpawner = GetWorld()->SpawnActor<AItemSpawnActor>(BPItemSpawner, FVector(0, 0, 0), FRotator(0, 90.0f, 0));
+				bItemSpawnerExists = true;
+			}
+		}	
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Make sure to assign this in the editor before running the game."));
 	}
 }
 
-void AVRProjectGameModeBase::CleanupGameItem() 
+// 플레이어가 죽었을 때 델리게이트 동작.
+void AVRProjectGameModeBase::OnPlayerDeath()
+{
+	bPlayerAlive = false;
+	if (IsValid(EnemySpanwer))
+	{
+		EnemySpanwer->DeActivateEnemySpawner();
+	}
+
+	return;
+}
+
+// 적이 죽었을 때 델리게이트 동작
+void AVRProjectGameModeBase::OnEnemyDeath()
+{
+	CurrentKillCnt++;
+	CheckGameClear();
+	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Black, TEXT("OnEnemyDeath"));
+}
+
+void AVRProjectGameModeBase::CheckGameClear()
+{
+	UE_LOG(LogTemp, Warning, TEXT("call CheckGameClear"));
+	if (RequiredKillCnt <= CurrentKillCnt)
+	{
+		TriggerGameClear();
+	}
+	else
+	{
+		return;
+	}
+}
+
+/*
+메모리 해제 로직
+*/
+
+void AVRProjectGameModeBase::CleanupGameItem()
 {
 	TArray<AActor*> FoundActor;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AGameItem::StaticClass(), FoundActor);
@@ -167,103 +210,21 @@ void AVRProjectGameModeBase::CleanupGameItem()
 	}
 }
 
-void AVRProjectGameModeBase::InitializeGameObjects()
+void AVRProjectGameModeBase::CleanupItemSpanwer()
 {
-	TArray<AActor*> FoundActor;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEnemySpawner::StaticClass(), FoundActor);
-
-	for (AActor* Spawner : FoundActor)
+	if (IsValid(ItemSpanwer))
 	{
-		AEnemySpawner* ExsitSpawner = Cast<AEnemySpawner>(Spawner);
-		if (IsValid(ExsitSpawner))
-		{
-			bEnemySpawnerExists = true;
-			break;
-		}
-	}
-
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AItemSpawnActor::StaticClass(), FoundActor);
-	for (AActor* Spawner : FoundActor)
-	{
-		AItemSpawnActor* ExsitSpawner = Cast<AItemSpawnActor>(Spawner);
-		if (IsValid(ExsitSpawner))
-		{
-			bItemSpawnerExists = true;
-			break;
-		}
-	}
-
-	if (BPEnemySpawner)
-	{
-		if (!bEnemySpawnerExists)
-		{
-			if (!Spanwer)
-			{
-				Spanwer = GetWorld()->SpawnActor<AEnemySpawner>(BPEnemySpawner, FVector(FVector::ZeroVector), FRotator(0, 0, 0));
-				GetWorldTimerManager().SetTimer(Spanwer->GetSpawnHandle(), Spanwer.Get(), &AEnemySpawner::SpawnEnemy, Spanwer->GetSpawnDelay(), true);
-				Spanwer->OnEnemySpawned.AddDynamic(this,&AVRProjectGameModeBase::OnEnemySpawned);
-				Spanwer->CreateEnemy();
-				UE_LOG(LogTemp, Warning, TEXT("Bind OnEnemySpawned"));			
-
-			}			
-			bEnemySpawnerExists = true;
-		}
-	}
-	else
-	{
-		UE_LOG(LogTemp,Warning,TEXT("Make sure to assign this in the editor before running the game."));
-	}
-
-	if (BPItemSpawner)
-	{
-		if (!bItemSpawnerExists)
-		{
-			AItemSpawnActor* ItemSpawner = GetWorld()->SpawnActor<AItemSpawnActor>(BPItemSpawner, FVector(0, 0, 0), FRotator(0, 90.0f, 0));
-			bItemSpawnerExists = true;
-		}	
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Make sure to assign this in the editor before running the game."));
+		ItemSpanwer->Destroy();
+		bItemSpawnerExists = false;
 	}
 }
 
-void AVRProjectGameModeBase::CheckGameClear()
+void AVRProjectGameModeBase::CleanupEnemySpawner()
 {
-	CurrentKillCnt++;
-	UE_LOG(LogTemp,Warning,TEXT("call CheckGameClear"));
-	if (RequiredKillCnt <= CurrentKillCnt)
+	if (IsValid(EnemySpanwer))
 	{
-		TriggerGameClear();
-	}
-	else
-	{
-		return;
-	}
-}
-
-void AVRProjectGameModeBase::OnEnemySpawned(AEnemyCharacter* SpawnedEnemy)
-{
-	SpawnedEnemy->OnEnemyKilled.AddDynamic(this, &AVRProjectGameModeBase::CheckGameClear);
-	UE_LOG(LogTemp,Warning,TEXT("KillCnt Enable"));
-}
-
-void AVRProjectGameModeBase::OnPlayerDeath()
-{
-	bPlayerAlive = false;
-	DeActivateEnemySpawner();
-	return;
-}
-
-void AVRProjectGameModeBase::NotifyReStart()
-{
-	OnRestart.Broadcast();
-}
-
-void AVRProjectGameModeBase::DeActivateEnemySpawner()
-{
-	if (Spanwer)
-	{
-		Spanwer->DeActivateEnemySpawner();
+		EnemySpanwer->DestroyEnemy();
+		EnemySpanwer->Destroy();
+		bEnemySpawnerExists = false;
 	}
 }
