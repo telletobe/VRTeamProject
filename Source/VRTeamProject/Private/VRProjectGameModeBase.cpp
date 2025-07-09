@@ -78,6 +78,18 @@ void AVRProjectGameModeBase::TriggerGameStart()
 	}
 	bPlayerAlive = true;
 
+	//Player Replace to Start
+	ACharacter* PlayerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
+
+	if (PlayerCharacter)
+	{
+		FVector CurrentLocation = PlayerCharacter->GetActorLocation();
+
+		FVector NewLocation = FVector(-4500.0, CurrentLocation.Y, CurrentLocation.Z); // 이동할 위치
+
+		PlayerCharacter->SetActorLocation(NewLocation);
+	}
+
 	InitializeGameObjects();
 	CleanupGameItem();
 	return;
@@ -100,6 +112,18 @@ void AVRProjectGameModeBase::CleanupAfterGameEnd()
 	CleanupItemSpanwer();
 	CleanupEnemySpawner();
 	CleanupGameItem();
+
+	//Player Replace to Start
+	ACharacter* PlayerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
+	
+	if (PlayerCharacter)
+	{
+		FVector CurrentLocation = PlayerCharacter->GetActorLocation();
+
+		FVector NewLocation = FVector(-9000.0, CurrentLocation.Y, CurrentLocation.Z); // 이동할 위치
+
+		PlayerCharacter->SetActorLocation(NewLocation);
+	}
 }
 
 void AVRProjectGameModeBase::InitializeGameObjects()
@@ -113,7 +137,7 @@ void AVRProjectGameModeBase::InitializeGameObjects()
 			if (!IsValid(EnemySpanwer))
 			{
 				EnemySpanwer = GetWorld()->SpawnActor<AEnemySpawner>(BPEnemySpawner, FVector(FVector::ZeroVector), FRotator(0, 0, 0));		
-				UE_LOG(LogTemp, Warning, TEXT("Spawner InValid"));
+				UE_LOG(LogTemp, Warning, TEXT("Enemy Spawner InValid"));
 			}
 			
 			bEnemySpawnerExists = true;
@@ -122,13 +146,13 @@ void AVRProjectGameModeBase::InitializeGameObjects()
 		{
 			if (IsValid(EnemySpanwer))
 			{
-				UE_LOG(LogTemp, Warning, TEXT("Spawner Valid"));
+				UE_LOG(LogTemp, Warning, TEXT("Enemy Spawner Valid"));
 				EnemySpanwer->ActivateEnemySpawner();
 			}
 			else
 			{
 				EnemySpanwer = GetWorld()->SpawnActor<AEnemySpawner>(BPEnemySpawner, FVector(FVector::ZeroVector), FRotator(0, 0, 0));
-				UE_LOG(LogTemp, Warning, TEXT("Spawner InValid"));
+				UE_LOG(LogTemp, Warning, TEXT("Enemy Spawner InValid"));
 			}
 			
 		} 

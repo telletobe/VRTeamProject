@@ -168,20 +168,7 @@ void UInputManager::Attack(const FInputActionValue& Value)
 
 void UInputManager::ToggleMap(const FInputActionValue& Value)
 {
-	// Checking Level Name -> M_Lobby
-	UWorld* World = GetWorld();
-	if (!World) return;
-
-	FString CurrentLevelName = UGameplayStatics::GetCurrentLevelName(World, true); // true → streaming 없이 전체 이름
-
-	if (CurrentLevelName != TEXT("M_Lobby"))
-	{
-		UE_LOG(LogTemp, Warning, TEXT("현재 레벨이 Lobby가 아님: %s"), *CurrentLevelName);
-		return;
-	}
-	
 	// VR
-
 	if (IsValid(Player))
 	{
 		if (Player->IsActive())
@@ -217,18 +204,6 @@ void UInputManager::ToggleMap(const FInputActionValue& Value)
 
 void UInputManager::PlayerStat(const FInputActionValue& Value)
 {
-	// Checking Level Name -> M_Basic
-	UWorld* World = GetWorld();
-	if (!World) return;
-
-	FString CurrentLevelName = UGameplayStatics::GetCurrentLevelName(World, true); // true → streaming 없이 전체 이름
-
-	if (CurrentLevelName != TEXT("M_Basic"))
-	{
-		UE_LOG(LogTemp, Warning, TEXT("현재 레벨이 Lobby가 아님: %s"), *CurrentLevelName);
-		return;
-	}
-
 	//VR
 	if (IsValid(Player))
 	{
