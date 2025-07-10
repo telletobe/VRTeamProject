@@ -117,7 +117,10 @@ private:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<AActor> SpawnPoint;
 
+	UPROPERTY(EditAnywhere)
 	float NavGenerationRadius;
+
+	UPROPERTY(EditAnywhere)
 	float NavRemovalRadius;
 
 	UPROPERTY(EditAnywhere)

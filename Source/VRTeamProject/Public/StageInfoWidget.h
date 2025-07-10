@@ -34,6 +34,7 @@ public:
 	void BackToMenu();
 	UFUNCTION()
 	void OnLevelLoaded();
+	
 
 protected:
 	virtual void NativeConstruct() override;

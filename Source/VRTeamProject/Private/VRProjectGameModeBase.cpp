@@ -80,6 +80,7 @@ void AVRProjectGameModeBase::TriggerGameStart()
 
 	CleanupGameItem();
 	InitializeGameObjects();
+
 	return;
 }
 
@@ -94,12 +95,15 @@ void AVRProjectGameModeBase::CleanupAfterGameEnd()
 		if (APlayerCharacter* PlayerActor = Cast<APlayerCharacter>(AllActor))
 		{
 			PlayerActor->SetHp(PlayerActor->GetMaxHp());
-			
+			PlayerActor->SetPlayerLocation(-9000.0f);
 		}
 	}
 	CleanupItemSpanwer();
 	CleanupEnemySpawner();
 	CleanupGameItem();
+
+	//Player Replace to Start
+
 }
 
 void AVRProjectGameModeBase::InitializeGameObjects()
@@ -112,8 +116,8 @@ void AVRProjectGameModeBase::InitializeGameObjects()
 		{
 			if (!IsValid(EnemySpanwer))
 			{
-				EnemySpanwer = GetWorld()->SpawnActor<AEnemySpawner>(BPEnemySpawner, FVector(FVector::ZeroVector), FRotator(0, 0, 0));		
-				UE_LOG(LogTemp, Warning, TEXT("Spawner InValid"));
+				EnemySpanwer = GetWorld()->SpawnActor<AEnemySpawner>(BPEnemySpawner, FVector(FVector(0,3500.0,0)), FRotator(0, 0, 0));
+				UE_LOG(LogTemp, Warning, TEXT("Enemy Spawner InValid"));
 			}
 			
 			bEnemySpawnerExists = true;
@@ -122,13 +126,13 @@ void AVRProjectGameModeBase::InitializeGameObjects()
 		{
 			if (IsValid(EnemySpanwer))
 			{
-				UE_LOG(LogTemp, Warning, TEXT("Spawner Valid"));
+				UE_LOG(LogTemp, Warning, TEXT("Enemy Spawner Valid"));
 				EnemySpanwer->ActivateEnemySpawner();
 			}
 			else
 			{
-				EnemySpanwer = GetWorld()->SpawnActor<AEnemySpawner>(BPEnemySpawner, FVector(FVector::ZeroVector), FRotator(0, 0, 0));
-				UE_LOG(LogTemp, Warning, TEXT("Spawner InValid"));
+				EnemySpanwer = GetWorld()->SpawnActor<AEnemySpawner>(BPEnemySpawner, FVector(FVector(0, 3500.0, 0)), FRotator(0, 0, 0));
+				UE_LOG(LogTemp, Warning, TEXT("Enemy Spawner InValid"));
 			}
 			
 		} 

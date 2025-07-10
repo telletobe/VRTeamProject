@@ -36,12 +36,13 @@ void UStageInfoWidget::GameStart()
     AVRProjectGameModeBase* GameMode = Cast<AVRProjectGameModeBase>(GetWorld()->GetAuthGameMode());
     if (GameMode)
     {
-        if (!GameMode->IsClear())
+        if (GameMode->IsClear() == false)
         {
+            UE_LOG(LogTemp, Warning, TEXT("GameMode->IsClear() = %s"), GameMode->IsClear() ? TEXT("true") : TEXT("false"));
             return;
         }
         else
-        {
+        {        
             // 스트리밍 방식으로 로드
             FLatentActionInfo LatentInfo;
             LatentInfo.CallbackTarget = this;
@@ -49,10 +50,10 @@ void UStageInfoWidget::GameStart()
             LatentInfo.Linkage = 0;
             LatentInfo.UUID = __LINE__;
 
-            UGameplayStatics::LoadStreamLevel(this, FName("M_Basic"), true, true, LatentInfo);
+            UGameplayStatics::LoadStreamLevel(this, FName("M_Basic"), true, false, LatentInfo);
+            UE_LOG(LogTemp, Warning, TEXT("LoadStreamLevel"));
         }
     }
-
 }
 
 void UStageInfoWidget::BackToMenu()
@@ -67,5 +68,7 @@ void UStageInfoWidget::OnLevelLoaded()
     {
         GameMode->TriggerGameStart();
     }
+
+    UE_LOG(LogTemp, Warning, TEXT("LoadStreamLevel"));
 
 }

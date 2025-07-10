@@ -35,11 +35,13 @@ void UMapSelectWidget::HandleRegionClicked()
 
     if (APlayerController* PC = Cast<APlayerController>(GetOwningPlayer()))
     {
+                
         if (WBP_StageInfoWidget)
         {
             WBP_StageInfoWidget->SetVisibility(ESlateVisibility::Visible);
             UE_LOG(LogTemp,Warning,TEXT("Call StageInfo"));
         }
+
     }
 
 

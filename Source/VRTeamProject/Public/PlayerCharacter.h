@@ -35,6 +35,7 @@ public:
 	void SetDef(float PlayerDef);
 	void SetExp(float PlayerExp);
 	void HideWidgetComponent();
+	void SetPlayerLocation(float X);
 
 	float GetHp() const { return Hp; }
 	float GetAtk() const { return Atk; }
@@ -68,6 +69,7 @@ public:
 	FOnHealthChange OnHealthChange;
 
 	// VR
+	//fdfd
 
 	TObjectPtr<UStaticMeshComponent> GetMotionControllerLeftLazerMesh() const { return MotionControllerLeftLazerMesh.Get(); }
 	TObjectPtr<UStaticMeshComponent> GetMotionControllerRightLazerMesh() const { return MotionControllerRightLazerMesh.Get(); }

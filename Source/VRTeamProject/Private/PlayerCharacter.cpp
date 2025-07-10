@@ -94,6 +94,15 @@ void APlayerCharacter::HideWidgetComponent()
 	}
 }
 
+void APlayerCharacter::SetPlayerLocation(float X)
+{
+	FVector CurrentLocation = GetActorLocation();
+
+	FVector NewLocation = FVector(X, CurrentLocation.Y, CurrentLocation.Z); // 이동할 위치
+	SetActorLocation(NewLocation);
+
+}
+
 // Called when the game starts or when spawned
 void APlayerCharacter::BeginPlay()
 {
@@ -169,6 +178,7 @@ void APlayerCharacter::BeginPlay()
 	}
 
 
+	SetPlayerLocation(-9000);
 }
 
 // Called every frame
@@ -255,6 +265,7 @@ void APlayerCharacter::NotifyPlayerChangeHealth()
 
 void APlayerCharacter::PlayerReSpawn()
 {
+	SetPlayerLocation(-4000.0f);
 	SetActorHiddenInGame(false);
 	if (Weapon) Weapon->SetActorHiddenInGame(false);
 	SetActorEnableCollision(true);

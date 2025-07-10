@@ -13,6 +13,7 @@
 #include "PlayerStateWidget.h"
 #include "StageInfoWidget.h"
 #include "Components/WidgetInteractionComponent.h"
+#include <Kismet/GameplayStatics.h>
 
 /*
 	�������� �Է��� �����ϴ� Ŭ����
