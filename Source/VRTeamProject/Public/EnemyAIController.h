@@ -50,13 +50,13 @@ private:
 	AActor* TargetActor;
 
 	UPROPERTY(EditAnywhere, Category = "AI")
-	float DetectionRadius = 4000.0f; //감지거리
+	float DetectionRadius = 6000.0f; //감지거리
 
 	UPROPERTY(EditAnywhere, Category = "AI")
-	float LoseInterestRadius = 6000.0f; // 목표를 잃는 거리(감지하는 거리보다 커야함
+	float LoseInterestRadius = 7000.0f; // 목표를 잃는 거리(감지하는 거리보다 커야함
 
 	UPROPERTY(EditAnywhere, Category = "AI")
-	float ChaseRadius = 5000.f; //쫒는거리
+	float ChaseRadius = 6000.f; //쫒는거리
 
 	float AcceptRadius = 0.0f;
 

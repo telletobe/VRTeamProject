@@ -78,18 +78,6 @@ void AVRProjectGameModeBase::TriggerGameStart()
 	}
 	bPlayerAlive = true;
 
-	//Player Replace to Start
-	ACharacter* PlayerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
-
-	if (PlayerCharacter)
-	{
-		FVector CurrentLocation = PlayerCharacter->GetActorLocation();
-
-		FVector NewLocation = FVector(-4500.0, CurrentLocation.Y, CurrentLocation.Z); // 이동할 위치
-
-		PlayerCharacter->SetActorLocation(NewLocation);
-	}
-
 	CleanupGameItem();
 	InitializeGameObjects();
 
@@ -107,7 +95,7 @@ void AVRProjectGameModeBase::CleanupAfterGameEnd()
 		if (APlayerCharacter* PlayerActor = Cast<APlayerCharacter>(AllActor))
 		{
 			PlayerActor->SetHp(PlayerActor->GetMaxHp());
-			
+			PlayerActor->SetPlayerLocation(-9000.0f);
 		}
 	}
 	CleanupItemSpanwer();
@@ -115,16 +103,7 @@ void AVRProjectGameModeBase::CleanupAfterGameEnd()
 	CleanupGameItem();
 
 	//Player Replace to Start
-	ACharacter* PlayerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
-	
-	if (PlayerCharacter)
-	{
-		FVector CurrentLocation = PlayerCharacter->GetActorLocation();
 
-		FVector NewLocation = FVector(-9000.0, CurrentLocation.Y, CurrentLocation.Z); // 이동할 위치
-
-		PlayerCharacter->SetActorLocation(NewLocation);
-	}
 }
 
 void AVRProjectGameModeBase::InitializeGameObjects()
@@ -137,7 +116,7 @@ void AVRProjectGameModeBase::InitializeGameObjects()
 		{
 			if (!IsValid(EnemySpanwer))
 			{
-				EnemySpanwer = GetWorld()->SpawnActor<AEnemySpawner>(BPEnemySpawner, FVector(FVector::ZeroVector), FRotator(0, 0, 0));		
+				EnemySpanwer = GetWorld()->SpawnActor<AEnemySpawner>(BPEnemySpawner, FVector(FVector(0,3500.0,0)), FRotator(0, 0, 0));
 				UE_LOG(LogTemp, Warning, TEXT("Enemy Spawner InValid"));
 			}
 			
@@ -152,7 +131,7 @@ void AVRProjectGameModeBase::InitializeGameObjects()
 			}
 			else
 			{
-				EnemySpanwer = GetWorld()->SpawnActor<AEnemySpawner>(BPEnemySpawner, FVector(FVector::ZeroVector), FRotator(0, 0, 0));
+				EnemySpanwer = GetWorld()->SpawnActor<AEnemySpawner>(BPEnemySpawner, FVector(FVector(0, 3500.0, 0)), FRotator(0, 0, 0));
 				UE_LOG(LogTemp, Warning, TEXT("Enemy Spawner InValid"));
 			}
 			

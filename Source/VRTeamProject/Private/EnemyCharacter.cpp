@@ -38,7 +38,7 @@ void AEnemyCharacter::BeginPlay()
 	}
 
 
-	NavGenerationRadius = 2000.0f;
+	NavGenerationRadius = 6000.0f;
 	NavRemovalRadius = 500.0f;
 	NavInvoker->SetGenerationRadii(NavGenerationRadius, NavRemovalRadius);
 
