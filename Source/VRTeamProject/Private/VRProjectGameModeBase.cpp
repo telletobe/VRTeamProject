@@ -78,8 +78,8 @@ void AVRProjectGameModeBase::TriggerGameStart()
 	}
 	bPlayerAlive = true;
 
-	InitializeGameObjects();
 	CleanupGameItem();
+	InitializeGameObjects();
 	return;
 }
 

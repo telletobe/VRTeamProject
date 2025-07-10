@@ -80,9 +80,6 @@ public:
 	UFUNCTION()
 	void SetVisibleRazerMesh(bool visible);
 
-	UFUNCTION()
-	void InVisibleRezerMesh();
-
 	UPROPERTY()
 	FOnPlayerDeath OnPlayerDeath;
 

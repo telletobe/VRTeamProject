@@ -10,17 +10,11 @@
 #include "PlayerCharacter.h"
 #include "PlayerBulletActor.h"
 
-/*
-	Enemy class �Ǹ޸��� �Ҵ��� Spawner Ŭ�������� �����.
-	�޸� ������ ���Ӹ�忡�� ����
-*/
-
 AEnemyCharacter::AEnemyCharacter()
 {
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	//�⺻ �� ����
 	SetCurrentHp(50);
 	SetDef(1.0f);
 	SetAtk(5.0f);
@@ -376,20 +370,7 @@ void AEnemyCharacter::OnComponentHit(UPrimitiveComponent* HitComponent, AActor* 
 
 		GetWorldTimerManager().SetTimer(AttackAnimTimerHandle, [this, Player]()
 			{
-				float PlayerCurrentHp = Player->GetHp();
-				float PlayerHp = PlayerCurrentHp - (GetAtk() - Player->GetDef());
-
-				if (PlayerHp > 0)
-				{
-					Player->SetHp(PlayerHp);
-					Player->NotifyPlayerChangeHealth();
-				}
-				else
-				{
-					Player->NotifyPlayerDeath();
-					Player->PlayerDeSpawn();
-				}
-
+				Player->TakenDamage(GetAtk());
 				// 4. 적 비활성화
 				DeSpawn();
 
