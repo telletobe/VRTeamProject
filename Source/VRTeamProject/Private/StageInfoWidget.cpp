@@ -38,7 +38,6 @@ void UStageInfoWidget::GameStart()
     {
         if (GameMode->IsClear() == false)
         {
-            UE_LOG(LogTemp, Warning, TEXT("GameMode->IsClear() = %s"), GameMode->IsClear() ? TEXT("true") : TEXT("false"));
             return;
         }
         else
