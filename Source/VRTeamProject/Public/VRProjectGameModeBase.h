@@ -25,6 +25,7 @@ public :
 	UFUNCTION(BlueprintCallable)
 	void CleanupAfterGameEnd();
 
+	UFUNCTION(BlueprintCallable)
 	bool IsClear() const { return bIsClear; }
 
 	bool IsPlayerAlive() const { return bPlayerAlive; }
@@ -48,6 +49,7 @@ protected:
 
 	virtual void BeginPlay() override;
 private:
+
 	bool bIsClear = false;
 	bool bPlayerAlive = true;
 	bool bItemSpawnerExists = false;
