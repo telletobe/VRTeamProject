@@ -90,8 +90,9 @@ void AVRProjectGameModeBase::TriggerGameStart()
 		PlayerCharacter->SetActorLocation(NewLocation);
 	}
 
-	InitializeGameObjects();
 	CleanupGameItem();
+	InitializeGameObjects();
+
 	return;
 }
 

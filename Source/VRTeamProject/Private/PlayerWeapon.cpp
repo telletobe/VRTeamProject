@@ -54,18 +54,24 @@ void APlayerWeapon::BeginPlay()
 
 const FRotator APlayerWeapon::FireWithSpread(float Pitch, float Yaw, float Roll)
 {
-	
-	const APlayerCharacter* Player = Cast<APlayerCharacter>(GetOwner()->GetInstigatorController()->GetPawn());
-	const FQuat BaseQuat = Player->GetMotionControllerRight()->GetRelativeRotation().Quaternion();
-	
 	const float RandomPitch = FMath::FRandRange(-Pitch, Pitch); // Y
 	const float RandomYaw = FMath::FRandRange(-Yaw, Yaw); // Z
 	const float RandomRoll = FMath::FRandRange(-Roll, Roll); // X
 	const FQuat RandomQuat = FRotator(RandomPitch, RandomYaw, RandomRoll).Quaternion();
-	const FQuat FinalQuat = RandomQuat * BaseQuat;
-	const FRotator FinalRotator = FinalQuat.Rotator();
-	
-	return FinalRotator;
+
+	const APlayerCharacter* Player = Cast<APlayerCharacter>(GetOwner()->GetInstigatorController()->GetPawn());
+	if (Player)
+	{
+		const FQuat BaseQuat = Player->GetMotionControllerRight()->GetRelativeRotation().Quaternion();
+		const FQuat FinalQuat = RandomQuat * BaseQuat;
+		const FRotator FinalRotator = FinalQuat.Rotator();
+
+		return FinalRotator;
+	}
+	else
+	{
+		return FRotator::ZeroRotator;
+	}
 }
 
 
@@ -76,16 +82,12 @@ void APlayerWeapon::Fire(float Damage)
 	ChangeFireState();
 	//VR
 	const APlayerCharacter* Player = Cast<APlayerCharacter>(GetOwner()->GetInstigatorController()->GetPawn());
-	//const FRotator StartLeftRotation = Player->GetMotionControllerLeft()->GetRelativeRotation();
-	//const FRotator StartRightRotation = Player->GetMotionControllerRight()->GetRelativeRotation();
 	const FVector StartRightLocation = WeaponSkeletal->GetSocketLocation("rifle_shot");
 	const FRotator SpreadAngle = FireWithSpread(0.0f, 2.0f, 2.0f);
-	 
 
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
-	/////////////////////////////////////////////////////////////////////////////////////////
 	APlayerBulletActor* NewBullet = GetWorld()->SpawnActor<APlayerBulletActor>(APlayerBulletActor::StaticClass(), StartRightLocation, SpreadAngle, SpawnParams);
 	if (FireSound)
 	{

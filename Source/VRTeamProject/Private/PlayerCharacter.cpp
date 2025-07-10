@@ -85,12 +85,12 @@ void APlayerCharacter::SetVisibleRazerMesh(bool visible)
 	}
 }
 
-void APlayerCharacter::InVisibleRezerMesh()
+void APlayerCharacter::HideWidgetComponent()
 {
-	if (MotionControllerRightLazerMesh || MotionControllerLeftLazerMesh)
+	if (WidgetComponent && WidgetComponent->IsVisible())
 	{
-		MotionControllerRightLazerMesh->SetVisibility(false);
-		MotionControllerLeftLazerMesh->SetVisibility(false);
+		WidgetComponent->SetVisibility(false);
+		SetVisibleRazerMesh(false);
 	}
 }
 
@@ -100,7 +100,10 @@ void APlayerCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	UCapsuleComponent* CharacterCollision = GetCapsuleComponent();
-	CharacterCollision->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	if (CharacterCollision)
+	{
+		CharacterCollision->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	}
 
 	if (!PlayerController)
 	{
@@ -109,7 +112,7 @@ void APlayerCharacter::BeginPlay()
 		if (IsValid(PlayerController))
 		{
 			UInputComponent* InputComp = PlayerController->InputComponent;
-			if (!InputManager)
+			if (!InputManager && IsValid(InputComp))
 			{
 				InputManager = InputManager->GetInstance();
 				InputManager->Initialize(this, PlayerController);
@@ -128,7 +131,7 @@ void APlayerCharacter::BeginPlay()
 	}
 	if (!bIsActive) //기본값 false
 	{
-		PlayerReSpawn();
+		PlayerReSpawn(); // 이곳에서 bIsActive를 ture로 변경.
 	}
 
 	if (!Weapon)
@@ -141,7 +144,6 @@ void APlayerCharacter::BeginPlay()
 		if (IsValid(NewWeapon))
 		{
 			Weapon = NewWeapon;
-			//Weapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, "RightHand");
 			Weapon->AttachToComponent(MotionControllerRight, FAttachmentTransformRules::SnapToTargetIncludingScale);
 		}
 	}
@@ -253,8 +255,8 @@ void APlayerCharacter::NotifyPlayerChangeHealth()
 
 void APlayerCharacter::PlayerReSpawn()
 {
-	if (Weapon) Weapon->SetActorHiddenInGame(false);
 	SetActorHiddenInGame(false);
+	if (Weapon) Weapon->SetActorHiddenInGame(false);
 	SetActorEnableCollision(true);
 
 	if (PlayerController)
@@ -265,7 +267,6 @@ void APlayerCharacter::PlayerReSpawn()
 	} 
 
 	HideWidgetComponent();
-	InVisibleRezerMesh();
 	SetHp(GetMaxHp());
 	NotifyPlayerChangeHealth();
 	bIsActive = true;
@@ -285,7 +286,7 @@ void APlayerCharacter::PlayerDeSpawn()
 void APlayerCharacter::TakenDamage(float Damage)
 {
 	float PlayerHp = GetHp();
-	if (PlayerHp >= 0)
+	if (PlayerHp > 0)
 	{
 		SetHp(PlayerHp - (Damage-GetDef()));
 		NotifyPlayerChangeHealth();
@@ -336,12 +337,4 @@ void APlayerCharacter::SetDef(float PlayerDef)
 void APlayerCharacter::SetExp(float PlayerExp)
 {
 	Exp = PlayerExp;
-}
-
-void APlayerCharacter::HideWidgetComponent()
-{
-	if (WidgetComponent && WidgetComponent->IsVisible())
-	{
-		WidgetComponent->SetVisibility(false);
-	}
 }
