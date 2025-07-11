@@ -27,6 +27,24 @@ void AWeatherManager::BeginPlay()
 	RequestKMAWeather();
 }
 
+/*
+관측소 지점 번호
+서울 서울 108
+경기 수원 119
+강원도 춘천 101
+충북 청주 131
+충남 홍성 129
+전북 전주 146
+전남 165
+경북 포항 138
+경남 창원 155
+제주 184
+부산 159
+광주 156
+대전 133
+울산 152
+인천 112
+*/
 
 void AWeatherManager::RequestKMAWeather()
 {
