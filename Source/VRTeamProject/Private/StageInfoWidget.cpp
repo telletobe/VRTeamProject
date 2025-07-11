@@ -5,6 +5,7 @@
 #include "Components/Button.h"
 #include <Kismet/GameplayStatics.h>
 #include <VRProjectGameModeBase.h>
+#include <PlayerCharacter.h>
 
 void UStageInfoWidget::Init(const FName& InRegionID, UTexture2D* Thumbnail, int32 Difficulty)
 {
@@ -68,6 +69,11 @@ void UStageInfoWidget::OnLevelLoaded()
         GameMode->TriggerGameStart();
     }
 
-    UE_LOG(LogTemp, Warning, TEXT("LoadStreamLevel"));
+   /* APlayerCharacter* Player = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+    if (IsValid(Player))
+    {
+        Player->SpawnWeapon();
+        UE_LOG(LogTemp, Log, TEXT("Weapon player."));
+    }*/
 
 }

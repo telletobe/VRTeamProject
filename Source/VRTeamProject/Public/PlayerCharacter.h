@@ -53,6 +53,9 @@ public:
 
 	void ApplyEffectItem(const EItemEffectData& Data);
 
+	UFUNCTION(BlueprintCallable)
+	void SpawnWeapon();
+
 	UFUNCTION()
 	void PlayerReSpawn();
 
