@@ -10,6 +10,7 @@
 #include "HAL/FileManager.h"
 #include "Engine/Engine.h"
 
+
 // Sets default values
 AWeatherManager::AWeatherManager()
 {
@@ -29,15 +30,9 @@ void AWeatherManager::BeginPlay()
 
 void AWeatherManager::RequestKMAWeather()
 {
-	// 현재 시간 기준 포맷된 기상청 시간 문자열 생성
-	FString FormattedTime = FDateTime::Now().ToString(TEXT("%Y%m%d%H00"));
-
-    FString URL = FString::Printf(
-        TEXT("https://apihub.kma.go.kr/api/typ01/url/kma_sfctm2.php?tm=%s&stn=0&authKey=Y1xuzi_oTlWcbs4v6M5Vjw"),
-        *FormattedTime
-    );
-
+    FString URL = SetURLData(119); // 관측소 지점 번호는 디스코드 참고.
     TSharedRef<IHttpRequest, ESPMode::ThreadSafe> Request = FHttpModule::Get().CreateRequest();
+
     Request->SetURL(URL);
     Request->SetVerb("GET");
     Request->SetHeader(TEXT("Content-Type"), TEXT("application/x-www-form-urlencoded; charset=UTF-8"));
@@ -75,15 +70,12 @@ void AWeatherManager::OnWeatherResponse(FHttpRequestPtr Request, FHttpResponsePt
 
         if (Columns.Num() >= 45)
         {
-            float TA = FCString::Atof(*Columns[11]); // 기온 (TA)
-            float RN = FCString::Atof(*Columns[15]); // 강수량 (RN)
-            float WS = FCString::Atof(*Columns[4]);  // 풍속 (WS)
+            float Temperture = FCString::Atof(*Columns[11]); // 기온 (TA)
+            float Precipitation = FCString::Atof(*Columns[15]); // 강수량 (RN)
+            float WindSpeed = FCString::Atof(*Columns[4]);  // 풍속 (WS)
 
-            CurrentTemp = TA;
-            CurrentRain = RN;
-            CurrentWindSpeed = WS;
-
-            UE_LOG(LogTemp, Log, TEXT("[WeatherManager] 기온: %.1f°C, 강수량: %.1fmm, 풍속: %.1fm/s"), TA, RN, WS);
+            Suwon = FRegionData("Suwon", Temperture, Precipitation, WindSpeed);
+            Suwon.PrintData();
 
             // 예: 게임 날씨 시스템에 적용 (UDS 연동)
             // if (UltraDynamicSky) { UltraDynamicSky->SetRainAmount(FMath::Clamp(RN / 30.0f, 0.0f, 1.0f)); }
@@ -93,3 +85,23 @@ void AWeatherManager::OnWeatherResponse(FHttpRequestPtr Request, FHttpResponsePt
     }
 }
 
+FString AWeatherManager::SetURLData(int32 RegionNum)
+{
+    // 현재 시간 기준 포맷된 기상청 시간 문자열 생성
+    FString FormattedTime = FDateTime::Now().ToString(TEXT("%Y%m%d%H00"));
+
+    FString URL = TEXT("");
+    FString URLFront = FString::Printf(TEXT("https://apihub.kma.go.kr/api/typ01/url/kma_sfctm2.php?tm=%s&stn="), *FormattedTime);
+    FString URLBack = FString::Printf(TEXT("&authKey=Y1xuzi_oTlWcbs4v6M5Vjw"));
+
+    URL.Append(URLFront);
+    URL.Append(FString::FromInt(RegionNum));
+    URL.Append(URLBack);
+
+    return URL;
+}
+
+void FRegionData::PrintData()
+{
+    UE_LOG(LogTemp,Warning,TEXT("region : %s,Temperture :  %.1f, Precipitation :  %.1f, WindSpeed : %.1f"), *LocationName,Temperature,Precipitation,WindSpeed);
+}

@@ -5,19 +5,14 @@
 #include "GameFramework/PlayerController.h"
 #include <EnhancedInputComponent.h>
 #include <EnhancedInputSubsystems.h>
+#include "InputActionValue.h"
 #include "PlayerCharacter.h"
 #include <PlayerHUD.h>
-#include "InputActionValue.h"
 #include "Components/WidgetComponent.h"
+#include "Components/WidgetInteractionComponent.h"
 #include "MapSelectWidget.h"
 #include "PlayerStateWidget.h"
-#include "StageInfoWidget.h"
-#include "Components/WidgetInteractionComponent.h"
-#include <Kismet/GameplayStatics.h>
 
-/*
-	�������� �Է��� �����ϴ� Ŭ����
-*/
 
 TObjectPtr<UInputManager> UInputManager::Instance = nullptr;
 

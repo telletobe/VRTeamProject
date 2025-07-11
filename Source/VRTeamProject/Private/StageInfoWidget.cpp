@@ -68,12 +68,4 @@ void UStageInfoWidget::OnLevelLoaded()
     {
         GameMode->TriggerGameStart();
     }
-
-   /* APlayerCharacter* Player = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
-    if (IsValid(Player))
-    {
-        Player->SpawnWeapon();
-        UE_LOG(LogTemp, Log, TEXT("Weapon player."));
-    }*/
-
 }

@@ -4,9 +4,34 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-
 #include "Http.h"
 #include "WeatherManager.generated.h"
+
+USTRUCT(BlueprintType)
+struct FRegionData {
+	GENERATED_BODY()
+
+private :
+	UPROPERTY(VisibleAnywhere)
+	FString LocationName;
+
+	UPROPERTY(VisibleAnywhere)
+	float Temperature;
+
+	UPROPERTY(VisibleAnywhere)
+	float Precipitation;
+
+	UPROPERTY(VisibleAnywhere)
+	float WindSpeed;
+
+public :
+	FRegionData() : LocationName(TEXT("Unkown")), Temperature(20.0f), Precipitation(0.0f), WindSpeed(0.0f) {}
+	FRegionData(const FString& SetLocationName, float SetTemperature, float SetPrecipitation, float SetWindSpeed) :
+		LocationName(SetLocationName), Temperature(SetTemperature), Precipitation(SetPrecipitation), WindSpeed(SetWindSpeed) {}
+
+	void PrintData();
+	
+};
 
 UCLASS()
 class VRTEAMPROJECT_API AWeatherManager : public AActor
@@ -25,10 +50,7 @@ private:
 
 	void RequestKMAWeather(); 
 	void OnWeatherResponse(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful);
-
+	FString SetURLData(int32 RegionNum);
 	// Weather Data 
-	float CurrentTemp;
-	float CurrentRain;
-	float CurrentWindSpeed;
-
+	FRegionData Suwon;
 };
