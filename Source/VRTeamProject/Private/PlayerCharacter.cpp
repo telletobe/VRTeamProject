@@ -14,6 +14,7 @@
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "EngineUtils.h"
+#include "Engine/LevelStreaming.h"
 // Sets default values
 // 커밋용 주석추가
 APlayerCharacter::APlayerCharacter()
@@ -70,9 +71,10 @@ APlayerCharacter::APlayerCharacter()
 	WidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("WidgetComponent"));
 	WidgetComponent->SetupAttachment(VRCamera);
 	WidgetComponent->SetWidgetSpace(EWidgetSpace::World);
-	WidgetComponent->SetDrawSize(FVector2D(768.0f,1150.0f));
-	WidgetComponent->SetRelativeLocation(FVector(200.0f,0.0f,0.0f));
+	//WidgetComponent->SetDrawSize(FVector2D(768.0f,1150.0f));
+	//WidgetComponent->SetRelativeLocation(FVector(200.0f,0.0f,0.0f));
 	WidgetComponent->SetVisibility(false);
+	WidgetComponent->SetCastShadow(false);
 	
 }
 
@@ -142,24 +144,24 @@ void APlayerCharacter::BeginPlay()
 	{
 		PlayerReSpawn(); // 이곳에서 bIsActive를 ture로 변경.
 	}
+		
+	//if (!Weapon)
+	//{
+	//	FActorSpawnParameters SpawnParams;
+	//	SpawnParams.Owner = this;
+	//	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn; // 항상 스폰허용
 
-	if (!Weapon)
-	{
-		FActorSpawnParameters SpawnParams;
-		SpawnParams.Owner = this;
-		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn; // 항상 스폰허용
-
-		APlayerWeapon* NewWeapon = GetWorld()->SpawnActor<APlayerWeapon>(APlayerWeapon::StaticClass(), FVector(0), FRotator(0),SpawnParams);
-		if (IsValid(NewWeapon))
-		{
-			Weapon = NewWeapon;
-			Weapon->AttachToComponent(MotionControllerRight, FAttachmentTransformRules::SnapToTargetIncludingScale);
-		}
-	}
-	else
-	{
-		UE_LOG(LogTemp,Warning,TEXT("PlayerWeapon InValid"));
-	}
+	//	APlayerWeapon* NewWeapon = GetWorld()->SpawnActor<APlayerWeapon>(APlayerWeapon::StaticClass(), FVector(0), FRotator(0),SpawnParams);
+	//	if (IsValid(NewWeapon))
+	//	{
+	//		Weapon = NewWeapon;
+	//		Weapon->AttachToComponent(MotionControllerRight, FAttachmentTransformRules::SnapToTargetIncludingScale);
+	//	}
+	//}
+	//else
+	//{
+	//	UE_LOG(LogTemp,Warning,TEXT("PlayerWeapon InValid"));
+	//}
 
 	if (GetHp() < 0)
 	{
@@ -250,6 +252,37 @@ void APlayerCharacter::ApplyEffectItem(const EItemEffectData& Data)
 		break;
 	}
 
+}
+
+void APlayerCharacter::SpawnWeapon()
+{
+	if (Weapon) return; // 이미 무기가 있으면 생성하지 않음
+	UE_LOG(LogTemp, Log, TEXT("Weapon spawned and attached to player."));
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.Owner = this;
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+	APlayerWeapon* NewWeapon = GetWorld()->SpawnActor<APlayerWeapon>(APlayerWeapon::StaticClass(), FVector::ZeroVector, FRotator::ZeroRotator, SpawnParams);
+
+	if (IsValid(NewWeapon))
+	{
+		Weapon = NewWeapon;
+
+		// 오른손 모션 컨트롤러에 부착
+		Weapon->AttachToComponent(MotionControllerRight, FAttachmentTransformRules::SnapToTargetIncludingScale);
+
+		// 무기 숨김 해제
+		Weapon->SetActorHiddenInGame(false);
+
+		// 기본 Fire Delay 설정 등 초기화 필요 시 여기에 추가
+		Weapon->SetFireDelay(Weapon->GetDefaultFireDelay());
+
+		UE_LOG(LogTemp, Log, TEXT("Weapon spawned and attached to player."));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Failed to spawn weapon."));
+	}
 }
 
 void APlayerCharacter::NotifyPlayerDeath()

@@ -14,13 +14,13 @@ UCLASS()
 class VRTEAMPROJECT_API UStartWidget : public UUserWidget
 {
 	GENERATED_BODY()
-
+public:
+	
 protected:
 	virtual void NativeConstruct() override;
 
 private:
-	UPROPERTY(meta = (Bindwidget))
-	TObjectPtr<UButton> BT_StartButton;
+	
 
 	
 };

@@ -49,7 +49,6 @@ protected:
 
 	virtual void BeginPlay() override;
 private:
-
 	bool bIsClear = false;
 	bool bPlayerAlive = true;
 	bool bItemSpawnerExists = false;
