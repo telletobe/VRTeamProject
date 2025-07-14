@@ -23,7 +23,7 @@ AWeatherManager::AWeatherManager()
 void AWeatherManager::BeginPlay()
 {
 	Super::BeginPlay();
-    RequestKMAWeather(119);
+  //  RequestKMAWeather(119);
 }
 
 /*
@@ -111,7 +111,6 @@ void AWeatherManager::SetWeatherData(FRegionData& Data)
 {
     if (Data.Precipitation >= 0.1f)
     {
-
         WeatherData = EWeatherData::RAIN;
         return;
     }
@@ -145,17 +144,5 @@ FString AWeatherManager::SetURLData(int32 RegionNum) const
 void FRegionData::PrintData() const
 {
     UE_LOG(LogTemp,Warning,TEXT("Temperture :  %.1f, Precipitation :  %.1f, WindSpeed : %.1f"),Temperature,Precipitation,WindSpeed);
-}
-
-bool FRegionData::operator==(const FRegionData& Other) const
-{
-    return FMath::IsNearlyEqual(Temperature, Other.Temperature, 0.1f)
-        && FMath::IsNearlyEqual(Precipitation, Other.Precipitation, 0.1f)
-        && FMath::IsNearlyEqual(WindSpeed, Other.WindSpeed, 0.1f);
-}
-
-bool FRegionData::operator!=(const FRegionData& Other) const
-{
-    return !(*this == Other);
 }
 

@@ -55,6 +55,7 @@ void UStageInfoWidget::GameStart()
 
             UGameplayStatics::LoadStreamLevel(this, FName("M_Basic"), true, false, LatentInfo);
             UE_LOG(LogTemp, Warning, TEXT("LoadStreamLevel"));
+            SetVisibility(ESlateVisibility::Hidden);
         }
     }
 }

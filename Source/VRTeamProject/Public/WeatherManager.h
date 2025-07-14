@@ -38,8 +38,6 @@ struct FRegionData {
 
 	void PrintData() const;
 
-	bool operator==(const FRegionData& Other)const;
-	bool operator!=(const FRegionData& Other)const;
 	
 };
 
