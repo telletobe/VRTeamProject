@@ -257,7 +257,6 @@ void APlayerCharacter::ApplyEffectItem(const EItemEffectData& Data)
 void APlayerCharacter::SpawnWeapon()
 {
 	if (Weapon) return; // 이미 무기가 있으면 생성하지 않음
-	UE_LOG(LogTemp, Log, TEXT("Weapon spawned and attached to player."));
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.Owner = this;
 	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;

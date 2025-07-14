@@ -45,8 +45,8 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UStageInfoWidget> WBP_StageInfoWidget;
 
-
 	UFUNCTION()
-	void HandleRegionClicked();
+	void OnClickKyounGi();
+
 
 };

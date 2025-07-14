@@ -6,6 +6,8 @@
 #include "GameFramework/PlayerController.h"
 #include "StageInfoWidget.h"
 #include "Components/Image.h"
+#include "WeatherManager.h"
+#include "Kismet/GameplayStatics.h"
 
 void UMapSelectWidget::NativeConstruct()
 {
@@ -26,33 +28,33 @@ void UMapSelectWidget::NativeConstruct()
 
     if (Button_KyoungGi)
     {
-        Button_KyoungGi->OnClicked.AddUniqueDynamic(this, &UMapSelectWidget::HandleRegionClicked);
+        Button_KyoungGi->OnClicked.AddUniqueDynamic(this, &UMapSelectWidget::OnClickKyounGi);
     }
 }
 
-void UMapSelectWidget::HandleRegionClicked()
+void UMapSelectWidget::OnClickKyounGi()
 {
 
     if (APlayerController* PC = Cast<APlayerController>(GetOwningPlayer()))
     {
-                
+
+        AWeatherManager* WeatherManager = Cast<AWeatherManager>(UGameplayStatics::GetActorOfClass(GetWorld(), AWeatherManager::StaticClass()));
+
+        if (WeatherManager)
+        {
+            WeatherManager->RequestKMAWeather(119); //수원 정보요청
+        }
+        else
+        {
+            UE_LOG(LogTemp, Warning, TEXT("WeatherManager Invalid"));
+        }
+
         if (WBP_StageInfoWidget)
         {
             WBP_StageInfoWidget->SetVisibility(ESlateVisibility::Visible);
-            UE_LOG(LogTemp,Warning,TEXT("Call StageInfo"));
+            UE_LOG(LogTemp, Warning, TEXT("Call StageInfo"));
         }
 
     }
 
-
-
-
-    /* 어떤 버튼인지 이름(FName)으로 구분 */
-    //if (const UButton* Sender = Cast<UButton>(GetSender()))
-    //{
-    //    const FName BtnName = Sender->GetFName();        // ex) "Button_Busan"
-    //    /* 필요하면 "Button_" 접두어 제거 → "Busan" */
-    //    const FString Clean = BtnName.ToString().RightChop(7);
-    //    OnRegionSelected.Broadcast(FName(*Clean));       // 델리게이트 전파
-    //}
 }

@@ -23,8 +23,6 @@ AWeatherManager::AWeatherManager()
 void AWeatherManager::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	RequestKMAWeather();
 }
 
 /*
@@ -46,9 +44,9 @@ void AWeatherManager::BeginPlay()
 인천 112
 */
 
-void AWeatherManager::RequestKMAWeather()
+void AWeatherManager::RequestKMAWeather(float RegionNum)
 {
-    FString URL = SetURLData(119); // 관측소 지점 번호는 디스코드 참고.
+    FString URL = SetURLData(RegionNum); // 관측소 지점 번호는 디스코드 참고.
     TSharedRef<IHttpRequest, ESPMode::ThreadSafe> Request = FHttpModule::Get().CreateRequest();
 
     Request->SetURL(URL);
@@ -58,6 +56,12 @@ void AWeatherManager::RequestKMAWeather()
     Request->ProcessRequest();
 
     UE_LOG(LogTemp, Log, TEXT("[WeatherManager] 날씨 요청 보냄: %s"), *URL);
+}
+
+void AWeatherManager::ClearRegionData()
+{
+    RegionData = FRegionData();
+
 }
 
 void AWeatherManager::OnWeatherResponse(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)
@@ -92,18 +96,36 @@ void AWeatherManager::OnWeatherResponse(FHttpRequestPtr Request, FHttpResponsePt
             float Precipitation = FCString::Atof(*Columns[15]); // 강수량 (RN)
             float WindSpeed = FCString::Atof(*Columns[4]);  // 풍속 (WS)
 
-            Suwon = FRegionData("Suwon", Temperture, Precipitation, WindSpeed);
-            Suwon.PrintData();
+            RegionData = FRegionData(Temperture, Precipitation, WindSpeed);
+            RegionData.PrintData();
 
-            // 예: 게임 날씨 시스템에 적용 (UDS 연동)
-            // if (UltraDynamicSky) { UltraDynamicSky->SetRainAmount(FMath::Clamp(RN / 30.0f, 0.0f, 1.0f)); }
+            SetWeatherData(RegionData);
 
             break; // 첫 데이터만 처리
         }
     }
 }
 
-FString AWeatherManager::SetURLData(int32 RegionNum)
+void AWeatherManager::SetWeatherData(FRegionData& Data)
+{
+    if (Data.Precipitation >= 1.0f)
+    {
+
+        WeatherData = EWeatherData::RAIN;
+        return;
+    }
+
+    if (Data.WindSpeed >= 1.0f)
+    {
+        WeatherData = EWeatherData::FOGGY;
+        return;
+    }
+    
+    WeatherData = EWeatherData::SUN;
+
+}
+
+FString AWeatherManager::SetURLData(int32 RegionNum) const
 {
     // 현재 시간 기준 포맷된 기상청 시간 문자열 생성
     FString FormattedTime = FDateTime::Now().ToString(TEXT("%Y%m%d%H00"));
@@ -119,7 +141,20 @@ FString AWeatherManager::SetURLData(int32 RegionNum)
     return URL;
 }
 
-void FRegionData::PrintData()
+void FRegionData::PrintData() const
 {
-    UE_LOG(LogTemp,Warning,TEXT("region : %s,Temperture :  %.1f, Precipitation :  %.1f, WindSpeed : %.1f"), *LocationName,Temperature,Precipitation,WindSpeed);
+    UE_LOG(LogTemp,Warning,TEXT("Temperture :  %.1f, Precipitation :  %.1f, WindSpeed : %.1f"),Temperature,Precipitation,WindSpeed);
 }
+
+bool FRegionData::operator==(const FRegionData& Other) const
+{
+    return FMath::IsNearlyEqual(Temperature, Other.Temperature, 0.1f)
+        && FMath::IsNearlyEqual(Precipitation, Other.Precipitation, 0.1f)
+        && FMath::IsNearlyEqual(WindSpeed, Other.WindSpeed, 0.1f);
+}
+
+bool FRegionData::operator!=(const FRegionData& Other) const
+{
+    return !(*this == Other);
+}
+

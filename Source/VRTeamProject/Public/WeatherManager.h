@@ -7,29 +7,39 @@
 #include "Http.h"
 #include "WeatherManager.generated.h"
 
+UENUM(BlueprintType)
+enum class EWeatherData : uint8
+{
+	SUN		UMETA(DisplayName = "SUN"),
+	RAIN	UMETA(DisplayName = "RAIN"),
+	FOGGY	UMETA(DisplayName = "FOGGY")
+};
+
 USTRUCT(BlueprintType)
 struct FRegionData {
 	GENERATED_BODY()
 
-private :
-	UPROPERTY(VisibleAnywhere)
-	FString LocationName;
-
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float Temperature;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float Precipitation;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float WindSpeed;
 
-public :
-	FRegionData() : LocationName(TEXT("Unkown")), Temperature(20.0f), Precipitation(0.0f), WindSpeed(0.0f) {}
-	FRegionData(const FString& SetLocationName, float SetTemperature, float SetPrecipitation, float SetWindSpeed) :
-		LocationName(SetLocationName), Temperature(SetTemperature), Precipitation(SetPrecipitation), WindSpeed(SetWindSpeed) {}
+	FRegionData() : Temperature(20.0f), Precipitation(0.0f), WindSpeed(0.0f), bIsData(false) {}
+	FRegionData(float SetTemperature, float SetPrecipitation, float SetWindSpeed) :
+		Temperature(SetTemperature), Precipitation(SetPrecipitation), WindSpeed(SetWindSpeed) {
+		bIsData = true;
+	}
 
-	void PrintData();
+	bool bIsData = false;
+
+	void PrintData() const;
+
+	bool operator==(const FRegionData& Other)const;
+	bool operator!=(const FRegionData& Other)const;
 	
 };
 
@@ -41,6 +51,16 @@ class VRTEAMPROJECT_API AWeatherManager : public AActor
 public:	
 	// Sets default values for this actor's properties
 	AWeatherManager();
+	void RequestKMAWeather(float RegionNum);
+
+	UFUNCTION(BlueprintCallable)
+	void ClearRegionData();
+
+	UFUNCTION(BlueprintCallable)
+	const FRegionData& GetRegionData() const { return RegionData; }
+
+	UFUNCTION(BlueprintCallable)
+	EWeatherData GetWeatherData() const { return WeatherData; }
 
 protected:
 	// Called when the game starts or when spawned
@@ -48,9 +68,14 @@ protected:
 
 private:
 
-	void RequestKMAWeather(); 
+
 	void OnWeatherResponse(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful);
-	FString SetURLData(int32 RegionNum);
+	void SetWeatherData(FRegionData& Data);
+	FString SetURLData(int32 RegionNum) const;
 	// Weather Data 
-	FRegionData Suwon;
+	UPROPERTY(EditAnywhere,Category = "Region")
+	FRegionData RegionData;
+
+	UPROPERTY(EditAnywhere)
+	EWeatherData WeatherData;
 };

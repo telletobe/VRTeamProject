@@ -6,6 +6,7 @@
 #include <Kismet/GameplayStatics.h>
 #include <VRProjectGameModeBase.h>
 #include <PlayerCharacter.h>
+#include "WeatherManager.h"
 
 void UStageInfoWidget::Init(const FName& InRegionID, UTexture2D* Thumbnail, int32 Difficulty)
 {
@@ -21,6 +22,8 @@ void UStageInfoWidget::Init(const FName& InRegionID, UTexture2D* Thumbnail, int3
 void UStageInfoWidget::NativeConstruct()
 {
     Super::NativeConstruct();
+
+
 
     if (Btn_GameStart)
     {
@@ -58,6 +61,16 @@ void UStageInfoWidget::GameStart()
 
 void UStageInfoWidget::BackToMenu()
 {
+    AWeatherManager* WeatherManager = Cast<AWeatherManager>(UGameplayStatics::GetActorOfClass(GetWorld(), AWeatherManager::StaticClass()));
+
+    if (WeatherManager)
+    {
+        WeatherManager->ClearRegionData();
+    }
+    else
+    {
+        UE_LOG(LogTemp,Warning,TEXT("WeatherManager Invalid"));
+    }
     SetVisibility(ESlateVisibility::Hidden);
 }
 

@@ -58,6 +58,4 @@ private:
 
 	FName RegionID;
 
-
-	
 };
