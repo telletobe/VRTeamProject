@@ -378,3 +378,6 @@ plugins/MetaXR/Content/Materials/LeftMetaQuestTouchProBatteryIndicatorMaterial.u
 plugins/MetaXR/Content/Materials/LeftMetaQuestTouchPlusMaterial.uasset
 plugins/MetaXR/Config/FilterPlugin.ini
 plugins/MetaXR/Config/BaseOculusXR.ini
+Build/Android/src/com/YourCompany/VRTeamProject/OBBData.java
+Build/Android_ASTC/FileOpenOrder/CookerOpenOrder.log
+Build/Android_ASTC/FileOpenOrder/EditorOpenOrder.log

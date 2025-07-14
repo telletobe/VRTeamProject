@@ -23,6 +23,7 @@ AWeatherManager::AWeatherManager()
 void AWeatherManager::BeginPlay()
 {
 	Super::BeginPlay();
+    RequestKMAWeather(119);
 }
 
 /*
@@ -108,14 +109,14 @@ void AWeatherManager::OnWeatherResponse(FHttpRequestPtr Request, FHttpResponsePt
 
 void AWeatherManager::SetWeatherData(FRegionData& Data)
 {
-    if (Data.Precipitation >= 1.0f)
+    if (Data.Precipitation >= 0.1f)
     {
 
         WeatherData = EWeatherData::RAIN;
         return;
     }
 
-    if (Data.WindSpeed >= 1.0f)
+    if (Data.WindSpeed >= 0.1f)
     {
         WeatherData = EWeatherData::FOGGY;
         return;
