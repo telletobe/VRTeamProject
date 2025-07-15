@@ -39,9 +39,6 @@ private:
 	UPROPERTY(meta = (Bindwidget))
 	TObjectPtr<UButton> Button_Kangwon; //101
 
-	UPROPERTY(meta = (Bindwidget))
-	TObjectPtr<UImage> IM_Map;
-
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UStageInfoWidget> WBP_StageInfoWidget;
 
