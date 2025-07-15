@@ -9,6 +9,9 @@
 #include "Misc/Paths.h"
 #include "HAL/FileManager.h"
 #include "Engine/Engine.h"
+#include "Sound/SoundCue.h"
+#include "Components/AudioComponent.h" 
+#include <Kismet/GameplayStatics.h>
 
 
 // Sets default values
@@ -17,6 +20,28 @@ AWeatherManager::AWeatherManager()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
 
+    ConstructorHelpers::FObjectFinder<USoundCue> MainBGMObject(TEXT("/Script/Engine.SoundCue'/Game/Audio/EffectSound/MainBGM.MainBGM'"));
+    ConstructorHelpers::FObjectFinder<USoundCue> RainBGMObject(TEXT("/Script/Engine.SoundCue'/Game/Audio/EffectSound/Rain_Cue.Rain_Cue'"));
+    ConstructorHelpers::FObjectFinder<USoundCue> FoggyBGMObject(TEXT("/Script/Engine.SoundCue'/Game/Audio/EffectSound/Foggy_Cue.Foggy_Cue'"));
+
+
+    AudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("AudioComponent"));
+
+    if (MainBGMObject.Succeeded())
+    {
+        MainBGM = MainBGMObject.Object;
+    }
+
+    if (RainBGMObject.Succeeded())
+    {
+        RainBGM = RainBGMObject.Object;
+    }
+
+    if (FoggyBGMObject.Succeeded())
+    {
+        FoggyBGM = FoggyBGMObject.Object;
+    }
+
 }
 
 // Called when the game starts or when spawned
@@ -24,6 +49,18 @@ void AWeatherManager::BeginPlay()
 {
 	Super::BeginPlay();
   //  RequestKMAWeather(119);
+
+    if (MainBGM)
+    {
+        if (AudioComponent)
+        {
+            AudioComponent = UGameplayStatics::SpawnSound2D(this, MainBGM);
+        }
+    }
+    else
+    {
+        UE_LOG(LogTemp, Warning, TEXT("BGMSound Data invalid"));
+    }
 }
 
 /*
@@ -62,7 +99,18 @@ void AWeatherManager::RequestKMAWeather(float RegionNum)
 void AWeatherManager::ClearRegionData()
 {
     RegionData = FRegionData();
+    SetWeatherData(RegionData);
 
+    USoundBase* CurrentSound = AudioComponent ? AudioComponent->GetSound() : nullptr;
+
+    if (AudioComponent && AudioComponent->IsPlaying())
+    {
+        if (CurrentSound != MainBGM)
+        {
+            AudioComponent->Stop();
+            AudioComponent = UGameplayStatics::SpawnSound2D(this, MainBGM);
+        }        
+    }
 }
 
 void AWeatherManager::OnWeatherResponse(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)
@@ -109,20 +157,52 @@ void AWeatherManager::OnWeatherResponse(FHttpRequestPtr Request, FHttpResponsePt
 
 void AWeatherManager::SetWeatherData(FRegionData& Data)
 {
+    USoundBase* CurrentSound = AudioComponent ? AudioComponent->GetSound() : nullptr;
+
     if (Data.Precipitation >= 0.1f)
     {
         WeatherData = EWeatherData::RAIN;
+        if (RainBGM)
+        {
+            if (AudioComponent && AudioComponent->IsPlaying())
+            {
+                if (CurrentSound != RainBGM)
+                {
+                    AudioComponent->Stop();
+                    AudioComponent = UGameplayStatics::SpawnSound2D(this, RainBGM);
+                }                
+            }
+        }
+        else
+        {
+            UE_LOG(LogTemp, Warning, TEXT("BGMSound Data invalid"));
+        }
         return;
     }
 
     if (Data.WindSpeed >= 0.1f)
     {
         WeatherData = EWeatherData::FOGGY;
+        if (FoggyBGM)
+        {
+            if (AudioComponent && AudioComponent->IsPlaying())
+            {
+                if (CurrentSound != FoggyBGM)
+                {
+                    AudioComponent->Stop();
+                    AudioComponent = UGameplayStatics::SpawnSound2D(this, FoggyBGM);
+                }
+            }
+        }
+        else
+        {
+            UE_LOG(LogTemp, Warning, TEXT("BGMSound Data invalid"));
+        }
         return;
     }
     
     WeatherData = EWeatherData::SUN;
-
+    GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::MakeRandomColor(), FString::Printf(TEXT("WeatherData : %s"),WeatherData));
 }
 
 FString AWeatherManager::SetURLData(int32 RegionNum) const
@@ -144,5 +224,6 @@ FString AWeatherManager::SetURLData(int32 RegionNum) const
 void FRegionData::PrintData() const
 {
     UE_LOG(LogTemp,Warning,TEXT("Temperture :  %.1f, Precipitation :  %.1f, WindSpeed : %.1f"),Temperature,Precipitation,WindSpeed);
+    GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::MakeRandomColor(), FString::Printf(TEXT("Temperture :  %.1f, Precipitation :  %.1f, WindSpeed : %.1f"), Temperature, Precipitation, WindSpeed));
 }
 
