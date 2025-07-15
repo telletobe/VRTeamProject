@@ -56,6 +56,7 @@ void AVRProjectGameModeBase::TriggerGameClear()
 	bIsClear = true;
 	CurrentKillCnt = 0;
 	CleanupAfterGameEnd();
+
 	if (ClearSound)
 	{
 		UGameplayStatics::SpawnSound2D(this, ClearSound);
@@ -77,7 +78,6 @@ void AVRProjectGameModeBase::TriggerGameStart()
 
 	CleanupGameItem();
 	InitializeGameObjects();
-
 	return;
 }
 

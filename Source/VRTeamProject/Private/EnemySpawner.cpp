@@ -56,6 +56,7 @@ void AEnemySpawner::CreateEnemy()
 					SpawnedEnemy->FindSpawnPoint();
 					SpawnedEnemy->FindDeSpawnPoint();
 					SpawnedEnemy->DeSpawn();
+					SpawnedEnemy->ApplyWeatherEffect(CachedWeatherData);
 					EnemyPool.Add(SpawnedEnemy);
 					GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Blue, TEXT("Create Enemy"));
 				}
@@ -139,5 +140,10 @@ void AEnemySpawner::BeginPlay()
 void AEnemySpawner::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+}
+
+void AEnemySpawner::OnWeatherChanged(EWeatherData NewWeather)
+{
+	CachedWeatherData = NewWeather;
 }
 
