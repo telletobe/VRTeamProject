@@ -13,19 +13,7 @@ void UMapSelectWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-    if (IM_Map)
-    {
-        UTexture2D* Map = LoadObject< UTexture2D>(nullptr, TEXT("/Script/Engine.Texture2D'/Game/UMG/MapUI/Texture/Map__1_.Map__1_'"));
-        if (Map)
-        {
-            IM_Map->SetBrushFromTexture(Map);
-        }
-        else
-        {
-            UE_LOG(LogTemp,Warning,TEXT("Map Texture invalid"));
-        }
-    }
-
+    
     if (Button_KyoungGi)
     {
         Button_KyoungGi->OnClicked.AddUniqueDynamic(this, &UMapSelectWidget::OnClickKyounGi);
