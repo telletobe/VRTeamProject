@@ -65,8 +65,6 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
-
-
 	void OnWeatherResponse(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful);
 	void SetWeatherData(FRegionData& Data);
 	FString SetURLData(int32 RegionNum) const;
@@ -76,4 +74,18 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	EWeatherData WeatherData;
+
+	UPROPERTY(EditAnywhere, Category = "Sound")
+	TObjectPtr<USoundBase> MainBGM;
+
+	UPROPERTY(EditAnywhere, Category = "Sound")
+	TObjectPtr<USoundBase> RainBGM;
+
+	UPROPERTY(EditAnywhere, Category = "Sound")
+	TObjectPtr<USoundBase> FoggyBGM;
+
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UAudioComponent> AudioComponent;
+
 };
+
