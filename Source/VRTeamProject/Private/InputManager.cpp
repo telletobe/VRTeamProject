@@ -73,12 +73,14 @@ void UInputManager::ToggleWidgetVisibility(UWidgetComponent* Widget)
 	if (Widget->IsVisible())
 	{
 		Widget->SetVisibility(false);
+		Widget->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		Player->SetVisibleRazerMesh(false);
 
 	}
 	else
 	{
 		Widget->SetVisibility(true);
+		Widget->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 		Player->SetVisibleRazerMesh(true);
 	}
 }

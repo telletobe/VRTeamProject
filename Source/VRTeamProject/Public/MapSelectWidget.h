@@ -31,13 +31,13 @@ protected:
 
 private:
 	UPROPERTY(meta = (Bindwidget))
-	TObjectPtr<UButton> Button_KyoungGi;
+	TObjectPtr<UButton> Button_KyoungGi; //119
 
 	UPROPERTY(meta = (Bindwidget))
-	TObjectPtr<UButton> SelectButton_2;
+	TObjectPtr<UButton> Button_Jeonju; //146
 
 	UPROPERTY(meta = (Bindwidget))
-	TObjectPtr<UButton> SelectButton_3;
+	TObjectPtr<UButton> Button_Kangwon; //101
 
 	UPROPERTY(meta = (Bindwidget))
 	TObjectPtr<UImage> IM_Map;
@@ -48,5 +48,8 @@ private:
 	UFUNCTION()
 	void OnClickKyounGi();
 
-
+	UFUNCTION()
+	void OnClickJeonju();
+	UFUNCTION()
+	void OnClickKangwon();
 };
