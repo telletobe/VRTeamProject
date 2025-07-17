@@ -12,6 +12,8 @@
 #include "Sound/SoundCue.h"
 #include "Components/AudioComponent.h" 
 #include <Kismet/GameplayStatics.h>
+#include "EngineUtils.h"
+#include "EnemyCharacter.h"
 
 
 // Sets default values
@@ -105,7 +107,7 @@ void AWeatherManager::ClearRegionData()
 
     if (AudioComponent && AudioComponent->IsPlaying())
     {
-        if (CurrentSound != MainBGM)
+        if (CurrentSound->GetName() != MainBGM->GetName())
         {
             AudioComponent->Stop();
             AudioComponent = UGameplayStatics::SpawnSound2D(this, MainBGM);
@@ -151,6 +153,18 @@ void AWeatherManager::OnWeatherResponse(FHttpRequestPtr Request, FHttpResponsePt
             SetWeatherData(RegionData);
 
             break; // 첫 데이터만 처리
+        }
+    }
+}
+
+void AWeatherManager::ApplyWeatherEffectToEnemy(AEnemyCharacter* Enemy)
+{
+    for (TActorIterator<AEnemyCharacter> It(GetWorld()); It; ++It)
+    {
+        AEnemyCharacter* Enemy = *It;
+        if (Enemy)
+        {
+            Enemy->ApplyWeatherEffect(WeatherData);
         }
     }
 }
@@ -202,6 +216,7 @@ void AWeatherManager::SetWeatherData(FRegionData& Data)
     }
     
     WeatherData = EWeatherData::SUN;
+    OnWeatherChange.Broadcast(WeatherData);
     GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::MakeRandomColor(), FString::Printf(TEXT("WeatherData : %s"),WeatherData));
 }
 

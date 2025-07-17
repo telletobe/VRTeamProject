@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "WeatherManager.h"
 #include "GameFramework/Character.h"
 #include "EnemyCharacter.generated.h"
 
@@ -31,14 +32,13 @@ public:
 	void SetMaxHp(float EnemyHp);
 	void SetDef(float EnemyDef);
 	void SetAtk(float EnemyAtk);
-	void SetSpawnDelay(float EnemySpawnDelay);
 	void SetSpawnPoint(AActor* TargetPoint);
+	void ApplyWeatherEffect(const EWeatherData Weather);
 
 	float GetCurrentHp() const { return CurrentHp; }
 	float GetMaxHp() const { return MaxHp; }
 	float GetDef() const { return Def; }
 	float GetAtk() const { return Atk; }
-	float GetSpawnDelay() const { return SpawnDelay; }
 
 	bool IsActive() const { return bIsActive; }
 	bool IsDeathAnim() const { return bIsDeathAnim; }
@@ -137,10 +137,7 @@ private:
 	UPROPERTY(EditAnywhere)
 	float Atk;
 
-	float DefaultAtk = 3.0f;
-	
-	UPROPERTY(EditAnywhere)
-	float SpawnDelay;
+	float DefaultAtk = 5.0f;
 
 	UPROPERTY(EditAnywhere, Category = "Anim")
 	bool bIsActive = false;

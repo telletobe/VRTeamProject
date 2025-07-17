@@ -51,7 +51,7 @@ public:
 	float GetDefaultAtk() const { return DefaultAtk; }
 	float GetDefaultDef () const { return DefaultDef; }
 
-	void ApplyEffectItem(const EItemEffectData& Data);
+	void ApplyEffectItem(const EItemEffectData Data);
 
 	UFUNCTION(BlueprintCallable)
 	void SpawnWeapon();

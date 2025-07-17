@@ -9,6 +9,7 @@
 #include <EnemySpawner.h>
 #include <ItemSpawnActor.h>
 #include <WeatherManager.h>
+#include <Sound/SoundCue.h>
 
 
 AVRProjectGameModeBase::AVRProjectGameModeBase()
@@ -21,6 +22,11 @@ AVRProjectGameModeBase::AVRProjectGameModeBase()
 	CurrentKillCnt = 0;
 	RequiredKillCnt = 40;
 
+	ConstructorHelpers::FObjectFinder<USoundCue> ClearSoundObject(TEXT("/Script/Engine.SoundCue'/Game/Audio/EffectSound/clear_Cue.clear_Cue'"));
+	if (ClearSoundObject.Succeeded())
+	{
+		ClearSound = ClearSoundObject.Object;
+	}
 }
 
 void AVRProjectGameModeBase::BeginPlay()
@@ -51,6 +57,10 @@ void AVRProjectGameModeBase::TriggerGameClear()
 	CurrentKillCnt = 0;
 	CleanupAfterGameEnd();
 
+	if (ClearSound)
+	{
+		UGameplayStatics::SpawnSound2D(this, ClearSound);
+	}
 	return;
 }
 
@@ -68,7 +78,6 @@ void AVRProjectGameModeBase::TriggerGameStart()
 
 	CleanupGameItem();
 	InitializeGameObjects();
-
 	return;
 }
 

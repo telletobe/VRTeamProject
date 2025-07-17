@@ -7,8 +7,10 @@
 #include "Engine/TargetPoint.h"
 #include "Kismet/GameplayStatics.h"
 #include <EnemyAIController.h>
+#include "GameFramework/CharacterMovementComponent.h"
 #include "PlayerCharacter.h"
 #include "PlayerBulletActor.h"
+
 
 AEnemyCharacter::AEnemyCharacter()
 {
@@ -18,7 +20,6 @@ AEnemyCharacter::AEnemyCharacter()
 	SetCurrentHp(50);
 	SetDef(1.0f);
 	SetAtk(5.0f);
-	SetSpawnDelay(5.0f);
 
 	NavInvoker = CreateDefaultSubobject<UNavigationInvokerComponent>(TEXT("NavInvoker"));
 
@@ -313,14 +314,28 @@ void AEnemyCharacter::PlayAttackMontage()
 	}
 }
 
-void AEnemyCharacter::SetSpawnDelay(float EnemySpawnDelay)
-{
-	SpawnDelay = EnemySpawnDelay;
-}
 
 void AEnemyCharacter::SetSpawnPoint(AActor* TargetPoint)
 {
 	SpawnPoint = TargetPoint;
+}
+
+void AEnemyCharacter::ApplyWeatherEffect(EWeatherData Weather)
+{
+	switch (Weather)
+	{
+	case EWeatherData::SUN:
+		GetCharacterMovement()->MaxAcceleration = 300.0f;
+		break;
+	case EWeatherData::RAIN:
+		GetCharacterMovement()->MaxAcceleration = 500.0f;	
+		break;
+	case EWeatherData::FOGGY:
+		GetCharacterMovement()->MaxAcceleration = 500.0f;
+		break;
+	default:
+		break;
+	}
 }
 
 void AEnemyCharacter::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)

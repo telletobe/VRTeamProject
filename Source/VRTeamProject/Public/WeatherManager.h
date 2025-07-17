@@ -15,6 +15,8 @@ enum class EWeatherData : uint8
 	FOGGY	UMETA(DisplayName = "FOGGY")
 };
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnWeatherChange, EWeatherData, NewWeatherData);
+
 USTRUCT(BlueprintType)
 struct FRegionData {
 	GENERATED_BODY()
@@ -41,6 +43,7 @@ struct FRegionData {
 	
 };
 
+
 UCLASS()
 class VRTEAMPROJECT_API AWeatherManager : public AActor
 {
@@ -59,13 +62,17 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	EWeatherData GetWeatherData() const { return WeatherData; }
+	void ApplyWeatherEffectToEnemy(class AEnemyCharacter* Enemy);
 
+	UPROPERTY()
+	FOnWeatherChange OnWeatherChange;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 private:
 	void OnWeatherResponse(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful);
+	
 	void SetWeatherData(FRegionData& Data);
 	FString SetURLData(int32 RegionNum) const;
 	// Weather Data 

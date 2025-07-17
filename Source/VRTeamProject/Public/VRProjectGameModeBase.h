@@ -70,4 +70,6 @@ private:
 	UPROPERTY()
 	TObjectPtr<AItemSpawnActor> ItemSpanwer;
 
+	UPROPERTY(EditAnywhere, Category = "Sound")
+	TObjectPtr<USoundBase> ClearSound;
 };
