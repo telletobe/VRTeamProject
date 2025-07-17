@@ -9,6 +9,7 @@
 class UProgressBar;
 class UButton;
 class APlayerCharacter;
+
 /**
  * 
  */
@@ -41,6 +42,7 @@ private:
 	UPROPERTY(meta = (Bindwidget))
 	TObjectPtr<UProgressBar> ExpBar;
 
+	
 
 
 };

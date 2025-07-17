@@ -28,7 +28,7 @@ class VRTEAMPROJECT_API APlayerCharacter : public ACharacter
 
 public:
 	// Sets default values for this character's properties
-	APlayerCharacter();
+	APlayerChracter();
 
 	void SetHp(float PlayerHp);
 	void SetAtk(float PlayerAtk);

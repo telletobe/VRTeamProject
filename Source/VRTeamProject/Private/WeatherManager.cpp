@@ -157,14 +157,14 @@ void AWeatherManager::OnWeatherResponse(FHttpRequestPtr Request, FHttpResponsePt
     }
 }
 
-void AWeatherManager::ApplyWeatherEffectToEnemy(AEnemyCharacter* Enemy)
+void AWeatherManager::ApplyWeatherEffectToEnemy(AEnemyCharacter* TargetEnemy)
 {
     for (TActorIterator<AEnemyCharacter> It(GetWorld()); It; ++It)
     {
-        AEnemyCharacter* Enemy = *It;
-        if (Enemy)
+        AEnemyCharacter* FoundEnemy = *It;
+        if (FoundEnemy)
         {
-            Enemy->ApplyWeatherEffect(WeatherData);
+            FoundEnemy->ApplyWeatherEffect(WeatherData);
         }
     }
 }

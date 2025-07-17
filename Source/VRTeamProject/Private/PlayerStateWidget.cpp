@@ -10,6 +10,7 @@
 
 
 
+
 void UPlayerStateWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
@@ -32,13 +33,14 @@ void UPlayerStateWidget::ReSetHp() //Restart 버튼을 눌럿을떄 활용
 	}
 }
 
+
 void UPlayerStateWidget::UpdatePlayerHP(float CurrentHp, float MaxHp)
 {
 	if (HPBar && MaxHp > 0.0f)
 	{
 		HPBar->SetPercent(CurrentHp/MaxHp);
 	}
-	//Set Text.
+	//Set Text
 }
 
 void UPlayerStateWidget::UpdatePlayerDef()
@@ -56,5 +58,5 @@ void UPlayerStateWidget::UpdatePlayerExp(float CurrentExp)
 	{
 		ExpBar->SetPercent(0.0f);
 	}
-		//Set Text
+	//Set Text
 }
