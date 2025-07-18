@@ -75,7 +75,7 @@ APlayerCharacter::APlayerCharacter()
 	//WidgetComponent->SetRelativeLocation(FVector(200.0f,0.0f,0.0f));
 	WidgetComponent->SetVisibility(false);
 	WidgetComponent->SetCastShadow(false);
-	
+	WidgetComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 void APlayerCharacter::SetVisibleRazerMesh(bool visible)
@@ -144,24 +144,6 @@ void APlayerCharacter::BeginPlay()
 	{
 		PlayerReSpawn(); // 이곳에서 bIsActive를 ture로 변경.
 	}
-		
-	//if (!Weapon)
-	//{
-	//	FActorSpawnParameters SpawnParams;
-	//	SpawnParams.Owner = this;
-	//	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn; // 항상 스폰허용
-
-	//	APlayerWeapon* NewWeapon = GetWorld()->SpawnActor<APlayerWeapon>(APlayerWeapon::StaticClass(), FVector(0), FRotator(0),SpawnParams);
-	//	if (IsValid(NewWeapon))
-	//	{
-	//		Weapon = NewWeapon;
-	//		Weapon->AttachToComponent(MotionControllerRight, FAttachmentTransformRules::SnapToTargetIncludingScale);
-	//	}
-	//}
-	//else
-	//{
-	//	UE_LOG(LogTemp,Warning,TEXT("PlayerWeapon InValid"));
-	//}
 
 	if (GetHp() < 0)
 	{
