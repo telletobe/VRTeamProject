@@ -168,6 +168,7 @@ void AItemSpawnActor::Tick(float DeltaTime)
 	}
 }
 
+
 void AItemSpawnActor::MoveToEndPoint(float DeltaTime)
 {
 	const FVector NewLocation = GetActorLocation() + MoveForce * DeltaTime;

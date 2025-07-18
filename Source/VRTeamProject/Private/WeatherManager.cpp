@@ -63,6 +63,9 @@ void AWeatherManager::BeginPlay()
     {
         UE_LOG(LogTemp, Warning, TEXT("BGMSound Data invalid"));
     }
+
+    OnWeatherChange.AddDynamic(this,&AWeatherManager::ApplyWeatherEffectToEnemy);
+
 }
 
 /*
@@ -157,14 +160,16 @@ void AWeatherManager::OnWeatherResponse(FHttpRequestPtr Request, FHttpResponsePt
     }
 }
 
-void AWeatherManager::ApplyWeatherEffectToEnemy(AEnemyCharacter* Enemy)
+void AWeatherManager::ApplyWeatherEffectToEnemy(EWeatherData NewWeather)
 {
-    for (TActorIterator<AEnemyCharacter> It(GetWorld()); It; ++It)
+    TArray<AActor*> FoundActor;
+    UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEnemyCharacter::StaticClass(), FoundActor);
+
+    for (AActor* AllActor : FoundActor)
     {
-        AEnemyCharacter* Enemy = *It;
-        if (Enemy)
+        if (AEnemyCharacter* Enemy = Cast<AEnemyCharacter>(AllActor))
         {
-            Enemy->ApplyWeatherEffect(WeatherData);
+            Enemy->ApplyWeatherEffect(NewWeather);
         }
     }
 }
@@ -217,7 +222,6 @@ void AWeatherManager::SetWeatherData(FRegionData& Data)
     
     WeatherData = EWeatherData::SUN;
     OnWeatherChange.Broadcast(WeatherData);
-    GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::MakeRandomColor(), FString::Printf(TEXT("WeatherData : %s"),WeatherData));
 }
 
 FString AWeatherManager::SetURLData(int32 RegionNum) const
@@ -241,4 +245,3 @@ void FRegionData::PrintData() const
     UE_LOG(LogTemp,Warning,TEXT("Temperture :  %.1f, Precipitation :  %.1f, WindSpeed : %.1f"),Temperature,Precipitation,WindSpeed);
     GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::MakeRandomColor(), FString::Printf(TEXT("Temperture :  %.1f, Precipitation :  %.1f, WindSpeed : %.1f"), Temperature, Precipitation, WindSpeed));
 }
-

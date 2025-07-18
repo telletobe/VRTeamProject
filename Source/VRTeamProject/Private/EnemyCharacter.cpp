@@ -36,6 +36,7 @@ void AEnemyCharacter::BeginPlay()
 		CharacterCollision->OnComponentHit.AddDynamic(this, &AEnemyCharacter::OnComponentHit);
 		CharacterCollision->OnComponentBeginOverlap.AddDynamic(this, &AEnemyCharacter::OnBeginOverlap);
 		OnEnemyDeathAnimEnded.AddDynamic(this, &AEnemyCharacter::EnemyDeathAnimEnded);
+		
 	}
 
 
@@ -322,6 +323,9 @@ void AEnemyCharacter::SetSpawnPoint(AActor* TargetPoint)
 
 void AEnemyCharacter::ApplyWeatherEffect(EWeatherData Weather)
 {
+
+	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::MakeRandomColor(), FString::Printf(TEXT("Weather : %d"), (uint8)Weather));
+
 	switch (Weather)
 	{
 	case EWeatherData::SUN:

@@ -62,7 +62,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	EWeatherData GetWeatherData() const { return WeatherData; }
-	void ApplyWeatherEffectToEnemy(class AEnemyCharacter* Enemy);
+
+	UFUNCTION()
+	void ApplyWeatherEffectToEnemy(EWeatherData NewWeather);
 
 	UPROPERTY()
 	FOnWeatherChange OnWeatherChange;
