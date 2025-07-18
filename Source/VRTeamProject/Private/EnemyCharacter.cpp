@@ -338,6 +338,7 @@ void AEnemyCharacter::ApplyWeatherEffect(EWeatherData Weather)
 		GetCharacterMovement()->MaxAcceleration = 500.0f;
 		break;
 	default:
+		GetCharacterMovement()->MaxAcceleration = 300.0f;
 		break;
 	}
 }
