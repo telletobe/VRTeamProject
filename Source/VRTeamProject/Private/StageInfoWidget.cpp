@@ -7,17 +7,8 @@
 #include <VRProjectGameModeBase.h>
 #include <PlayerCharacter.h>
 #include "WeatherManager.h"
-
-void UStageInfoWidget::Init(const FName& InRegionID, UTexture2D* Thumbnail, int32 Difficulty)
-{
-   /* RegionID = InRegionID;
-    if (TXT_Title)      
-        TXT_Title->SetText(FText::FromName(RegionID));
-    if (IMG_Thumb)      
-        IMG_Thumb->SetBrushFromTexture(Thumb);
-    if (TXT_Difficulty) 
-        TXT_Difficulty->SetText(FText::AsNumber(Diff));*/
-}
+#include "Components/TextBlock.h"
+#include "Components/Image.h"
 
 void UStageInfoWidget::NativeConstruct()
 {
@@ -82,4 +73,22 @@ void UStageInfoWidget::OnLevelLoaded()
     {
         GameMode->TriggerGameStart();
     }
+}
+
+void UStageInfoWidget::Init(const FName& InRegionID, UTexture2D* Thumbnail)
+{
+    RegionID = InRegionID;
+    if (TXT_Title)
+        TXT_Title->SetText(FText::FromName(RegionID));
+    else
+        UE_LOG(LogTemp, Warning, TEXT("TXT_Title is nullptr!"));
+    if (IMG_Thumb && Thumbnail)
+        IMG_Thumb->SetBrushFromTexture(Thumbnail);
+    else
+    {
+        UE_LOG(LogTemp, Warning, TEXT("IMG_Thumb is nullptr!"));
+        UE_LOG(LogTemp, Warning, TEXT("Thumbnail is nullptr!"));
+    }
+
+
 }

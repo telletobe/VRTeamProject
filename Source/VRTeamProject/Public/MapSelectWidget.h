@@ -10,7 +10,6 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnRegionSelected, FName, RegionID);
 
 class UButton;
-class UImage;
 class UStageInfoWidget;
 
 /**
@@ -25,6 +24,9 @@ public:
 
 	UPROPERTY() 
 	FOnRegionSelected OnRegionSelected;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Region")
+	TMap<FName, UTexture2D*> RegionThumbnails;
 
 protected:
 	virtual void NativeConstruct() override;

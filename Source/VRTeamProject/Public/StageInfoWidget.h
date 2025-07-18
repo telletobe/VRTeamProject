@@ -10,6 +10,8 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnStartStage, FName, RegionID);
 
 class UButton;
+class UImage;
+class UTextBlock;
 
 
 
@@ -22,9 +24,7 @@ class VRTEAMPROJECT_API UStageInfoWidget : public UUserWidget
 	GENERATED_BODY()
 
 public:
-	UFUNCTION(BlueprintCallable)
-	void Init(const FName& InRegionID, UTexture2D* Thumbnail, int32 Difficulty);
-
+	
 	UPROPERTY(BlueprintAssignable)
 	FOnStartStage OnStartStage;
 
@@ -34,26 +34,26 @@ public:
 	void BackToMenu();
 	UFUNCTION()
 	void OnLevelLoaded();
+	UFUNCTION(BlueprintCallable)
+	void Init(const FName& InRegionID, UTexture2D* Thumbnail);
+
+	//¸Ê Á¤º¸
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UTextBlock> TXT_Title;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UImage> IMG_Thumb;
+	
 	
 
 protected:
 	virtual void NativeConstruct() override;
 
 private:
-
-	//¸Ê Á¤º¸
-	//UPROPERTY(meta = (BindWidget))
-	//class UTextBlock* TXT_Title;
-	//UPROPERTY(meta = (BindWidget))
-	//TObjectPtr<UImage> IMG_Thumb;
-	//UPROPERTY(meta = (BindWidget))
-	//TObjectPtr<UTextBlock> TXT_Difficulty;
-
-
-	UPROPERTY(meta = (Bindwidget))
+	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UButton> Btn_GameStart;
 
-	UPROPERTY(meta = (Bindwidget))
+	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UButton> Btn_Back;
 
 	FName RegionID;

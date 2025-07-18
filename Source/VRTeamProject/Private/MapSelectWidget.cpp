@@ -9,6 +9,7 @@
 #include "WeatherManager.h"
 #include "Kismet/GameplayStatics.h"
 
+
 void UMapSelectWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
@@ -49,7 +50,16 @@ void UMapSelectWidget::OnClickKyounGi()
 
         if (WBP_StageInfoWidget)
         {
+            FName Region = "KyougGi";
+            UTexture2D* Thumbnail = nullptr;
+            if (RegionThumbnails.Contains(Region))
+            {
+                Thumbnail = RegionThumbnails[Region];
+            }
+
+            WBP_StageInfoWidget->Init(Region, Thumbnail);
             WBP_StageInfoWidget->SetVisibility(ESlateVisibility::Visible);
+
             UE_LOG(LogTemp, Warning, TEXT("Call StageInfo"));
         }
 
@@ -75,7 +85,11 @@ void UMapSelectWidget::OnClickJeonju()
 
         if (WBP_StageInfoWidget)
         {
+            FName Region = "JeonJu";
+            UTexture2D* Thumbnail = RegionThumbnails.Contains(Region) ? RegionThumbnails[Region] : nullptr;
+            WBP_StageInfoWidget->Init(Region, Thumbnail);
             WBP_StageInfoWidget->SetVisibility(ESlateVisibility::Visible);
+
             UE_LOG(LogTemp, Warning, TEXT("Call StageInfo"));
         }
 
@@ -100,6 +114,9 @@ void UMapSelectWidget::OnClickKangwon()
 
         if (WBP_StageInfoWidget)
         {
+            FName Region = "Gangwon";
+            UTexture2D* Thumbnail = RegionThumbnails.Contains(Region) ? RegionThumbnails[Region] : nullptr;
+            WBP_StageInfoWidget->Init(Region, Thumbnail);
             WBP_StageInfoWidget->SetVisibility(ESlateVisibility::Visible);
             UE_LOG(LogTemp, Warning, TEXT("Call StageInfo"));
         }
