@@ -8,6 +8,7 @@
 
 class UProgressBar;
 class UButton;
+class UTextBlock;
 class APlayerCharacter;
 /**
  * 
@@ -28,6 +29,9 @@ public:
 	void UpdatePlayerDef();
 	void UpdatePlayerExp(float CurrentExp);
 
+	// 날씨 정보 UI 업데이트
+	void UpdateWeatherInfo(float InTemperature, float InRainfall, float InWindSpeed);
+
 protected:
 	virtual void NativeConstruct() override;
 
@@ -40,6 +44,21 @@ private:
 
 	UPROPERTY(meta = (Bindwidget))
 	TObjectPtr<UProgressBar> ExpBar;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UTextBlock> TemperatureText;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UTextBlock> RainfallText;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UTextBlock> WindSpeedText;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UTextBlock> NowPlayerAttackText;
+
+	// 내부 계산 함수
+	float CalculateAttackPowerPercent(float Temperature, float Rainfall, float WindSpeed) const;
 
 
 

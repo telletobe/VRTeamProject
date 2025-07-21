@@ -7,6 +7,8 @@
 #include "GameFramework/Character.h"
 #include <InputMappingContext.h>
 #include "PlayerWeapon.h"
+#include "PlayerStateWidget.h"
+#include "WeatherManager.h"
 #include "PlayerCharacter.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPlayerDeath);
@@ -101,6 +103,9 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	// 날씨 기반 공격력 디버프 반영
+	void ApplyWeatherAttackDebuff(float Temperature, float Rainfall, float WindSpeed);
+
 private:
 	UPROPERTY(EditAnywhere)
 	float Hp;
@@ -160,4 +165,20 @@ private:
 	TObjectPtr<UStaticMeshComponent> MotionControllerRightLazerMesh;
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<USceneComponent> SceneComponent;
+
+
+	UPROPERTY(EditAnywhere, Category = "UI")
+	TSubclassOf<UUserWidget> PlayerWidgetClass;
+
+	UPROPERTY()
+	UPlayerStateWidget* PlayerWidget;
+
+	UPROPERTY()
+	AWeatherManager* WeatherManager;
+
+	
+
+
+
+
 };

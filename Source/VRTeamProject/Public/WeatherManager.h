@@ -8,6 +8,9 @@
 #include "Http.h"
 #include "WeatherManager.generated.h"
 
+class UPlayerStateWidget;
+class APlayerCharacter;
+
 UCLASS()
 class VRTEAMPROJECT_API AWeatherManager : public AActor
 {
@@ -30,5 +33,19 @@ private:
 	float CurrentTemp;
 	float CurrentRain;
 	float CurrentWindSpeed;
+
+	UPROPERTY()
+	UPlayerStateWidget* PlayerWidget;
+
+	UPROPERTY()
+	APlayerCharacter* PlayerRef;
+
+	
+
+public:
+	void SetPlayerWidget(UPlayerStateWidget* Widget)
+	{
+		PlayerWidget = Widget;
+	}
 
 };
