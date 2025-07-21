@@ -15,6 +15,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "EngineUtils.h"
 #include "Engine/LevelStreaming.h"
+
 // Sets default values
 // 커밋용 주석추가
 APlayerCharacter::APlayerCharacter()
@@ -108,8 +109,49 @@ void APlayerCharacter::SetPlayerLocation(float X)
 // Called when the game starts or when spawned
 void APlayerCharacter::BeginPlay()
 {
+
 	Super::BeginPlay();
 
+	if (PlayerWidgetClass)
+	{
+		PlayerWidget = CreateWidget<UPlayerStateWidget>(GetWorld(), PlayerWidgetClass);
+		if (PlayerWidget)
+		{
+			PlayerWidget->AddToViewport();
+			//UE_LOG(LogTemp, Warning, TEXT("Player 위젯 생성 및 Viewport에 추가됨"));
+		}
+		else
+		{
+			//UE_LOG(LogTemp, Error, TEXT("Player 위젯 생성 실패"));
+		}
+	}
+	else
+	{
+		//UE_LOG(LogTemp, Error, TEXT("PlayerWidgetClass가 설정되지 않음"));
+	}
+	
+	// 예시: 날씨 매니저와 연결
+	for (TActorIterator<AWeatherManager> It(GetWorld()); It; ++It)
+	{
+		AWeatherManager* FoundWeatherManager = *It;
+		if (FoundWeatherManager)
+		{
+			FoundWeatherManager->SetPlayerWidget(PlayerWidget);
+			break;
+		}
+	}
+
+	// WeatherManager 찾기
+	TArray<AActor*> FoundActors;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AWeatherManager::StaticClass(), FoundActors);
+	if (FoundActors.Num() > 0)
+	{
+		WeatherManager = Cast<AWeatherManager>(FoundActors[0]);
+		if (WeatherManager && PlayerWidget)
+		{
+			WeatherManager->SetPlayerWidget(PlayerWidget);
+		}
+	}
 	UCapsuleComponent* CharacterCollision = GetCapsuleComponent();
 	if (CharacterCollision)
 	{
@@ -177,7 +219,31 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 }
 
-void APlayerCharacter::ApplyEffectItem(const EItemEffectData Data)
+void APlayerCharacter::ApplyWeatherAttackDebuff(float Temperature, float Rainfall, float WindSpeed)
+{
+	float AttackRatio = 1.0f;
+
+	if (Temperature >= 30.0f)
+	{
+		AttackRatio = FMath::Min(AttackRatio, 0.5f); // 50%
+	}
+	if (Rainfall >= 100.0f)
+	{
+		AttackRatio = FMath::Min(AttackRatio, 0.7f); // 70%
+	}
+	if (WindSpeed >= 10.0f)
+	{
+		AttackRatio = FMath::Min(AttackRatio, 0.9f); // 90%
+	}
+
+	float NewAttack = DefaultAtk * AttackRatio;
+	SetAtk(NewAttack);
+
+	UE_LOG(LogTemp, Log, TEXT("[PlayerCharacter] 날씨 공격력 디버프 적용됨: %.1f%% → 공격력 %.1f"), AttackRatio * 100.0f, NewAttack);
+
+}
+
+void APlayerCharacter::ApplyEffectItem(const EItemEffectData& Data)
 {
 	//플레이어가 아이템을 파괴 햇을 때, 아이템 효과를 적용받는 함수.
 	//Switch를 활용하여 Data에 들어있는 값으로 효과 적용
