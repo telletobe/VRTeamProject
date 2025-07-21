@@ -1,6 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
+#pragma once
 #include "PlayerHUD.h"
 #include "MapselectWidget.h"
 #include "PlayerStateWidget.h"
