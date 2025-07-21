@@ -18,17 +18,6 @@ void UEndGameWidget::NativeConstruct()
 			Player->OnPlayerDeath.AddUniqueDynamic(this,&UEndGameWidget::ShowEndGame);
 		}
 	}
-
-	//if (BT_RestartButton)
-	//{
-	//	BT_RestartButton->OnClicked.AddUniqueDynamic(this, &UEndGameWidget::ReStart);
-	//}
-
-	//if (BT_QuitButton)
-	//{
-	//	BT_QuitButton->OnClicked.AddUniqueDynamic(this, &UEndGameWidget::Quit);
-	//}
-
 }
 
 void UEndGameWidget::ShowEndGame() 

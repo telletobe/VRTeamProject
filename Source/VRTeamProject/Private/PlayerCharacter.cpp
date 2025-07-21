@@ -75,7 +75,7 @@ APlayerCharacter::APlayerCharacter()
 	//WidgetComponent->SetRelativeLocation(FVector(200.0f,0.0f,0.0f));
 	WidgetComponent->SetVisibility(false);
 	WidgetComponent->SetCastShadow(false);
-	
+	WidgetComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 void APlayerCharacter::SetVisibleRazerMesh(bool visible)
@@ -144,24 +144,6 @@ void APlayerCharacter::BeginPlay()
 	{
 		PlayerReSpawn(); // 이곳에서 bIsActive를 ture로 변경.
 	}
-		
-	//if (!Weapon)
-	//{
-	//	FActorSpawnParameters SpawnParams;
-	//	SpawnParams.Owner = this;
-	//	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn; // 항상 스폰허용
-
-	//	APlayerWeapon* NewWeapon = GetWorld()->SpawnActor<APlayerWeapon>(APlayerWeapon::StaticClass(), FVector(0), FRotator(0),SpawnParams);
-	//	if (IsValid(NewWeapon))
-	//	{
-	//		Weapon = NewWeapon;
-	//		Weapon->AttachToComponent(MotionControllerRight, FAttachmentTransformRules::SnapToTargetIncludingScale);
-	//	}
-	//}
-	//else
-	//{
-	//	UE_LOG(LogTemp,Warning,TEXT("PlayerWeapon InValid"));
-	//}
 
 	if (GetHp() < 0)
 	{
@@ -195,7 +177,7 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 }
 
-void APlayerCharacter::ApplyEffectItem(const EItemEffectData& Data)
+void APlayerCharacter::ApplyEffectItem(const EItemEffectData Data)
 {
 	//플레이어가 아이템을 파괴 햇을 때, 아이템 효과를 적용받는 함수.
 	//Switch를 활용하여 Data에 들어있는 값으로 효과 적용
@@ -257,7 +239,6 @@ void APlayerCharacter::ApplyEffectItem(const EItemEffectData& Data)
 void APlayerCharacter::SpawnWeapon()
 {
 	if (Weapon) return; // 이미 무기가 있으면 생성하지 않음
-	UE_LOG(LogTemp, Log, TEXT("Weapon spawned and attached to player."));
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.Owner = this;
 	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;

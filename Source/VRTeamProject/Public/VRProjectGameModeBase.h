@@ -71,6 +71,5 @@ private:
 	TObjectPtr<AItemSpawnActor> ItemSpanwer;
 
 	UPROPERTY(EditAnywhere, Category = "Sound")
-	TObjectPtr<USoundBase> MainBGM;
-
+	TObjectPtr<USoundBase> ClearSound;
 };

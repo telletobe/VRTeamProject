@@ -10,7 +10,6 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnRegionSelected, FName, RegionID);
 
 class UButton;
-class UImage;
 class UStageInfoWidget;
 
 /**
@@ -26,27 +25,30 @@ public:
 	UPROPERTY() 
 	FOnRegionSelected OnRegionSelected;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Region")
+	TMap<FName, UTexture2D*> RegionThumbnails;
+
 protected:
 	virtual void NativeConstruct() override;
 
 private:
 	UPROPERTY(meta = (Bindwidget))
-	TObjectPtr<UButton> Button_KyoungGi;
+	TObjectPtr<UButton> Button_KyoungGi; //119
 
 	UPROPERTY(meta = (Bindwidget))
-	TObjectPtr<UButton> SelectButton_2;
+	TObjectPtr<UButton> Button_Jeonju; //146
 
 	UPROPERTY(meta = (Bindwidget))
-	TObjectPtr<UButton> SelectButton_3;
-
-	UPROPERTY(meta = (Bindwidget))
-	TObjectPtr<UImage> IM_Map;
+	TObjectPtr<UButton> Button_Kangwon; //101
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UStageInfoWidget> WBP_StageInfoWidget;
 
+	UFUNCTION()
+	void OnClickKyounGi();
 
 	UFUNCTION()
-	void HandleRegionClicked();
-
+	void OnClickJeonju();
+	UFUNCTION()
+	void OnClickKangwon();
 };

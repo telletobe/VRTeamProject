@@ -6,21 +6,15 @@
 #include <Kismet/GameplayStatics.h>
 #include <VRProjectGameModeBase.h>
 #include <PlayerCharacter.h>
-
-void UStageInfoWidget::Init(const FName& InRegionID, UTexture2D* Thumbnail, int32 Difficulty)
-{
-   /* RegionID = InRegionID;
-    if (TXT_Title)      
-        TXT_Title->SetText(FText::FromName(RegionID));
-    if (IMG_Thumb)      
-        IMG_Thumb->SetBrushFromTexture(Thumb);
-    if (TXT_Difficulty) 
-        TXT_Difficulty->SetText(FText::AsNumber(Diff));*/
-}
+#include "WeatherManager.h"
+#include "Components/TextBlock.h"
+#include "Components/Image.h"
 
 void UStageInfoWidget::NativeConstruct()
 {
     Super::NativeConstruct();
+
+
 
     if (Btn_GameStart)
     {
@@ -52,12 +46,23 @@ void UStageInfoWidget::GameStart()
 
             UGameplayStatics::LoadStreamLevel(this, FName("M_Basic"), true, false, LatentInfo);
             UE_LOG(LogTemp, Warning, TEXT("LoadStreamLevel"));
+            SetVisibility(ESlateVisibility::Hidden);
         }
     }
 }
 
 void UStageInfoWidget::BackToMenu()
 {
+    AWeatherManager* WeatherManager = Cast<AWeatherManager>(UGameplayStatics::GetActorOfClass(GetWorld(), AWeatherManager::StaticClass()));
+
+    if (WeatherManager)
+    {
+        WeatherManager->ClearRegionData();
+    }
+    else
+    {
+        UE_LOG(LogTemp,Warning,TEXT("WeatherManager Invalid"));
+    }
     SetVisibility(ESlateVisibility::Hidden);
 }
 
@@ -68,12 +73,22 @@ void UStageInfoWidget::OnLevelLoaded()
     {
         GameMode->TriggerGameStart();
     }
+}
 
-   /* APlayerCharacter* Player = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
-    if (IsValid(Player))
+void UStageInfoWidget::Init(const FName& InRegionID, UTexture2D* Thumbnail)
+{
+    RegionID = InRegionID;
+    if (TXT_Title)
+        TXT_Title->SetText(FText::FromName(RegionID));
+    else
+        UE_LOG(LogTemp, Warning, TEXT("TXT_Title is nullptr!"));
+    if (IMG_Thumb && Thumbnail)
+        IMG_Thumb->SetBrushFromTexture(Thumbnail);
+    else
     {
-        Player->SpawnWeapon();
-        UE_LOG(LogTemp, Log, TEXT("Weapon player."));
-    }*/
+        UE_LOG(LogTemp, Warning, TEXT("IMG_Thumb is nullptr!"));
+        UE_LOG(LogTemp, Warning, TEXT("Thumbnail is nullptr!"));
+    }
+
 
 }

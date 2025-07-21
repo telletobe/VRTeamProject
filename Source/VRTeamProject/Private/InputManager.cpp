@@ -5,19 +5,14 @@
 #include "GameFramework/PlayerController.h"
 #include <EnhancedInputComponent.h>
 #include <EnhancedInputSubsystems.h>
+#include "InputActionValue.h"
 #include "PlayerCharacter.h"
 #include <PlayerHUD.h>
-#include "InputActionValue.h"
 #include "Components/WidgetComponent.h"
+#include "Components/WidgetInteractionComponent.h"
 #include "MapSelectWidget.h"
 #include "PlayerStateWidget.h"
-#include "StageInfoWidget.h"
-#include "Components/WidgetInteractionComponent.h"
-#include <Kismet/GameplayStatics.h>
 
-/*
-	�������� �Է��� �����ϴ� Ŭ����
-*/
 
 TObjectPtr<UInputManager> UInputManager::Instance = nullptr;
 
@@ -78,12 +73,14 @@ void UInputManager::ToggleWidgetVisibility(UWidgetComponent* Widget)
 	if (Widget->IsVisible())
 	{
 		Widget->SetVisibility(false);
+		Widget->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		Player->SetVisibleRazerMesh(false);
 
 	}
 	else
 	{
 		Widget->SetVisibility(true);
+		Widget->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 		Player->SetVisibleRazerMesh(true);
 	}
 }

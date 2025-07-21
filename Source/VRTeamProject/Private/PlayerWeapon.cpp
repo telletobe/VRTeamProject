@@ -80,7 +80,7 @@ void APlayerWeapon::Fire(float Damage)
 	if (!bIsFire) return;
 
 	ChangeFireState();
-	//VR
+	
 	const APlayerCharacter* Player = Cast<APlayerCharacter>(GetOwner()->GetInstigatorController()->GetPawn());
 	const FVector StartRightLocation = WeaponSkeletal->GetSocketLocation("rifle_shot");
 	const FRotator SpreadAngle = FireWithSpread(0.0f, 2.0f, 2.0f);

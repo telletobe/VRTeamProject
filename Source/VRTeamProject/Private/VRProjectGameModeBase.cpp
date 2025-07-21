@@ -9,7 +9,8 @@
 #include <EnemySpawner.h>
 #include <ItemSpawnActor.h>
 #include <WeatherManager.h>
-#include "Sound/SoundCue.h"
+#include <Sound/SoundCue.h>
+
 
 AVRProjectGameModeBase::AVRProjectGameModeBase()
 {
@@ -21,10 +22,10 @@ AVRProjectGameModeBase::AVRProjectGameModeBase()
 	CurrentKillCnt = 0;
 	RequiredKillCnt = 40;
 
-	ConstructorHelpers::FObjectFinder<USoundCue> BGMObject(TEXT("/Script/Engine.SoundCue'/Game/Audio/EffectSound/MainBGM.MainBGM'"));
-	if (BGMObject.Succeeded())
+	ConstructorHelpers::FObjectFinder<USoundCue> ClearSoundObject(TEXT("/Script/Engine.SoundCue'/Game/Audio/EffectSound/clear_Cue.clear_Cue'"));
+	if (ClearSoundObject.Succeeded())
 	{
-		MainBGM = BGMObject.Object;
+		ClearSound = ClearSoundObject.Object;
 	}
 }
 
@@ -32,14 +33,6 @@ void AVRProjectGameModeBase::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (MainBGM)
-	{
-		UGameplayStatics::SpawnSound2D(this, MainBGM);
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("BGMSound Data invalid"));
-	}
 
 	TArray<AActor*> FoundActor;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerCharacter::StaticClass(), FoundActor);
@@ -63,6 +56,11 @@ void AVRProjectGameModeBase::TriggerGameClear()
 	bIsClear = true;
 	CurrentKillCnt = 0;
 	CleanupAfterGameEnd();
+
+	if (ClearSound)
+	{
+		UGameplayStatics::SpawnSound2D(this, ClearSound);
+	}
 	return;
 }
 
@@ -80,7 +78,6 @@ void AVRProjectGameModeBase::TriggerGameStart()
 
 	CleanupGameItem();
 	InitializeGameObjects();
-
 	return;
 }
 

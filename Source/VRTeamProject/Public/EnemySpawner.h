@@ -63,4 +63,9 @@ private :
 
 	bool bIsClear = false;
 
+	UFUNCTION()
+	void OnWeatherChanged(EWeatherData NewWeather);
+
+	UPROPERTY()
+	EWeatherData CachedWeatherData;
 };
