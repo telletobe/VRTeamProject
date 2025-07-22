@@ -63,6 +63,16 @@ UInputManager::UInputManager()
 	}
 }
 
+UInputManager* UInputManager::GetInstance() {
+	if (!Instance)
+	{
+		Instance = NewObject<UInputManager>();
+		Instance->AddToRoot();
+	}
+	return Instance.Get();
+}
+
+
 void UInputManager::ToggleWidgetVisibility(UWidgetComponent* Widget)
 {
 	if (!IsValid(Widget))
@@ -85,18 +95,8 @@ void UInputManager::ToggleWidgetVisibility(UWidgetComponent* Widget)
 	}
 }
 
-UInputManager* UInputManager::GetInstance() {
-	if (!Instance)
-	{
-		Instance = NewObject<UInputManager>();
-		Instance->AddToRoot();
-	}
-	return Instance.Get();
-}
-
 void UInputManager::Initialize(APlayerCharacter* PlayerCharacter, APlayerController* PC)
 {
-
 	Player = PlayerCharacter;
 
 	if (PC)
@@ -111,7 +111,6 @@ void UInputManager::Initialize(APlayerCharacter* PlayerCharacter, APlayerControl
 	}
 }
 
-//��Ʈ�ѷ� ���� �Լ�
 void UInputManager::BindAction(UEnhancedInputComponent* InputComponent)
 {
 	if (!InputComponent || !Player) return;
@@ -139,13 +138,11 @@ void UInputManager::Move(const FInputActionValue& Value)
 
 void UInputManager::Look(const FInputActionValue& Value)
 {
-	// input is a Vector2D
 	FVector2D LookAxisVector = Value.Get<FVector2D>();
 	const APlayerController* PlayerController = Cast<APlayerController>(Player->GetController());
 
 	if (PlayerController != nullptr)
 	{
-		// add yaw and pitch input to controller
 		PlayerController->GetPawn()->AddControllerYawInput((LookAxisVector.X) * -1);
 		PlayerController->GetPawn()->AddControllerPitchInput(LookAxisVector.Y);
 	}
@@ -201,7 +198,6 @@ void UInputManager::ToggleMap(const FInputActionValue& Value)
 
 void UInputManager::PlayerStat(const FInputActionValue& Value)
 {
-	//VR
 	if (IsValid(Player))
 	{
 		if (Player->IsActive())

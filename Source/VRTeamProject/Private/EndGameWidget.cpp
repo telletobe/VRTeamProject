@@ -29,19 +29,7 @@ void UEndGameWidget::ShowEndGame()
 		UWidgetComponent* WidgetComp = Player->GetWidgetComponent();
 		if (IsValid(WidgetComp))
 		{
-			WidgetComp->SetWidget(this);
-			////////////////////
-			#if WITH_EDITOR
-			AddToViewport();
-			PC->bShowMouseCursor = true;
-
-			FInputModeUIOnly InputMode;
-			InputMode.SetWidgetToFocus(TakeWidget()); // 현재 위젯에 포커스 설정
-			InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
-			PC->SetInputMode(InputMode);
-			#endif
-			/////////////////////
-			
+			WidgetComp->SetWidget(this);			
 			if (WidgetComp->GetVisibleFlag() == false)
 			{
 				WidgetComp->SetVisibility(true);

@@ -22,9 +22,9 @@ AWeatherManager::AWeatherManager()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
 
-    ConstructorHelpers::FObjectFinder<USoundCue> MainBGMObject(TEXT("/Script/Engine.SoundCue'/Game/Audio/EffectSound/MainBGM.MainBGM'"));
-    ConstructorHelpers::FObjectFinder<USoundCue> RainBGMObject(TEXT("/Script/Engine.SoundCue'/Game/Audio/EffectSound/Rain_Cue.Rain_Cue'"));
-    ConstructorHelpers::FObjectFinder<USoundCue> FoggyBGMObject(TEXT("/Script/Engine.SoundCue'/Game/Audio/EffectSound/Foggy_Cue.Foggy_Cue'"));
+    static ConstructorHelpers::FObjectFinder<USoundCue> MainBGMObject(TEXT("/Script/Engine.SoundCue'/Game/Audio/EffectSound/MainBGM.MainBGM'"));
+    static ConstructorHelpers::FObjectFinder<USoundCue> RainBGMObject(TEXT("/Script/Engine.SoundCue'/Game/Audio/EffectSound/Rain_Cue.Rain_Cue'"));
+    static ConstructorHelpers::FObjectFinder<USoundCue> FoggyBGMObject(TEXT("/Script/Engine.SoundCue'/Game/Audio/EffectSound/Foggy_Cue.Foggy_Cue'"));
 
 
     AudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("AudioComponent"));
