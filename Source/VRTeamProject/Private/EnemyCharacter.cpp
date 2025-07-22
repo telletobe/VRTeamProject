@@ -328,7 +328,7 @@ void AEnemyCharacter::SetSpawnPoint(AActor* TargetPoint)
 void AEnemyCharacter::ApplyWeatherEffect(EWeatherData Weather)
 {
 
-	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::MakeRandomColor(), FString::Printf(TEXT("Weather : %d"), (uint8)Weather));
+	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::MakeRandomColor(), FString::Printf(TEXT("Weather : %d"), (uint8)Weather));
 
 	switch (Weather)
 	{
