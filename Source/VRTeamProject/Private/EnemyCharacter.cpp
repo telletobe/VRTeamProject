@@ -35,8 +35,7 @@ void AEnemyCharacter::BeginPlay()
 	{
 		CharacterCollision->OnComponentHit.AddDynamic(this, &AEnemyCharacter::OnComponentHit);
 		CharacterCollision->OnComponentBeginOverlap.AddDynamic(this, &AEnemyCharacter::OnBeginOverlap);
-		OnEnemyDeathAnimEnded.AddDynamic(this, &AEnemyCharacter::EnemyDeathAnimEnded);
-		
+		OnEnemyDeathAnimEnded.AddDynamic(this, &AEnemyCharacter::EnemyDeathAnimEnded);	
 	}
 
 
@@ -388,9 +387,9 @@ void AEnemyCharacter::OnComponentHit(UPrimitiveComponent* HitComponent, AActor* 
 
 		float Duration = AttackMontage->GetPlayLength(); // 애니메이션 길이
 
-		GetWorldTimerManager().SetTimer(AttackAnimTimerHandle, [this, Player]()
+		GetWorldTimerManager().SetTimer(AttackAnimTimerHandle, [this]()
 			{
-				Player->TakenDamage(GetAtk());
+				BoradCastEnemyAttack();
 				// 4. 적 비활성화
 				DeSpawn();
 
