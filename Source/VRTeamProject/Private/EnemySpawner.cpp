@@ -4,7 +4,6 @@
 #include "EnemySpawner.h"
 #include "Components/BoxComponent.h"
 #include <EnemyCharacter.h>
-#include <VRProjectGameModeBase.h>
 #include "Engine/TargetPoint.h"
 #include <Kismet/GameplayStatics.h>
 
@@ -47,14 +46,7 @@ void AEnemySpawner::CreateEnemy()
 
 				if (SpawnedEnemy)
 				{
-					AVRProjectGameModeBase* GM = Cast<AVRProjectGameModeBase>(UGameplayStatics::GetGameMode(this));
-					if (GM)
-					{
-						SpawnedEnemy->OnEnemyDie.AddDynamic(GM, &AVRProjectGameModeBase::OnEnemyDeath);
-					}
 					SpawnedEnemy->SpawnDefaultController();
-					SpawnedEnemy->FindSpawnPoint();
-					SpawnedEnemy->FindDeSpawnPoint();
 					SpawnedEnemy->DeSpawn();
 					SpawnedEnemy->ApplyWeatherEffect(CachedWeatherData);
 					EnemyPool.Add(SpawnedEnemy);

@@ -10,6 +10,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "PlayerCharacter.h"
 #include "PlayerBulletActor.h"
+#include <VRProjectGameModeBase.h>
 
 
 AEnemyCharacter::AEnemyCharacter()
@@ -30,6 +31,15 @@ void AEnemyCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
+	NavGenerationRadius = 6000.0f;
+	NavRemovalRadius = 500.0f;
+	NavInvoker->SetGenerationRadii(NavGenerationRadius, NavRemovalRadius);
+
+	UCapsuleComponent* EnemyCollision = GetCapsuleComponent();
+	EnemyCollision->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	USkeletalMeshComponent* EnemyMesh = GetMesh();
+	EnemyMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
 	UCapsuleComponent* CharacterCollision = GetCapsuleComponent();
 	if (CharacterCollision)
 	{
@@ -38,30 +48,25 @@ void AEnemyCharacter::BeginPlay()
 		OnEnemyDeathAnimEnded.AddDynamic(this, &AEnemyCharacter::EnemyDeathAnimEnded);	
 	}
 
-
-	NavGenerationRadius = 6000.0f;
-	NavRemovalRadius = 500.0f;
-	NavInvoker->SetGenerationRadii(NavGenerationRadius, NavRemovalRadius);
-
-
-	UCapsuleComponent* EnemyCollision = GetCapsuleComponent();
-	EnemyCollision->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-
-	USkeletalMeshComponent* EnemyMesh = GetMesh();
-	EnemyMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-
 	if (APlayerCharacter* Player = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(this, 0)))
 	{
 		OnEnemyAttack.AddDynamic(Player, &APlayerCharacter::TakenDamage);
 		Player->OnPlayerDeath.AddDynamic(this,&AEnemyCharacter::DeSpawn);
 	}
 
+	AVRProjectGameModeBase* GM = Cast<AVRProjectGameModeBase>(UGameplayStatics::GetGameMode(this));
+	if (GM)
+	{
+		OnEnemyDie.AddDynamic(GM, &AVRProjectGameModeBase::OnEnemyDeath);
+	}
 
 	if (EnemyMesh && EnemyMesh->GetMaterial(0))
 	{
 		DynamicMaterial = UMaterialInstanceDynamic::Create(EnemyMesh->GetMaterial(0), this);
 		EnemyMesh->SetMaterial(0, DynamicMaterial);
 	}
+	FindSpawnPoint();
+	FindDeSpawnPoint();
 }
 
 // Called every frame
