@@ -65,9 +65,8 @@ void UMapSelectWidget::NativeConstruct()
     }
 }
 
-void UMapSelectWidget::OnClickKyounGi()
+void UMapSelectWidget::RequestWeatherData(int32 RegionNum)
 {
-
     if (APlayerController* PC = Cast<APlayerController>(GetOwningPlayer()))
     {
 
@@ -75,288 +74,93 @@ void UMapSelectWidget::OnClickKyounGi()
 
         if (WeatherManager)
         {
-            WeatherManager->RequestKMAWeather(119); //수원 정보요청
+            WeatherManager->RequestKMAWeather(RegionNum); //숫자에맞는 지역 정보요청
         }
         else
         {
             UE_LOG(LogTemp, Warning, TEXT("WeatherManager Invalid"));
         }
-
-        if (WBP_StageInfoWidget)
-        {
-            FName Region = "KyougGi";
-            UTexture2D* Thumbnail = nullptr;
-            if (RegionThumbnails.Contains(Region))
-            {
-                Thumbnail = RegionThumbnails[Region];
-            }
-
-            WBP_StageInfoWidget->Init(Region, Thumbnail);
-            WBP_StageInfoWidget->SetVisibility(ESlateVisibility::Visible);
-
-            UE_LOG(LogTemp, Warning, TEXT("Call StageInfo"));
-        }
-
     }
+}
 
+void UMapSelectWidget::RequestRegionImage(const FName& RegionName)
+{
+    if (APlayerController* PC = Cast<APlayerController>(GetOwningPlayer()))
+    {
+        const FName& Region = RegionName;
+        UTexture2D* Thumbnail = RegionThumbnails.Contains(Region) ? RegionThumbnails[Region] : nullptr;
+        WBP_StageInfoWidget->Init(Region, Thumbnail);
+        WBP_StageInfoWidget->SetVisibility(ESlateVisibility::Visible);
+
+        UE_LOG(LogTemp, Warning, TEXT("Call StageInfo"));
+    }
+}
+
+
+void UMapSelectWidget::OnClickKyounGi()
+{
+    RequestWeatherData(119); //경기 수원
+    RequestRegionImage("KyougGi");
 }
 
 void UMapSelectWidget::OnClickJeonju()
 {
-    if (APlayerController* PC = Cast<APlayerController>(GetOwningPlayer()))
-    {
+    RequestWeatherData(146); //전주
+    RequestRegionImage("JeonJu");
 
-        AWeatherManager* WeatherManager = Cast<AWeatherManager>(UGameplayStatics::GetActorOfClass(GetWorld(), AWeatherManager::StaticClass()));
-
-        if (WeatherManager)
-        {
-            WeatherManager->RequestKMAWeather(146); //전라도 전주 정보요청
-        }
-        else
-        {
-            UE_LOG(LogTemp, Warning, TEXT("WeatherManager Invalid"));
-        }
-
-        if (WBP_StageInfoWidget)
-        {
-            FName Region = "JeonJu";
-            UTexture2D* Thumbnail = RegionThumbnails.Contains(Region) ? RegionThumbnails[Region] : nullptr;
-            WBP_StageInfoWidget->Init(Region, Thumbnail);
-            WBP_StageInfoWidget->SetVisibility(ESlateVisibility::Visible);
-
-            UE_LOG(LogTemp, Warning, TEXT("Call StageInfo"));
-        }
-
-    }
 }
 
 void UMapSelectWidget::OnClickKangwon()
 {
-    if (APlayerController* PC = Cast<APlayerController>(GetOwningPlayer()))
-    {
+    RequestWeatherData(101); //강원도
+    RequestRegionImage("Gangwon");
 
-        AWeatherManager* WeatherManager = Cast<AWeatherManager>(UGameplayStatics::GetActorOfClass(GetWorld(), AWeatherManager::StaticClass()));
-
-        if (WeatherManager)
-        {
-            WeatherManager->RequestKMAWeather(101); //강원도 정보요청
-        }
-        else
-        {
-            UE_LOG(LogTemp, Warning, TEXT("WeatherManager Invalid"));
-        }
-
-        if (WBP_StageInfoWidget)
-        {
-            FName Region = "Gangwon";
-            UTexture2D* Thumbnail = RegionThumbnails.Contains(Region) ? RegionThumbnails[Region] : nullptr;
-            WBP_StageInfoWidget->Init(Region, Thumbnail);
-            WBP_StageInfoWidget->SetVisibility(ESlateVisibility::Visible);
-            UE_LOG(LogTemp, Warning, TEXT("Call StageInfo"));
-        }
-
-    }
 }
 
 void UMapSelectWidget::OnClickcheongju()
 {
-    if (APlayerController* PC = Cast<APlayerController>(GetOwningPlayer()))
-    {
+    RequestWeatherData(131); //청주
+    RequestRegionImage("ChungBuk");
 
-        AWeatherManager* WeatherManager = Cast<AWeatherManager>(UGameplayStatics::GetActorOfClass(GetWorld(), AWeatherManager::StaticClass()));
-
-        if (WeatherManager)
-        {
-            WeatherManager->RequestKMAWeather(131); //충북 청주 정보요청
-        }
-        else
-        {
-            UE_LOG(LogTemp, Warning, TEXT("WeatherManager Invalid"));
-        }
-
-        if (WBP_StageInfoWidget)
-        {
-            FName Region = "ChungBuk";
-            UTexture2D* Thumbnail = RegionThumbnails.Contains(Region) ? RegionThumbnails[Region] : nullptr;
-            WBP_StageInfoWidget->Init(Region, Thumbnail);
-            WBP_StageInfoWidget->SetVisibility(ESlateVisibility::Visible);
-
-            UE_LOG(LogTemp, Warning, TEXT("Call StageInfo"));
-        }
-
-    }
 }
 
 void UMapSelectWidget::OnClickHongseong()
 {
-    if (APlayerController* PC = Cast<APlayerController>(GetOwningPlayer()))
-    {
+    RequestWeatherData(129); //홍성
+    RequestRegionImage("ChungNam");
 
-        AWeatherManager* WeatherManager = Cast<AWeatherManager>(UGameplayStatics::GetActorOfClass(GetWorld(), AWeatherManager::StaticClass()));
-
-        if (WeatherManager)
-        {
-            WeatherManager->RequestKMAWeather(129); //충남 홍성 정보요청
-        }
-        else
-        {
-            UE_LOG(LogTemp, Warning, TEXT("WeatherManager Invalid"));
-        }
-
-        if (WBP_StageInfoWidget)
-        {
-            FName Region = "ChungNam";
-            UTexture2D* Thumbnail = RegionThumbnails.Contains(Region) ? RegionThumbnails[Region] : nullptr;
-            WBP_StageInfoWidget->Init(Region, Thumbnail);
-            WBP_StageInfoWidget->SetVisibility(ESlateVisibility::Visible);
-
-            UE_LOG(LogTemp, Warning, TEXT("Call StageInfo"));
-        }
-
-    }
 }
 
 void UMapSelectWidget::OnClickdaejeon()
 {
-    if (APlayerController* PC = Cast<APlayerController>(GetOwningPlayer()))
-    {
+    RequestWeatherData(133); //대전
+    RequestRegionImage("Daejeon");
 
-        AWeatherManager* WeatherManager = Cast<AWeatherManager>(UGameplayStatics::GetActorOfClass(GetWorld(), AWeatherManager::StaticClass()));
-
-        if (WeatherManager)
-        {
-            WeatherManager->RequestKMAWeather(133); //충정도 대전 정보요청
-        }
-        else
-        {
-            UE_LOG(LogTemp, Warning, TEXT("WeatherManager Invalid"));
-        }
-
-        if (WBP_StageInfoWidget)
-        {
-            FName Region = "Daejeon";
-            UTexture2D* Thumbnail = RegionThumbnails.Contains(Region) ? RegionThumbnails[Region] : nullptr;
-            WBP_StageInfoWidget->Init(Region, Thumbnail);
-            WBP_StageInfoWidget->SetVisibility(ESlateVisibility::Visible);
-
-            UE_LOG(LogTemp, Warning, TEXT("Call StageInfo"));
-        }
-
-    }
 }
 
 void UMapSelectWidget::OnClickPohang()
 {
-    if (APlayerController* PC = Cast<APlayerController>(GetOwningPlayer()))
-    {
+    RequestWeatherData(138); // 포항
+    RequestRegionImage("KyoungBuk");
 
-        AWeatherManager* WeatherManager = Cast<AWeatherManager>(UGameplayStatics::GetActorOfClass(GetWorld(), AWeatherManager::StaticClass()));
-
-        if (WeatherManager)
-        {
-            WeatherManager->RequestKMAWeather(138); //경상북도 포항 정보요청
-        }
-        else
-        {
-            UE_LOG(LogTemp, Warning, TEXT("WeatherManager Invalid"));
-        }
-
-        if (WBP_StageInfoWidget)
-        {
-            FName Region = "KyoungBuk";
-            UTexture2D* Thumbnail = RegionThumbnails.Contains(Region) ? RegionThumbnails[Region] : nullptr;
-            WBP_StageInfoWidget->Init(Region, Thumbnail);
-            WBP_StageInfoWidget->SetVisibility(ESlateVisibility::Visible);
-
-            UE_LOG(LogTemp, Warning, TEXT("Call StageInfo"));
-        }
-
-    }
 }
 
 void UMapSelectWidget::OnClickChangwon()
 {
-    if (APlayerController* PC = Cast<APlayerController>(GetOwningPlayer()))
-    {
+    RequestWeatherData(155); //창원
+    RequestRegionImage("KyoungNam");
 
-        AWeatherManager* WeatherManager = Cast<AWeatherManager>(UGameplayStatics::GetActorOfClass(GetWorld(), AWeatherManager::StaticClass()));
-
-        if (WeatherManager)
-        {
-            WeatherManager->RequestKMAWeather(155); //경상남도 창원 정보요청
-        }
-        else
-        {
-            UE_LOG(LogTemp, Warning, TEXT("WeatherManager Invalid"));
-        }
-
-        if (WBP_StageInfoWidget)
-        {
-            FName Region = "KyoungNam";
-            UTexture2D* Thumbnail = RegionThumbnails.Contains(Region) ? RegionThumbnails[Region] : nullptr;
-            WBP_StageInfoWidget->Init(Region, Thumbnail);
-            WBP_StageInfoWidget->SetVisibility(ESlateVisibility::Visible);
-
-            UE_LOG(LogTemp, Warning, TEXT("Call StageInfo"));
-        }
-
-    }
 }
 
 void UMapSelectWidget::OnClickBusan()
 {
-    if (APlayerController* PC = Cast<APlayerController>(GetOwningPlayer()))
-    {
+    RequestWeatherData(159); //부산
+    RequestRegionImage("Busan");
 
-        AWeatherManager* WeatherManager = Cast<AWeatherManager>(UGameplayStatics::GetActorOfClass(GetWorld(), AWeatherManager::StaticClass()));
-
-        if (WeatherManager)
-        {
-            WeatherManager->RequestKMAWeather(159); //부산 정보요청
-        }
-        else
-        {
-            UE_LOG(LogTemp, Warning, TEXT("WeatherManager Invalid"));
-        }
-
-        if (WBP_StageInfoWidget)
-        {
-            FName Region = "Busan";
-            UTexture2D* Thumbnail = RegionThumbnails.Contains(Region) ? RegionThumbnails[Region] : nullptr;
-            WBP_StageInfoWidget->Init(Region, Thumbnail);
-            WBP_StageInfoWidget->SetVisibility(ESlateVisibility::Visible);
-
-            UE_LOG(LogTemp, Warning, TEXT("Call StageInfo"));
-        }
-
-    }
 }
 
 void UMapSelectWidget::OnClickSeoul()
 {
-    if (APlayerController* PC = Cast<APlayerController>(GetOwningPlayer()))
-    {
-
-        AWeatherManager* WeatherManager = Cast<AWeatherManager>(UGameplayStatics::GetActorOfClass(GetWorld(), AWeatherManager::StaticClass()));
-
-        if (WeatherManager)
-        {
-            WeatherManager->RequestKMAWeather(108); //서울 정보요청
-        }
-        else
-        {
-            UE_LOG(LogTemp, Warning, TEXT("WeatherManager Invalid"));
-        }
-
-        if (WBP_StageInfoWidget)
-        {
-            FName Region = "Seoul";
-            UTexture2D* Thumbnail = RegionThumbnails.Contains(Region) ? RegionThumbnails[Region] : nullptr;
-            WBP_StageInfoWidget->Init(Region, Thumbnail);
-            WBP_StageInfoWidget->SetVisibility(ESlateVisibility::Visible);
-
-            UE_LOG(LogTemp, Warning, TEXT("Call StageInfo"));
-        }
-
-    }
+    RequestWeatherData(108); //서울
+    RequestRegionImage("Seoul");
 }
