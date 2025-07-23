@@ -28,10 +28,10 @@ public:
 	// NavInvoker Subobject return forcely
 	FORCEINLINE class UNavigationInvokerComponent* GetNavInvoker() const { return NavInvoker; }
 
-	void SetCurrentHp(float EnemyHp);
-	void SetMaxHp(float EnemyHp);
-	void SetDef(float EnemyDef);
-	void SetAtk(float EnemyAtk);
+	void SetCurrentHp(const float EnemyHp);
+	void SetMaxHp(const float EnemyHp);
+	void SetDef(const float EnemyDef);
+	void SetAtk(const float EnemyAtk);
 	void SetSpawnPoint(AActor* TargetPoint);
 	void ApplyWeatherEffect(const EWeatherData Weather);
 

@@ -14,7 +14,7 @@
 #include <Kismet/GameplayStatics.h>
 #include "EngineUtils.h"
 #include "EnemyCharacter.h"
-
+#include "EnemySpawner.h"
 
 // Sets default values
 AWeatherManager::AWeatherManager()
@@ -64,8 +64,7 @@ void AWeatherManager::BeginPlay()
         UE_LOG(LogTemp, Warning, TEXT("BGMSound Data invalid"));
     }
 
-    OnWeatherChange.AddDynamic(this,&AWeatherManager::ApplyWeatherEffectToEnemy);
-
+    OnWeatherChange.AddDynamic(this,&AWeatherManager::ApplyWeatherEffectToEnemy); //스테이지 플레이중 날씨가 바뀐다면 적용.
 }
 
 /*
@@ -87,7 +86,7 @@ void AWeatherManager::BeginPlay()
 인천 112
 */
 
-void AWeatherManager::RequestKMAWeather(float RegionNum)
+void AWeatherManager::RequestKMAWeather(const int32 RegionNum)
 {
     FString URL = SetURLData(RegionNum); // 관측소 지점 번호는 디스코드 참고.
     TSharedRef<IHttpRequest, ESPMode::ThreadSafe> Request = FHttpModule::Get().CreateRequest();
@@ -174,7 +173,7 @@ void AWeatherManager::ApplyWeatherEffectToEnemy(EWeatherData NewWeather)
     }
 }
 
-void AWeatherManager::SetWeatherData(FRegionData& Data)
+void AWeatherManager::SetWeatherData(const FRegionData& Data)
 {
     USoundBase* CurrentSound = AudioComponent ? AudioComponent->GetSound() : nullptr;
 

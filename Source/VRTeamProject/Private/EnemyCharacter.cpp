@@ -81,7 +81,7 @@ void AEnemyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 }
 
-void AEnemyCharacter::SetCurrentHp(float EnemyHp)
+void AEnemyCharacter::SetCurrentHp(const float EnemyHp)
 {
 	if (EnemyHp < 0)
 	{
@@ -93,7 +93,7 @@ void AEnemyCharacter::SetCurrentHp(float EnemyHp)
 	}
 }
 
-void AEnemyCharacter::SetMaxHp(float EnemyHp)
+void AEnemyCharacter::SetMaxHp(const float EnemyHp)
 {
 	if (EnemyHp < 0)
 	{
@@ -105,7 +105,7 @@ void AEnemyCharacter::SetMaxHp(float EnemyHp)
 	}
 }
 
-void AEnemyCharacter::SetDef(float EnemyDef)
+void AEnemyCharacter::SetDef(const float EnemyDef)
 {
 	if (EnemyDef < 0)
 	{
@@ -117,7 +117,7 @@ void AEnemyCharacter::SetDef(float EnemyDef)
 	}
 }
 
-void AEnemyCharacter::SetAtk(float EnemyAtk)
+void AEnemyCharacter::SetAtk(const float EnemyAtk)
 {
 	if (EnemyAtk < 0)
 	{

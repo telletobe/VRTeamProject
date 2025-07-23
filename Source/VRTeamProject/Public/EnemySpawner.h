@@ -36,6 +36,9 @@ public:
 	UPROPERTY()
 	FOnEnemySpawned OnEnemySpawned;
 
+	UFUNCTION()
+	void OnWeatherChanged(EWeatherData NewWeather);
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -62,9 +65,6 @@ private :
 	int32 PoolIndex = 0;
 
 	bool bIsClear = false;
-
-	UFUNCTION()
-	void OnWeatherChanged(EWeatherData NewWeather);
 
 	UPROPERTY()
 	EWeatherData CachedWeatherData;

@@ -52,7 +52,7 @@ class VRTEAMPROJECT_API AWeatherManager : public AActor
 public:	
 	// Sets default values for this actor's properties
 	AWeatherManager();
-	void RequestKMAWeather(float RegionNum);
+	void RequestKMAWeather(const int32 RegionNum);
 
 	UFUNCTION(BlueprintCallable)
 	void ClearRegionData();
@@ -75,7 +75,7 @@ protected:
 private:
 	void OnWeatherResponse(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful);
 	
-	void SetWeatherData(FRegionData& Data);
+	void SetWeatherData(const FRegionData& Data);
 	FString SetURLData(int32 RegionNum) const;
 	// Weather Data 
 	UPROPERTY(EditAnywhere,Category = "Region")

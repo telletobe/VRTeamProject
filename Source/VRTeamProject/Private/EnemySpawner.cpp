@@ -119,6 +119,14 @@ void AEnemySpawner::BeginPlay()
 {
 	Super::BeginPlay();
 
+	AWeatherManager* WeatherManager = Cast<AWeatherManager>(
+		UGameplayStatics::GetActorOfClass(GetWorld(), AWeatherManager::StaticClass()));
+
+	if (WeatherManager)
+	{
+		WeatherManager->OnWeatherChange.AddDynamic(this, &AEnemySpawner::OnWeatherChanged); //³¯¾¾ Á¤º¸¸¦ Ä³½¬ÇØµÒ
+	}
+
 	if (SpawnDelay <= 0)
 	{
 		SpawnDelay = 0.7f;

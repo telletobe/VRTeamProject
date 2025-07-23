@@ -114,6 +114,6 @@ private:
 	UFUNCTION()
 	void OnClickSeoul();
 
-	void RequestWeatherData(int32 RegionNum);
+	void RequestWeatherData(const int32 RegionNum);
 	void RequestRegionImage(const FName& RegionName);
 };

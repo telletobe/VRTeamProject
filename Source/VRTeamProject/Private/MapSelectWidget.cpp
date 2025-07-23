@@ -65,7 +65,7 @@ void UMapSelectWidget::NativeConstruct()
     }
 }
 
-void UMapSelectWidget::RequestWeatherData(int32 RegionNum)
+void UMapSelectWidget::RequestWeatherData(const int32 RegionNum)
 {
     if (APlayerController* PC = Cast<APlayerController>(GetOwningPlayer()))
     {
