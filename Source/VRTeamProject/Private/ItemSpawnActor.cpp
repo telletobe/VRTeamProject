@@ -1,6 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#pragma once
+
 #include "ItemSpawnActor.h"
 #include <GameItem.h>
 #include "Components/BoxComponent.h"

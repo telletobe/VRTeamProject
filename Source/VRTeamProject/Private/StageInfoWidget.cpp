@@ -1,6 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#pragma once
+
 #include "StageInfoWidget.h"
 #include "Components/Button.h"
 #include <Kismet/GameplayStatics.h>
@@ -80,6 +80,7 @@ void UStageInfoWidget::Init(const FName& InRegionID, UTexture2D* Thumbnail)
     RegionID = InRegionID;
     if (TXT_Title)
         TXT_Title->SetText(FText::FromName(RegionID));
+    //RegionID의 정보를 활용해서 스테이지의 난이도를 조절할 수 있을거같음.
     else
         UE_LOG(LogTemp, Warning, TEXT("TXT_Title is nullptr!"));
     if (IMG_Thumb && Thumbnail)

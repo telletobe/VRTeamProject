@@ -1,6 +1,6 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
-#pragma once
+
 #include "WeatherManager.h"
 #include "HttpModule.h"
 #include "Interfaces/IHttpResponse.h"

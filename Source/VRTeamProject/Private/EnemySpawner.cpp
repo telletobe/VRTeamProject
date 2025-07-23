@@ -1,6 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#pragma once
+
 #include "EnemySpawner.h"
 #include "Components/BoxComponent.h"
 #include <EnemyCharacter.h>
