@@ -1,10 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "GameItem.h"
+#include "Item/GameItem.h"
 #include "Components/BoxComponent.h"
-#include <PlayerCharacter.h>
-#include "PlayerBulletActor.h"
+#include "Player/PlayerCharacter.h"
+#include "Player/PlayerBulletActor.h"
 #include "Engine/StaticMeshActor.h"
 
 /*

@@ -1,11 +1,11 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "PlayerCharacter.h"
+#include "Player/PlayerCharacter.h"
 #include "Kismet/GameplayStatics.h"
 #include <EnhancedInputComponent.h>
 #include "Components/CapsuleComponent.h"
-#include <PlayerWeapon.h>
-#include "InputManager.h"
+#include "Player/PlayerWeapon.h"
+#include "System/InputManager.h"
 #include "MotionControllerComponent.h"
 #include "GameFramework/PlayerController.h"
 #include "Components/WidgetInteractionComponent.h"

@@ -1,12 +1,12 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "ItemSpawnActor.h"
-#include <GameItem.h>
+#include "Item/ItemSpawnActor.h"
+#include "Item/GameItem.h"
 #include "Components/BoxComponent.h"
 #include <Kismet/GameplayStatics.h>
 #include "Engine/TargetPoint.h"
-#include "VRProjectGameModeBase.h"
+#include "System/VRProjectGameModeBase.h"
 #include "Sound/SoundCue.h"
 
 

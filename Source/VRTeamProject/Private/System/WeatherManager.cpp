@@ -1,7 +1,7 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "WeatherManager.h"
+#include "System/WeatherManager.h"
 #include "HttpModule.h"
 #include "Interfaces/IHttpResponse.h"
 #include "Dom/JsonObject.h"
@@ -13,8 +13,8 @@
 #include "Components/AudioComponent.h" 
 #include <Kismet/GameplayStatics.h>
 #include "EngineUtils.h"
-#include "EnemyCharacter.h"
-#include "EnemySpawner.h"
+#include "Enemy/EnemyCharacter.h"
+#include "Enemy/EnemySpawner.h"
 
 // Sets default values
 AWeatherManager::AWeatherManager()

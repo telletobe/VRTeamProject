@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameItem.h"
+#include "iTEM/GameItem.h"
 #include "GameFramework/Character.h"
 #include <InputMappingContext.h>
 #include "PlayerWeapon.h"

@@ -1,16 +1,16 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "InputManager.h"
+#include "System/InputManager.h"
 #include "GameFramework/PlayerController.h"
 #include <EnhancedInputComponent.h>
 #include <EnhancedInputSubsystems.h>
 #include "InputActionValue.h"
-#include "PlayerCharacter.h"
-#include <PlayerHUD.h>
+#include "Player/PlayerCharacter.h"
+#include "Widget/PlayerHUD.h"
 #include "Components/WidgetComponent.h"
 #include "Components/WidgetInteractionComponent.h"
-#include "MapSelectWidget.h"
-#include "PlayerStateWidget.h"
+#include "Widget/MapSelectWidget.h"
+#include "Widget/PlayerStateWidget.h"
 
 
 TObjectPtr<UInputManager> UInputManager::Instance = nullptr;

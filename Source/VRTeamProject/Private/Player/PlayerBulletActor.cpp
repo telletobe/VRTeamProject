@@ -1,9 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "PlayerBulletActor.h"
+#include "Player/PlayerBulletActor.h"
 #include "Components/SphereComponent.h"
-#include <GameItem.h>
+#include "Item/GameItem.h"
 #include <Kismet/GameplayStatics.h>
 
 // Sets default values

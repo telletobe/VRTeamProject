@@ -1,11 +1,11 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "MapSelectWidget.h"
+#include "Widget/MapSelectWidget.h"
 #include "Components/Button.h"
 #include "GameFramework/PlayerController.h"
-#include "StageInfoWidget.h"
+#include "Widget/StageInfoWidget.h"
 #include "Components/Image.h"
-#include "WeatherManager.h"
+#include "System/WeatherManager.h"
 #include "Kismet/GameplayStatics.h"
 
 

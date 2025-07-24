@@ -1,10 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "PlayerWeapon.h"
+#include "Player/PlayerWeapon.h"
 #include "Components/SphereComponent.h"
-#include "PlayerBulletActor.h"
-#include <PlayerCharacter.h>
+#include "Player/PlayerBulletActor.h"
+#include "Player/PlayerCharacter.h"
 #include "MotionControllerComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Sound/SoundCue.h"

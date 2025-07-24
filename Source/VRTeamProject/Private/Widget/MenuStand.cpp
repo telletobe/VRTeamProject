@@ -1,8 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "MenuStand.h"
-#include "MapSelectWidget.h"
+#include "Widget/MenuStand.h"
 // Sets default values
 AMenuStand::AMenuStand()
 {

@@ -1,14 +1,15 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "VRProjectGameModeBase.h"
-#include "PlayerCharacter.h"
-#include "PlayerHUD.h"
+#include "System/VRProjectGameModeBase.h"
+#include "Player/PlayerCharacter.h"
+#include "Widget/PlayerHUD.h"
 #include "Kismet/GameplayStatics.h"
-#include <EnemyCharacter.h>
-#include <EnemySpawner.h>
-#include <ItemSpawnActor.h>
-#include <WeatherManager.h>
+#include "Enemy/EnemyCharacter.h"
+#include "Enemy/EnemySpawner.h"
+#include "Item/ItemSpawnActor.h"
+#include "Item/GameItem.h"
+#include "System/WeatherManager.h"
 #include <Sound/SoundCue.h>
 
 

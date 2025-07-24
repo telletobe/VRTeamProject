@@ -1,16 +1,16 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "EnemyCharacter.h"
+#include "Enemy/EnemyCharacter.h"
 #include "Components/CapsuleComponent.h"
 #include "NavigationInvokerComponent.h"
 #include "Engine/TargetPoint.h"
 #include "Kismet/GameplayStatics.h"
-#include <EnemyAIController.h>
+#include "Enemy/EnemyAIController.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "PlayerCharacter.h"
-#include "PlayerBulletActor.h"
-#include <VRProjectGameModeBase.h>
+#include "Player/PlayerCharacter.h"
+#include "Player/PlayerBulletActor.h"
+#include "System/VRProjectGameModeBase.h"
 
 
 AEnemyCharacter::AEnemyCharacter()

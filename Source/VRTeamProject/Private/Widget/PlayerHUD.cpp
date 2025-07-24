@@ -1,12 +1,12 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "PlayerHUD.h"
-#include "MapselectWidget.h"
-#include "PlayerStateWidget.h"
-#include "StageInfoWidget.h"
+#include "Widget/PlayerHUD.h"
+#include "Widget/MapselectWidget.h"
+#include "Widget/PlayerStateWidget.h"
+#include "Widget/StageInfoWidget.h"
 #include "Blueprint/UserWidget.h"
-#include <EndGameWidget.h>
+#include "Widget/EndGameWidget.h"
 
 /*
 	UserWidgetclass�� ����

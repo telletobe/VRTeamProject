@@ -2,11 +2,11 @@
 
 
 
-#include "EndGameWidget.h"
-#include <PlayerCharacter.h>
+#include "Widget/EndGameWidget.h"
+#include "Player/PlayerCharacter.h"
 #include "Components/WidgetComponent.h"
 #include "Components/Button.h"
-#include <VRProjectGameModeBase.h>
+#include "System/VRProjectGameModeBase.h"
 #include <Kismet/KismetSystemLibrary.h>
 
 void UEndGameWidget::NativeConstruct()

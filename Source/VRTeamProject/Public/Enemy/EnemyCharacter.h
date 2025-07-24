@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "WeatherManager.h"
+#include "System/WeatherManager.h"
 #include "GameFramework/Character.h"
 #include "EnemyCharacter.generated.h"
 

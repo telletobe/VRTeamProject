@@ -1,11 +1,11 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "PlayerStateWidget.h"
+#include "Widget/PlayerStateWidget.h"
 #include "Components/Button.h"
 #include "Components/ProgressBar.h"
-#include "PlayerCharacter.h"
-#include "VRProjectGameModeBase.h"
+#include "Player/PlayerCharacter.h"
+#include "System/VRProjectGameModeBase.h"
 
 void UPlayerStateWidget::NativeConstruct()
 {

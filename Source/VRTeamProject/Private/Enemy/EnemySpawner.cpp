@@ -1,9 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "EnemySpawner.h"
+#include "Enemy/EnemySpawner.h"
 #include "Components/BoxComponent.h"
-#include <EnemyCharacter.h>
+#include "Enemy/EnemyCharacter.h"
 #include "Engine/TargetPoint.h"
 #include <Kismet/GameplayStatics.h>
 

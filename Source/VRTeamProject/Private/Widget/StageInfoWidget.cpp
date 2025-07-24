@@ -1,12 +1,12 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "StageInfoWidget.h"
+#include "Widget/StageInfoWidget.h"
 #include "Components/Button.h"
 #include <Kismet/GameplayStatics.h>
-#include <VRProjectGameModeBase.h>
-#include <PlayerCharacter.h>
-#include "WeatherManager.h"
+#include <System/VRProjectGameModeBase.h>
+#include <Player/PlayerCharacter.h>
+#include "System/WeatherManager.h"
 #include "Components/TextBlock.h"
 #include "Components/Image.h"
 
