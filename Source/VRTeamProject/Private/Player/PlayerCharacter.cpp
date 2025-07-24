@@ -221,7 +221,7 @@ void APlayerCharacter::ApplyEffectItem(const EItemEffectData Data)
 		}
 
 		GetWorld()->GetTimerManager().ClearTimer(RestoreTimerHandle);
-		GetWorld()->GetTimerManager().SetTimer(RestoreTimerHandle, [this]() { GetWeapon()->SetFireDelay(GetWeapon()->GetDefaultFireDelay()); }, 3.0f, false);
+		GetWorld()->GetTimerManager().SetTimer(RestoreTimerHandle, [this]() { GetWeapon()->SetFireDelay(GetWeapon()->GetDefaultFireDelay()); }, 4.0f, false);
 		break;
 
 	default :
@@ -275,14 +275,18 @@ void APlayerCharacter::PlayerReSpawn()
 	SetPlayerLocation(-4000.0f);
 	SetActorHiddenInGame(false);
 	if (Weapon) Weapon->SetActorHiddenInGame(false);
-	SetActorEnableCollision(true);
 
-	if (PlayerController)
-	{
-		PlayerController->SetIgnoreMoveInput(false);
-		EnableInput(PlayerController);
-		bMouseClickEnable = true;
-	} 
+
+	FTimerHandle InputDelayHandle;
+	GetWorld()->GetTimerManager().SetTimer(InputDelayHandle, [this]()
+		{
+			if (PlayerController)
+			{
+				PlayerController->SetIgnoreMoveInput(false);
+				bMouseClickEnable = true;
+			}
+		},0.1f,false
+	);
 
 	HideWidgetComponent();
 	SetHp(GetMaxHp());

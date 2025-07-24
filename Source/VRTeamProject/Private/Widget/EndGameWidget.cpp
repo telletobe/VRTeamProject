@@ -30,6 +30,7 @@ void UEndGameWidget::ShowEndGame()
 			if (WidgetComp->GetVisibleFlag() == false)
 			{
 				WidgetComp->SetVisibility(true);
+				WidgetComp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 				Player->SetVisibleRazerMesh(true);
 			}
 		}
