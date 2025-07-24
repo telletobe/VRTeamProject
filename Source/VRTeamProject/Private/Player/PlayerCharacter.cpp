@@ -14,19 +14,17 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "EngineUtils.h"
 #include "Engine/LevelStreaming.h"
-// Sets default values
-// 커밋용 주석추가
+
 APlayerCharacter::APlayerCharacter()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 	SetHp(100.0f);
-	SetAtk(5.0f);
+	SetAtk(15.0f);
 	SetDef(1);
 	bIsActive = false;
 	bMouseClickEnable = false;
-	//VR
 
 	SceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("SceneComponent"));
 	SceneComponent->SetupAttachment(GetCapsuleComponent());
@@ -70,8 +68,6 @@ APlayerCharacter::APlayerCharacter()
 	WidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("WidgetComponent"));
 	WidgetComponent->SetupAttachment(VRCamera);
 	WidgetComponent->SetWidgetSpace(EWidgetSpace::World);
-	//WidgetComponent->SetDrawSize(FVector2D(768.0f,1150.0f));
-	//WidgetComponent->SetRelativeLocation(FVector(200.0f,0.0f,0.0f));
 	WidgetComponent->SetVisibility(false);
 	WidgetComponent->SetCastShadow(false);
 	WidgetComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
@@ -101,7 +97,6 @@ void APlayerCharacter::SetPlayerLocation(float X)
 
 	FVector NewLocation = FVector(X, CurrentLocation.Y, CurrentLocation.Z); // 이동할 위치
 	SetActorLocation(NewLocation);
-
 }
 
 // Called when the game starts or when spawned
@@ -160,7 +155,6 @@ void APlayerCharacter::BeginPlay()
 		SetExp(0.0f);
 	}
 
-
 	SetPlayerLocation(-9000);
 }
 
@@ -180,6 +174,7 @@ void APlayerCharacter::ApplyEffectItem(const EItemEffectData Data)
 {
 	//플레이어가 아이템을 파괴 햇을 때, 아이템 효과를 적용받는 함수.
 	//Switch를 활용하여 Data에 들어있는 값으로 효과 적용
+	//공격력 증가와 공격속도 증가만 적용중
 	GEngine->AddOnScreenDebugMessage(-1,3.0f,FColor::Green,TEXT("Player ApplyEffetItem!"));
 	FTimerHandle RestoreTimerHandle;
 	
@@ -198,11 +193,11 @@ void APlayerCharacter::ApplyEffectItem(const EItemEffectData Data)
 
 	case EItemEffectData::AtkUp:
 		
-		SetAtk(GetAtk() + 1);
+		SetAtk(GetAtk() + 50);
 		GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Green, FString::Printf(TEXT("AtkUp applied: Atk = %.1f (for 10 seconds)"), GetAtk()));
 
 		GetWorldTimerManager().ClearTimer(RestoreTimerHandle);
-		GetWorld()->GetTimerManager().SetTimer(RestoreTimerHandle, [this]() {SetAtk(DefaultAtk);}, 10.0f, false);	
+		GetWorld()->GetTimerManager().SetTimer(RestoreTimerHandle, [this]() {SetAtk(DefaultAtk);}, 3.0f, false);	
 		break;
 
 	case EItemEffectData::DefUp:
@@ -222,11 +217,11 @@ void APlayerCharacter::ApplyEffectItem(const EItemEffectData Data)
 		}
 		else
 		{
-			GetWeapon()->SetFireDelay(0.0005f);
+			GetWeapon()->SetFireDelay(0.005f);
 		}
 
 		GetWorld()->GetTimerManager().ClearTimer(RestoreTimerHandle);
-		GetWorld()->GetTimerManager().SetTimer(RestoreTimerHandle, [this]() { GetWeapon()->SetFireDelay(GetWeapon()->GetDefaultFireDelay()); }, 10.0f, false);
+		GetWorld()->GetTimerManager().SetTimer(RestoreTimerHandle, [this]() { GetWeapon()->SetFireDelay(GetWeapon()->GetDefaultFireDelay()); }, 3.0f, false);
 		break;
 
 	default :
@@ -268,7 +263,6 @@ void APlayerCharacter::SpawnWeapon()
 void APlayerCharacter::NotifyPlayerDeath()
 {
 	OnPlayerDeath.Broadcast();
-	UE_LOG(LogTemp,Warning,TEXT("NotifyPlayerDeath"));
 }
 
 void APlayerCharacter::NotifyPlayerChangeHealth()

@@ -13,10 +13,10 @@ class ATargetPoint;
 UENUM(BlueprintType)
 enum class EItemEffectData : uint8
 {
-	HEAL			UMETA(DisplayName = "HEAL"),
 	AtkUp			UMETA(DisplayName = "AtkUp"),
+	AttackSpeed	UMETA(DisplayName = "AttackSpeed"),
 	DefUp			UMETA(DisplayName = "DefUp"),
-	AttackSpeed	UMETA(DisplayName = "AttackSpeed")
+	HEAL			UMETA(DisplayName = "HEAL")
 
 };
 

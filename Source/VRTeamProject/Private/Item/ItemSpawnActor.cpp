@@ -40,31 +40,30 @@ void AItemSpawnActor::SpawnItem()
 	{
 		const FVector SpawnPoint = FMath::RandPointInBox(ItemSpawnerCollision->Bounds.GetBox());
 
-		const int32 ItemDropTableCnt = 4; 
+		const int32 ItemDropTableCnt = 2; 
 
 		
 		if (GameItemClass)
 		{
 			AGameItem* SpawnedItem = GetWorld()->SpawnActor<AGameItem>(GameItemClass, SpawnPoint, FRotator(0));
-			const int32 ItemType = FMath::RandRange(0, ItemDropTableCnt - 1); //������ ����� ����. Ȯ���� ����.
+			const int32 ItemType = FMath::RandRange(0, ItemDropTableCnt - 1); 
 
 			switch (ItemType)
 			{
 			case 0:
-				SpawnedItem->SetItemData(EItemEffectData::HEAL);
-				break;
-			case 1:
 				SpawnedItem->SetItemData(EItemEffectData::AtkUp);
+				break;
+			case 1:				
+				SpawnedItem->SetItemData(EItemEffectData::AttackSpeed);
 				break;
 			case 2:
 				SpawnedItem->SetItemData(EItemEffectData::DefUp);
 				break;
-			case 3:
-				SpawnedItem->SetItemData(EItemEffectData::AttackSpeed);
+			case 3:				
+				SpawnedItem->SetItemData(EItemEffectData::HEAL);
 				break;
 
 			default:
-				return;
 				break;
 			}
 			return;

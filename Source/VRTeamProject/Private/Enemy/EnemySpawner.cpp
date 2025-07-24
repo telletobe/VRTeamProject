@@ -12,7 +12,7 @@
 	메모리 해제는 게임모드에서 처리
 */
 
-const int32 AEnemySpawner::EnemyPoolSize = 20;
+
 
 // Sets default values
 AEnemySpawner::AEnemySpawner()
@@ -24,6 +24,7 @@ AEnemySpawner::AEnemySpawner()
 	SetRootComponent(SpawnBox);
 
 	SpawnDelay = 0.7f;
+	EnemyPoolSize = 30;
 	PoolIndex = EnemyPoolSize - 1;
 }
 
@@ -35,7 +36,6 @@ void AEnemySpawner::CreateEnemy()
 
 	if (bIsSpawn)
 	{
-		TSubclassOf<AEnemyCharacter> CommonEnemy = LoadClass<AEnemyCharacter>(nullptr, TEXT("/Script/Engine.Blueprint'/Game/Character/Enemy/BP_EnemyCharacter.BP_EnemyCharacter_C'"));
 		if (CommonEnemy)
 		{
 			for (int32 i = 0; i < EnemyPoolSize; i++)
@@ -69,6 +69,7 @@ void AEnemySpawner::DestroyEnemy()
 		EnemyPool[i]->OnEnemyDie.Clear();
 		EnemyPool[i]->OnEnemyDeathAnimEnded.Clear();
 		EnemyPool[i]->OnEnemyAttack.Clear();
+
 		EnemyPool[i]->Destroy();
 	}
 }

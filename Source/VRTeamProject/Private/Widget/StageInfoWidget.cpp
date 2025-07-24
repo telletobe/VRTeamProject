@@ -14,8 +14,6 @@ void UStageInfoWidget::NativeConstruct()
 {
     Super::NativeConstruct();
 
-
-
     if (Btn_GameStart)
     {
         Btn_GameStart->OnClicked.AddUniqueDynamic(this, &UStageInfoWidget::GameStart);
@@ -90,6 +88,4 @@ void UStageInfoWidget::Init(const FName& InRegionID, UTexture2D* Thumbnail)
         UE_LOG(LogTemp, Warning, TEXT("IMG_Thumb is nullptr!"));
         UE_LOG(LogTemp, Warning, TEXT("Thumbnail is nullptr!"));
     }
-
-
 }

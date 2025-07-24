@@ -47,7 +47,7 @@ private :
 	UPROPERTY(EditAnywhere)
 	float BulletSpeed = 4500.0f;
 	float MoveInterval = 0.01f;
-	float Damage = 5.0f;
+	float Damage = 15.0f;
 
 	FTimerHandle MoveTimerHandle;
 };

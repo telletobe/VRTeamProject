@@ -105,7 +105,6 @@ void UInputManager::Initialize(APlayerCharacter* PlayerCharacter, APlayerControl
 			Subsystem->AddMappingContext(IMC_InputMappingContext, 0);
 			UE_LOG(LogTemp, Warning, TEXT("Input Mapping Context Added!"));
 		}
-
 		if(!IsValid(MyHUD.Get())) MyHUD = Cast<APlayerHUD>(PC->GetHUD());
 	}
 }

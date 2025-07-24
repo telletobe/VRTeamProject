@@ -34,7 +34,6 @@ void AVRProjectGameModeBase::BeginPlay()
 {
 	Super::BeginPlay();
 
-
 	TArray<AActor*> FoundActor;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerCharacter::StaticClass(), FoundActor);
 
@@ -99,9 +98,6 @@ void AVRProjectGameModeBase::CleanupAfterGameEnd()
 	CleanupItemSpanwer();
 	CleanupEnemySpawner();
 	CleanupGameItem();
-
-	//Player Replace to Start
-
 }
 
 void AVRProjectGameModeBase::InitializeGameObjects()
@@ -132,7 +128,6 @@ void AVRProjectGameModeBase::InitializeGameObjects()
 				EnemySpanwer = GetWorld()->SpawnActor<AEnemySpawner>(BPEnemySpawner, FVector(FVector(0, 3500.0, 0)), FRotator(0, 0, 0));
 				UE_LOG(LogTemp, Warning, TEXT("Enemy Spawner InValid"));
 			}
-			
 		} 
 	}
 	else

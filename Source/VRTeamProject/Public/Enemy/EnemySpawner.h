@@ -50,7 +50,8 @@ public:
 
 private :
 
-	const static int32 EnemyPoolSize;
+	UPROPERTY(EditAnywhere)
+	int32 EnemyPoolSize;
 
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UBoxComponent> SpawnBox;
@@ -68,4 +69,7 @@ private :
 
 	UPROPERTY()
 	EWeatherData CachedWeatherData;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<AEnemyCharacter> CommonEnemy;
 };

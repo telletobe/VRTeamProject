@@ -36,7 +36,7 @@ void UPlayerStateWidget::UpdatePlayerHP(float CurrentHp, float MaxHp)
 	{
 		HPBar->SetPercent(CurrentHp/MaxHp);
 	}
-	//Set Text
+
 }
 
 void UPlayerStateWidget::UpdatePlayerDef()
@@ -45,7 +45,7 @@ void UPlayerStateWidget::UpdatePlayerDef()
 	{
 		DefBar->SetPercent(1.0f);
 	}
-	//Set Text
+
 }
 
 void UPlayerStateWidget::UpdatePlayerExp(float CurrentExp)
@@ -54,5 +54,5 @@ void UPlayerStateWidget::UpdatePlayerExp(float CurrentExp)
 	{
 		ExpBar->SetPercent(0.0f);
 	}
-	//Set Text
+
 }

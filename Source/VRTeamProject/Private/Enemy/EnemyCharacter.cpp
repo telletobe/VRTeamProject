@@ -242,8 +242,10 @@ void AEnemyCharacter::BoradCastEnemyAttack()
 
 void AEnemyCharacter::EnemyDeathAnimEnded()
 {
-	bIsDeathAnim = false;
-	DeSpawn();
+	if (IsValid(this)) {
+		bIsDeathAnim = false;
+		DeSpawn();
+	}	
 }
 
 void AEnemyCharacter::PlayHitEffect()

@@ -47,9 +47,9 @@ private:
 	bool bIsFire = true;
 
 	UPROPERTY(EditAnywhere)
-	float FireDelay = 0.02f;
+	float FireDelay = 0.05f;
 
-	float DefaultFireDelay = 0.02f;
+	float DefaultFireDelay = 0.05f;
 	FTimerHandle FireTimer;
 
 	UPROPERTY(EditAnywhere, Category = "Sound")
