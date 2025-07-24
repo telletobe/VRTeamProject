@@ -95,7 +95,7 @@ void APlayerCharacter::SetPlayerLocation(float X)
 {
 	FVector CurrentLocation = GetActorLocation();
 
-	FVector NewLocation = FVector(X, CurrentLocation.Y, CurrentLocation.Z); // 이동할 위치
+	FVector NewLocation = FVector(X, CurrentLocation.Y+3, CurrentLocation.Z); // 이동할 위치
 	SetActorLocation(NewLocation);
 }
 
@@ -158,6 +158,73 @@ void APlayerCharacter::BeginPlay()
 	SetPlayerLocation(-9000);
 }
 
+// Player Spawn 및 DeSpawn
+
+void APlayerCharacter::PlayerReSpawn()
+{
+	SetPlayerLocation(-4000.0f);
+	if (Weapon) Weapon->SetActorHiddenInGame(false);
+
+	FTimerHandle InputDelayHandle;
+	GetWorld()->GetTimerManager().SetTimer(InputDelayHandle, [this]()
+		{
+			if (PlayerController)
+			{
+				//PlayerController->SetIgnoreMoveInput(false);
+				bMouseClickEnable = true;
+			}
+		}, 0.1f, false
+	);
+
+	HideWidgetComponent();
+	SetHp(GetMaxHp());
+	NotifyPlayerChangeHealth();
+	bIsActive = true;
+}
+
+void APlayerCharacter::PlayerDeSpawn()
+{
+	if (PlayerController)
+	{
+		//PlayerController->SetIgnoreMoveInput(true);
+		bMouseClickEnable = false;
+	}
+	if (Weapon) Weapon->SetActorHiddenInGame(true);
+	bIsActive = false;
+}
+
+// 플레이어의 무기 생성
+
+void APlayerCharacter::SpawnWeapon()
+{
+	if (Weapon) return; // 이미 무기가 있으면 생성하지 않음
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.Owner = this;
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+	APlayerWeapon* NewWeapon = GetWorld()->SpawnActor<APlayerWeapon>(APlayerWeapon::StaticClass(), FVector::ZeroVector, FRotator::ZeroRotator, SpawnParams);
+
+	if (IsValid(NewWeapon))
+	{
+		Weapon = NewWeapon;
+
+		// 오른손 모션 컨트롤러에 부착
+		Weapon->AttachToComponent(MotionControllerRight, FAttachmentTransformRules::SnapToTargetIncludingScale);
+
+		// 무기 숨김 해제
+		Weapon->SetActorHiddenInGame(false);
+
+		// 기본 Fire Delay 설정 등 초기화 필요 시 여기에 추가
+		Weapon->SetFireDelay(Weapon->GetDefaultFireDelay());
+
+		UE_LOG(LogTemp, Log, TEXT("Weapon spawned and attached to player."));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Failed to spawn weapon."));
+	}
+}
+
 // Called every frame
 void APlayerCharacter::Tick(float DeltaTime)
 {
@@ -169,6 +236,8 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 }
+
+// 아이템 적용
 
 void APlayerCharacter::ApplyEffectItem(const EItemEffectData Data)
 {
@@ -230,80 +299,7 @@ void APlayerCharacter::ApplyEffectItem(const EItemEffectData Data)
 
 }
 
-void APlayerCharacter::SpawnWeapon()
-{
-	if (Weapon) return; // 이미 무기가 있으면 생성하지 않음
-	FActorSpawnParameters SpawnParams;
-	SpawnParams.Owner = this;
-	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-
-	APlayerWeapon* NewWeapon = GetWorld()->SpawnActor<APlayerWeapon>(APlayerWeapon::StaticClass(), FVector::ZeroVector, FRotator::ZeroRotator, SpawnParams);
-
-	if (IsValid(NewWeapon))
-	{
-		Weapon = NewWeapon;
-
-		// 오른손 모션 컨트롤러에 부착
-		Weapon->AttachToComponent(MotionControllerRight, FAttachmentTransformRules::SnapToTargetIncludingScale);
-
-		// 무기 숨김 해제
-		Weapon->SetActorHiddenInGame(false);
-
-		// 기본 Fire Delay 설정 등 초기화 필요 시 여기에 추가
-		Weapon->SetFireDelay(Weapon->GetDefaultFireDelay());
-
-		UE_LOG(LogTemp, Log, TEXT("Weapon spawned and attached to player."));
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Failed to spawn weapon."));
-	}
-}
-
-void APlayerCharacter::NotifyPlayerDeath()
-{
-	OnPlayerDeath.Broadcast();
-}
-
-void APlayerCharacter::NotifyPlayerChangeHealth()
-{
-	OnHealthChange.Broadcast(GetHp(),GetMaxHp());
-}
-
-void APlayerCharacter::PlayerReSpawn()
-{
-	SetPlayerLocation(-4000.0f);
-	SetActorHiddenInGame(false);
-	if (Weapon) Weapon->SetActorHiddenInGame(false);
-
-
-	FTimerHandle InputDelayHandle;
-	GetWorld()->GetTimerManager().SetTimer(InputDelayHandle, [this]()
-		{
-			if (PlayerController)
-			{
-				PlayerController->SetIgnoreMoveInput(false);
-				bMouseClickEnable = true;
-			}
-		},0.1f,false
-	);
-
-	HideWidgetComponent();
-	SetHp(GetMaxHp());
-	NotifyPlayerChangeHealth();
-	bIsActive = true;
-}
-
-void APlayerCharacter::PlayerDeSpawn()
-{
-	if (PlayerController)
-	{
-		PlayerController->SetIgnoreMoveInput(true);
-		bMouseClickEnable = false;
-	}
-	if (Weapon) Weapon->SetActorHiddenInGame(true);
-	bIsActive = false;
-}
+// 플레이어가 적이 공격했다는 BroadCast 신호를 받아서 호출하는 델리게이트
 
 void APlayerCharacter::TakenDamage(float Damage)
 {
@@ -319,6 +315,8 @@ void APlayerCharacter::TakenDamage(float Damage)
 		PlayerDeSpawn();
 	}
 }
+
+// Setter
 
 void APlayerCharacter::SetHp(float PlayerHp)
 {
@@ -359,4 +357,16 @@ void APlayerCharacter::SetDef(float PlayerDef)
 void APlayerCharacter::SetExp(float PlayerExp)
 {
 	Exp = PlayerExp;
+}
+
+//플레이어 사망, 위젯 업데이트를 위한 델리게이트호출
+
+void APlayerCharacter::NotifyPlayerDeath()
+{
+	OnPlayerDeath.Broadcast();
+}
+
+void APlayerCharacter::NotifyPlayerChangeHealth()
+{
+	OnHealthChange.Broadcast(GetHp(), GetMaxHp());
 }
