@@ -23,7 +23,6 @@ AEnemyCharacter::AEnemyCharacter()
 	SetAtk(DefaultAtk); //5
 
 	NavInvoker = CreateDefaultSubobject<UNavigationInvokerComponent>(TEXT("NavInvoker"));
-
 }
 
 // Called when the game starts or when spawned
@@ -88,7 +87,6 @@ void AEnemyCharacter::BeginPlay()
 			UE_LOG(LogTemp,Warning,TEXT("enemycharacter : NotFound WeatherManager!"));
 		}
 	}
-
 }
 
 // Called every frame
@@ -143,13 +141,15 @@ void AEnemyCharacter::SetAtk(const float EnemyAtk)
 {
 	if (EnemyAtk < 0)
 	{
-
+		Atk = DefaultAtk;
 	}
 	else
 	{
 		Atk = EnemyAtk;
 	}
 }
+
+// Spawn 관련코드
 
 void AEnemyCharacter::FindSpawnPoint()
 {
@@ -252,6 +252,12 @@ void AEnemyCharacter::Spawn()
 	}
 }
 
+void AEnemyCharacter::SetSpawnPoint(AActor* TargetPoint)
+{
+	SpawnPoint = TargetPoint;
+}
+
+// 델리게이트
 void AEnemyCharacter::BroadcastEnemyKilled()
 {
 	OnEnemyDie.Broadcast();
@@ -262,6 +268,7 @@ void AEnemyCharacter::BoradCastEnemyAttack()
 	OnEnemyAttack.Broadcast(GetAtk());
 }
 
+// 애니메이션
 void AEnemyCharacter::EnemyDeathAnimEnded()
 {
 	if (IsValid(this)) {
@@ -295,11 +302,10 @@ void AEnemyCharacter::PlayDeathMontage()
 		{
 			if (DeathMontage)
 			{
-				AnimInstance->Montage_Play(DeathMontage);
-				bIsDeathAnim = true;
 				AEnemyAIController* EnemyController = Cast<AEnemyAIController>(GetController());
 				EnemyController->StopMovement();
-				
+				AnimInstance->Montage_Play(DeathMontage);
+				bIsDeathAnim = true;
 			}
 		}
 	}
@@ -314,8 +320,7 @@ void AEnemyCharacter::PlayHitMontage()
 			if (HitMontage && !AnimInstance->Montage_IsPlaying(HitMontage))
 			{
 				bIsHitReacting = true;
-				AnimInstance->Montage_Play(HitMontage);
-				
+				AnimInstance->Montage_Play(HitMontage);	
 				return;
 			}
 		}
@@ -342,15 +347,10 @@ void AEnemyCharacter::PlayAttackMontage()
 	}
 }
 
-
-void AEnemyCharacter::SetSpawnPoint(AActor* TargetPoint)
-{
-	SpawnPoint = TargetPoint;
-}
+//날씨에 따른 능력치 변경
 
 void AEnemyCharacter::ApplyWeatherEffect(EWeatherData Weather)
 {
-
 	switch (Weather)
 	{
 	case EWeatherData::SUN:
@@ -358,32 +358,29 @@ void AEnemyCharacter::ApplyWeatherEffect(EWeatherData Weather)
 		SetMaxHp(50.0f);
 		SetAtk(DefaultAtk);
 		SetDef(DefaultDef);
-		GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::MakeRandomColor(), FString::Printf(TEXT("Weather : %d"), (uint8)Weather));
 		break;
 	case EWeatherData::RAIN:
-		GetCharacterMovement()->MaxWalkSpeed = 1000.0f;
-		SetMaxHp(10.0f);
+		GetCharacterMovement()->MaxWalkSpeed = 2000.0f;
+		SetMaxHp(20.0f);
 		SetAtk(3.0);
 		SetDef(0.0f);
-	//	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::MakeRandomColor(), FString::Printf(TEXT("Weather : %d"), (uint8)Weather));
 		break;
 	case EWeatherData::FOGGY:
 		GetCharacterMovement()->MaxWalkSpeed = 200.0f;
-		SetMaxHp(150.0f);
+		SetMaxHp(60.0f);
 		SetAtk(20.0);
 		SetDef(3.0f);
-	//	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::MakeRandomColor(), FString::Printf(TEXT("Weather : %d"), (uint8)Weather));
 		break;
 	default:
 		GetCharacterMovement()->MaxWalkSpeed = 450.0f;
 		SetMaxHp(50.0f);
 		SetAtk(DefaultAtk);
 		SetDef(DefaultDef);
-	//	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::MakeRandomColor(), FString::Printf(TEXT("Weather : %d"), (uint8)Weather));
 		break;
 	}
 }
 
+//콜리전 반응
 void AEnemyCharacter::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	APlayerBulletActor* Bullet = Cast<APlayerBulletActor>(OtherActor);
@@ -392,9 +389,10 @@ void AEnemyCharacter::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, A
 	{
 		if (GetCurrentHp() > 0)
 		{
+			const float finalDamage = FMath::Max(1.0f, Bullet->GetDamage()-GetDef());
 			PlayHitEffect();
 			PlayHitMontage();
-			float EnemyHp = GetCurrentHp() - (Bullet->GetDamage() - GetDef());
+			float EnemyHp = GetCurrentHp() - finalDamage;
 			if (EnemyHp > 0)
 			{
 				SetCurrentHp(EnemyHp);
@@ -421,22 +419,22 @@ void AEnemyCharacter::OnComponentHit(UPrimitiveComponent* HitComponent, AActor* 
 
 	if (!IsValid(Player) || bIsDeathAnim || bIsAttacking)	return;
 
-	AEnemyAIController* EnemyController = Cast<AEnemyAIController>(GetController());
-	EnemyController->StopMovement();
-
-	if (AttackMontage)
+	if (Player)
 	{
-		PlayAttackMontage();
+		AEnemyAIController* EnemyController = Cast<AEnemyAIController>(GetController());
+		EnemyController->StopMovement();
+		if (AttackMontage)
+		{
+			PlayAttackMontage();
 
-		float Duration = AttackMontage->GetPlayLength(); // 애니메이션 길이
+			float Duration = AttackMontage->GetPlayLength(); // 애니메이션 길이
 
-		GetWorldTimerManager().SetTimer(AttackAnimTimerHandle, [this]()
-			{
-				BoradCastEnemyAttack();
-				// 4. 적 비활성화
-				DeSpawn();
-
-			}, Duration, false);
+			GetWorldTimerManager().SetTimer(AttackAnimTimerHandle, [this]()
+				{
+					BoradCastEnemyAttack();
+					// 4. 적 비활성화
+					DeSpawn();
+				}, Duration, false);
+		}
 	}
-
 }

@@ -30,12 +30,13 @@ public:
 	// Sets default values for this character's properties
 	APlayerCharacter();
 
-	void SetHp(float PlayerHp);
-	void SetAtk(float PlayerAtk);
-	void SetDef(float PlayerDef);
-	void SetExp(float PlayerExp);
+	void SetHp(const float PlayerHp);
+	void SetMaxHp(const float PlayerMaxHp);
+	void SetAtk(const float PlayerAtk);
+	void SetDef(const float PlayerDef);
+	void SetExp(const float PlayerExp);
 	void HideWidgetComponent();
-	void SetPlayerLocation(float X);
+	void SetPlayerLocation(const float X);
 
 	float GetHp() const { return Hp; }
 	float GetAtk() const { return Atk; }

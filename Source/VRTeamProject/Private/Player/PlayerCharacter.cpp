@@ -303,34 +303,36 @@ void APlayerCharacter::ApplyEffectItem(const EItemEffectData Data)
 
 void APlayerCharacter::TakenDamage(float Damage)
 {
+	
 	float PlayerHp = GetHp();
 	if (PlayerHp > 0)
 	{
-		SetHp(PlayerHp - (Damage-GetDef()));
+		float finalDamage = FMath::Max(1.0f, Damage - GetDef());
+		SetHp(PlayerHp - (finalDamage));
 		NotifyPlayerChangeHealth();
+		if (GetHp() < 0)
+		{
+			NotifyPlayerDeath();
+			PlayerDeSpawn();
+			return;
+		}
 	}
 	else
 	{
 		NotifyPlayerDeath();
 		PlayerDeSpawn();
+		return;
 	}
 }
 
 // Setter
 
-void APlayerCharacter::SetHp(float PlayerHp)
+void APlayerCharacter::SetHp(const float PlayerHp)
 {
-	if (PlayerHp < 0)
-	{
-		Hp = GetMaxHp();
-	}
-	else
-	{
-		Hp = PlayerHp;
-	}
+	Hp = PlayerHp;
 }
 
-void APlayerCharacter::SetAtk(float PlayerAtk)
+void APlayerCharacter::SetAtk(const float PlayerAtk)
 {
 	if (PlayerAtk < 0)
 	{
@@ -342,7 +344,7 @@ void APlayerCharacter::SetAtk(float PlayerAtk)
 	}
 }
 
-void APlayerCharacter::SetDef(float PlayerDef)
+void APlayerCharacter::SetDef(const float PlayerDef)
 {
 	if (PlayerDef < 0)
 	{
@@ -354,9 +356,21 @@ void APlayerCharacter::SetDef(float PlayerDef)
 	}
 }
 
-void APlayerCharacter::SetExp(float PlayerExp)
+void APlayerCharacter::SetExp(const float PlayerExp)
 {
 	Exp = PlayerExp;
+}
+
+void APlayerCharacter::SetMaxHp(const float PlayerMaxHp)
+{
+	if (PlayerMaxHp < 0)
+	{
+		MaxHp = 100.0f;
+	}
+	else
+	{
+		MaxHp = PlayerMaxHp;
+	}
 }
 
 //플레이어 사망, 위젯 업데이트를 위한 델리게이트호출
