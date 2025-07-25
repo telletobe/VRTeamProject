@@ -161,6 +161,8 @@ void UInputManager::Attack(const FInputActionValue& Value)
 void UInputManager::ToggleMap(const FInputActionValue& Value)
 {
 	// VR
+
+
 	if (IsValid(Player))
 	{
 		if (Player->IsActive())

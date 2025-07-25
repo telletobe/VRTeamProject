@@ -48,7 +48,6 @@ void AEnemySpawner::CreateEnemy()
 				{
 					SpawnedEnemy->SpawnDefaultController();
 					SpawnedEnemy->DeSpawn();
-					SpawnedEnemy->ApplyWeatherEffect(CachedWeatherData);
 					EnemyPool.Add(SpawnedEnemy);
 					GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Blue, TEXT("Create Enemy"));
 				}
@@ -123,10 +122,6 @@ void AEnemySpawner::BeginPlay()
 	AWeatherManager* WeatherManager = Cast<AWeatherManager>(
 		UGameplayStatics::GetActorOfClass(GetWorld(), AWeatherManager::StaticClass()));
 
-	if (WeatherManager)
-	{
-		WeatherManager->OnWeatherChange.AddDynamic(this, &AEnemySpawner::OnWeatherChanged); //³¯¾¾ Á¤º¸¸¦ Ä³½¬ÇØµÒ
-	}
 
 	if (SpawnDelay <= 0)
 	{
@@ -134,17 +129,11 @@ void AEnemySpawner::BeginPlay()
 	}
 	GetWorldTimerManager().SetTimer(SpawnHandle, this, &AEnemySpawner::SpawnEnemy, GetSpawnDelay(), true);
 	CreateEnemy();
-		
 }
 
 // Called every frame
 void AEnemySpawner::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-}
-
-void AEnemySpawner::OnWeatherChanged(EWeatherData NewWeather)
-{
-	CachedWeatherData = NewWeather;
 }
 

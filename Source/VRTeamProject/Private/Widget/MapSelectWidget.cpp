@@ -161,6 +161,23 @@ void UMapSelectWidget::OnClickBusan()
 
 void UMapSelectWidget::OnClickSeoul()
 {
-    RequestWeatherData(108); //서울
+    //RequestWeatherData(108); //서울
+
+    //날씨 변환 테스트용. 비, 안개 적용
+    TArray<AActor*> WeatherManagerData;
+    UGameplayStatics::GetAllActorsOfClass(GetWorld(), AWeatherManager::StaticClass(), WeatherManagerData);
+
+    for (const auto& foundActor : WeatherManagerData)
+    {
+        if (AWeatherManager* WeatherManager = Cast<AWeatherManager>(foundActor))
+        {
+            if (IsValid(WeatherManager))
+            {
+                WeatherManager->TestSetRandomRegionData();
+                UE_LOG(LogTemp,Warning,TEXT("MapSelectWidget : WeatherManager Call TestSetRandomReigionData()"));
+            }
+        }
+    }
+
     RequestRegionImage("Seoul");
 }

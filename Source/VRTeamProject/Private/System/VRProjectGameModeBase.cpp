@@ -21,7 +21,7 @@ AVRProjectGameModeBase::AVRProjectGameModeBase()
 	HUDClass = APlayerHUD::StaticClass();
 
 	CurrentKillCnt = 0;
-	RequiredKillCnt = 40;
+	RequiredKillCnt = 100;
 
 	ConstructorHelpers::FObjectFinder<USoundCue> ClearSoundObject(TEXT("/Script/Engine.SoundCue'/Game/Audio/EffectSound/clear_Cue.clear_Cue'"));
 	if (ClearSoundObject.Succeeded())
@@ -142,7 +142,7 @@ void AVRProjectGameModeBase::InitializeGameObjects()
 		{
 			if (!IsValid(ItemSpanwer))
 			{
-				AItemSpawnActor* ItemSpawner = GetWorld()->SpawnActor<AItemSpawnActor>(BPItemSpawner, FVector(0, 0, 0), FRotator(0, 90.0f, 0));
+				ItemSpanwer = GetWorld()->SpawnActor<AItemSpawnActor>(BPItemSpawner, FVector(0, 0, 0), FRotator(0, 90.0f, 0));
 				bItemSpawnerExists = true;
 			}
 		}	

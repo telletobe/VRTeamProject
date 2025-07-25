@@ -64,7 +64,6 @@ void AWeatherManager::BeginPlay()
         UE_LOG(LogTemp, Warning, TEXT("BGMSound Data invalid"));
     }
 
-    OnWeatherChange.AddDynamic(this,&AWeatherManager::ApplyWeatherEffectToEnemy); //스테이지 플레이중 날씨가 바뀐다면 적용.
 }
 
 /*
@@ -161,6 +160,9 @@ void AWeatherManager::OnWeatherResponse(FHttpRequestPtr Request, FHttpResponsePt
 
 void AWeatherManager::ApplyWeatherEffectToEnemy(EWeatherData NewWeather)
 {
+
+    UE_LOG(LogTemp,Warning,TEXT("WeatherManager : Applyweather EweatherData : %d"), (int32)NewWeather);
+
     TArray<AActor*> FoundActor;
     UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEnemyCharacter::StaticClass(), FoundActor);
 
@@ -173,13 +175,36 @@ void AWeatherManager::ApplyWeatherEffectToEnemy(EWeatherData NewWeather)
     }
 }
 
+void AWeatherManager::TestSetRandomRegionData()
+{
+
+    float RandNum = FMath::RandRange(0, 1);
+
+    if (RandNum <= 0.5)
+    {
+        RegionData.Precipitation = 10.0f;
+    }
+    else
+    {
+        RegionData.WindSpeed = 2.0f;
+    }
+
+    SetWeatherData(RegionData);
+
+    RegionData.PrintData();
+}
+
 void AWeatherManager::SetWeatherData(const FRegionData& Data)
 {
     USoundBase* CurrentSound = AudioComponent ? AudioComponent->GetSound() : nullptr;
 
+    Data.PrintData();
+
     if (Data.Precipitation >= 0.1f)
     {
         WeatherData = EWeatherData::RAIN;
+        OnWeatherChange.Broadcast(WeatherData);
+        UE_LOG(LogTemp,Warning,TEXT("WeatherManager EWeatherData : %d"),WeatherData);
         if (RainBGM)
         {
             if (AudioComponent && AudioComponent->IsPlaying())
@@ -195,12 +220,14 @@ void AWeatherManager::SetWeatherData(const FRegionData& Data)
         {
             UE_LOG(LogTemp, Warning, TEXT("BGMSound Data invalid"));
         }
+
         return;
     }
 
     if (Data.WindSpeed >= 0.1f)
     {
         WeatherData = EWeatherData::FOGGY;
+        OnWeatherChange.Broadcast(WeatherData);
         if (FoggyBGM)
         {
             if (AudioComponent && AudioComponent->IsPlaying())
@@ -216,11 +243,24 @@ void AWeatherManager::SetWeatherData(const FRegionData& Data)
         {
             UE_LOG(LogTemp, Warning, TEXT("BGMSound Data invalid"));
         }
+  
         return;
     }
     
     WeatherData = EWeatherData::SUN;
     OnWeatherChange.Broadcast(WeatherData);
+    if (MainBGM)
+    {
+        if (AudioComponent && AudioComponent->IsPlaying())
+        {
+            if (CurrentSound != MainBGM)
+            {
+                AudioComponent->Stop();
+                AudioComponent = UGameplayStatics::SpawnSound2D(this, MainBGM);
+            }
+        }
+    }
+    return;
 }
 
 FString AWeatherManager::SetURLData(int32 RegionNum) const

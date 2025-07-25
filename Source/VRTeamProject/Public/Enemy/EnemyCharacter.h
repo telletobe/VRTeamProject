@@ -33,7 +33,7 @@ public:
 	void SetDef(const float EnemyDef);
 	void SetAtk(const float EnemyAtk);
 	void SetSpawnPoint(AActor* TargetPoint);
-	void ApplyWeatherEffect(const EWeatherData Weather);
+	void ApplyWeatherEffect(EWeatherData Weather);
 
 	float GetCurrentHp() const { return CurrentHp; }
 	float GetMaxHp() const { return MaxHp; }

@@ -18,9 +18,9 @@ AEnemyCharacter::AEnemyCharacter()
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	SetCurrentHp(50);
-	SetDef(1.0f);
-	SetAtk(5.0f);
+	SetCurrentHp(GetMaxHp());
+	SetDef(DefaultDef); //1
+	SetAtk(DefaultAtk); //5
 
 	NavInvoker = CreateDefaultSubobject<UNavigationInvokerComponent>(TEXT("NavInvoker"));
 
@@ -29,6 +29,8 @@ AEnemyCharacter::AEnemyCharacter()
 // Called when the game starts or when spawned
 void AEnemyCharacter::BeginPlay()
 {
+	UE_LOG(LogTemp,Warning,TEXT("EnemyCharacter : BeginPlay Call"));
+
 	Super::BeginPlay();
 
 	NavGenerationRadius = 6000.0f;
@@ -67,6 +69,26 @@ void AEnemyCharacter::BeginPlay()
 	}
 	FindSpawnPoint();
 	FindDeSpawnPoint();
+
+	TArray<AActor*> WeatherManagerActor;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AWeatherManager::StaticClass(), WeatherManagerActor);
+
+	for (const auto& FoundActor : WeatherManagerActor)
+	{
+		if (FoundActor)
+		{
+			AWeatherManager* WeatherManager = Cast<AWeatherManager>(FoundActor);
+			if (WeatherManager)
+			{
+				ApplyWeatherEffect(WeatherManager->GetWeatherData());
+			}
+		}
+		else
+		{
+			UE_LOG(LogTemp,Warning,TEXT("enemycharacter : NotFound WeatherManager!"));
+		}
+	}
+
 }
 
 // Called every frame
@@ -273,7 +295,6 @@ void AEnemyCharacter::PlayDeathMontage()
 		{
 			if (DeathMontage)
 			{
-				SetActorEnableCollision(false);
 				AnimInstance->Montage_Play(DeathMontage);
 				bIsDeathAnim = true;
 				AEnemyAIController* EnemyController = Cast<AEnemyAIController>(GetController());
@@ -330,21 +351,35 @@ void AEnemyCharacter::SetSpawnPoint(AActor* TargetPoint)
 void AEnemyCharacter::ApplyWeatherEffect(EWeatherData Weather)
 {
 
-	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::MakeRandomColor(), FString::Printf(TEXT("Weather : %d"), (uint8)Weather));
-
 	switch (Weather)
 	{
 	case EWeatherData::SUN:
-		GetCharacterMovement()->MaxAcceleration = 300.0f;
+		GetCharacterMovement()->MaxWalkSpeed = 450.0f;
+		SetMaxHp(50.0f);
+		SetAtk(DefaultAtk);
+		SetDef(DefaultDef);
+		GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::MakeRandomColor(), FString::Printf(TEXT("Weather : %d"), (uint8)Weather));
 		break;
 	case EWeatherData::RAIN:
-		GetCharacterMovement()->MaxAcceleration = 500.0f;	
+		GetCharacterMovement()->MaxWalkSpeed = 1000.0f;
+		SetMaxHp(10.0f);
+		SetAtk(3.0);
+		SetDef(0.0f);
+	//	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::MakeRandomColor(), FString::Printf(TEXT("Weather : %d"), (uint8)Weather));
 		break;
 	case EWeatherData::FOGGY:
-		GetCharacterMovement()->MaxAcceleration = 500.0f;
+		GetCharacterMovement()->MaxWalkSpeed = 200.0f;
+		SetMaxHp(150.0f);
+		SetAtk(20.0);
+		SetDef(3.0f);
+	//	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::MakeRandomColor(), FString::Printf(TEXT("Weather : %d"), (uint8)Weather));
 		break;
 	default:
-		GetCharacterMovement()->MaxAcceleration = 300.0f;
+		GetCharacterMovement()->MaxWalkSpeed = 450.0f;
+		SetMaxHp(50.0f);
+		SetAtk(DefaultAtk);
+		SetDef(DefaultDef);
+	//	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::MakeRandomColor(), FString::Printf(TEXT("Weather : %d"), (uint8)Weather));
 		break;
 	}
 }
@@ -358,7 +393,7 @@ void AEnemyCharacter::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, A
 		if (GetCurrentHp() > 0)
 		{
 			PlayHitEffect();
-			PlayHitMontage(); // �ǰ� ���� �߰�
+			PlayHitMontage();
 			float EnemyHp = GetCurrentHp() - (Bullet->GetDamage() - GetDef());
 			if (EnemyHp > 0)
 			{
@@ -370,6 +405,7 @@ void AEnemyCharacter::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, A
 				{
 					FTimerHandle AnimEndNotifyHandle;
 					BroadcastEnemyKilled();
+					SetActorEnableCollision(false);
 					PlayDeathMontage();
 					GetWorldTimerManager().SetTimer(AnimEndNotifyHandle, [this]() {OnEnemyDeathAnimEnded.Broadcast(); }, 3.0f, false);
 				}
