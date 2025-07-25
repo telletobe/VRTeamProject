@@ -88,7 +88,9 @@ void APlayerWeapon::Fire(float Damage)
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
-	APlayerBulletActor* NewBullet = GetWorld()->SpawnActor<APlayerBulletActor>(APlayerBulletActor::StaticClass(), StartRightLocation, SpreadAngle, SpawnParams);
+	APlayerBulletActor* NewBullet = GetWorld()->SpawnActor<APlayerBulletActor>(APlayerBulletActor::StaticClass(), FVector::ZeroVector, SpreadAngle, SpawnParams);
+
+//	APlayerBulletActor* NewBullet = GetWorld()->SpawnActor<APlayerBulletActor>(APlayerBulletActor::StaticClass(), StartRightLocation, SpreadAngle, SpawnParams);
 	if (FireSound)
 	{
 		UGameplayStatics::SpawnSoundAtLocation(this, FireSound,GetActorLocation());
@@ -100,6 +102,7 @@ void APlayerWeapon::Fire(float Damage)
 
 	if (IsValid(NewBullet))
 	{
+		NewBullet->SetActorLocation(StartRightLocation);
 		NewBullet->SetOwner(this);
 		NewBullet->SetDamage(Damage);
 	}
