@@ -426,9 +426,7 @@ void AEnemyCharacter::OnComponentHit(UPrimitiveComponent* HitComponent, AActor* 
 		if (AttackMontage)
 		{
 			PlayAttackMontage();
-
 			float Duration = AttackMontage->GetPlayLength(); // 애니메이션 길이
-
 			GetWorldTimerManager().SetTimer(AttackAnimTimerHandle, [this]()
 				{
 					BoradCastEnemyAttack();
