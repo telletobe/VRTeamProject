@@ -67,18 +67,26 @@ void UMapSelectWidget::NativeConstruct()
 
 void UMapSelectWidget::RequestWeatherData(const int32 RegionNum)
 {
+    TArray<AActor*> WeatherManagerData;
+    UGameplayStatics::GetAllActorsOfClass(GetWorld(), AWeatherManager::StaticClass(), WeatherManagerData);
+
     if (APlayerController* PC = Cast<APlayerController>(GetOwningPlayer()))
     {
 
-        AWeatherManager* WeatherManager = Cast<AWeatherManager>(UGameplayStatics::GetActorOfClass(GetWorld(), AWeatherManager::StaticClass()));
-
-        if (WeatherManager)
+        for (const auto& foundActor : WeatherManagerData)
         {
-            WeatherManager->RequestKMAWeather(RegionNum); //숫자에맞는 지역 정보요청
-        }
-        else
-        {
-            UE_LOG(LogTemp, Warning, TEXT("WeatherManager Invalid"));
+            if (AWeatherManager* WeatherManager = Cast<AWeatherManager>(foundActor))
+            {
+                if (IsValid(WeatherManager))
+                {
+                    WeatherManager->RequestKMAWeather(RegionNum);//숫자에맞는 지역 정보요청
+                    UE_LOG(LogTemp, Warning, TEXT("MapSelectWidget : WeatherManager Call RequestKMAWeather()"));
+                }
+                else
+                {
+                    UE_LOG(LogTemp, Warning, TEXT("WeatherManager Invalid"));
+                }
+            }
         }
     }
 }

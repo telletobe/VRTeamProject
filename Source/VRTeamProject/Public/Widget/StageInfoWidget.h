@@ -43,8 +43,6 @@ public:
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UImage> IMG_Thumb;
-	
-	
 
 protected:
 	virtual void NativeConstruct() override;
