@@ -110,7 +110,7 @@ void AEnemySpawner::DeActivateEnemySpawner()
 void AEnemySpawner::ActivateEnemySpawner()
 {
 	//EnemySpawner의 스폰 활성화
-	GetWorld()->GetTimerManager().SetTimer(SpawnHandle, this, &AEnemySpawner::SpawnEnemy, SpawnDelay, true);
+	GetWorld()->GetTimerManager().SetTimer(SpawnHandle, this, &AEnemySpawner::SpawnEnemy, GetSpawnDelay(), true);
 	GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::MakeRandomColor(), TEXT("ActivateEnemySpawner"));
 }
 
@@ -127,7 +127,7 @@ void AEnemySpawner::BeginPlay()
 	{
 		SpawnDelay = 0.7f;
 	}
-	GetWorldTimerManager().SetTimer(SpawnHandle, this, &AEnemySpawner::SpawnEnemy, GetSpawnDelay(), true);
+	ActivateEnemySpawner();
 	CreateEnemy();
 }
 

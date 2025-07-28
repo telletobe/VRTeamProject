@@ -215,6 +215,7 @@ void AEnemyCharacter::DeSpawn()
 	{
 		UE_LOG(LogTemp,Warning,TEXT("DeSpawnPoint invalid"));
 		SetActorLocation(FVector(FVector::ZeroVector));
+		FindDeSpawnPoint();
 	}
 
 	GetMesh()->SetSimulatePhysics(false);
@@ -248,8 +249,9 @@ void AEnemyCharacter::Spawn()
 	else {
 		UE_LOG(LogTemp,Warning,TEXT("SpawnPoint InValid "));
 		FindSpawnPoint();
-		Spawn();
 	}
+
+	return;
 }
 
 void AEnemyCharacter::SetSpawnPoint(AActor* TargetPoint)
