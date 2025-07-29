@@ -65,7 +65,7 @@ public:
 
 	
 	UFUNCTION()
-	void ApplyWeatherEffectToEnemy(EWeatherData NewWeather);
+	void ApplyWeatherEffectToEnemy(const EWeatherData NewWeather) const;
 	
 	void TestSetRandomRegionData();
 
@@ -79,7 +79,7 @@ private:
 	void OnWeatherResponse(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful);
 	
 	void SetWeatherData(const FRegionData& Data);
-	FString SetURLData(int32 RegionNum) const;
+	FString SetURLData(const int32 RegionNum) const;
 	// Weather Data 
 	UPROPERTY(EditAnywhere,Category = "Region")
 	FRegionData RegionData;

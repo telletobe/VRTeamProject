@@ -24,7 +24,7 @@ public:
 	float GetFireDelay() const { return FireDelay; }
 	float GetDefaultFireDelay() const { return DefaultFireDelay; }
 	TObjectPtr<UStaticMeshComponent> GetMesh() const { return WeaponMesh.Get(); }
-	const FRotator FireWithSpread(float Pitch, float Yaw, float Roll);
+	FRotator FireWithSpread(float Pitch,float Yaw,float Roll);
 
 protected:
 	// Called when the game starts or when spawned

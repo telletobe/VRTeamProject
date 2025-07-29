@@ -52,7 +52,7 @@ void APlayerWeapon::BeginPlay()
 
 }
 
-const FRotator APlayerWeapon::FireWithSpread(float Pitch, float Yaw, float Roll)
+FRotator APlayerWeapon::FireWithSpread(float Pitch,float Yaw,float Roll)
 {
 	const float RandomPitch = FMath::FRandRange(-Pitch, Pitch); // Y
 	const float RandomYaw = FMath::FRandRange(-Yaw, Yaw); // Z
@@ -75,7 +75,7 @@ const FRotator APlayerWeapon::FireWithSpread(float Pitch, float Yaw, float Roll)
 }
 
 
-void APlayerWeapon::Fire(float Damage)
+void APlayerWeapon::Fire(const float Damage)
 {
 	if (!bIsFire) return;
 
@@ -120,7 +120,7 @@ void APlayerWeapon::ChangeFireState()
 	bIsFire = !bIsFire;
 }
 
-void APlayerWeapon::SetFireDelay(float AttackFireDelay)
+void APlayerWeapon::SetFireDelay(const float AttackFireDelay)
 {
 	FireDelay = AttackFireDelay;
 }

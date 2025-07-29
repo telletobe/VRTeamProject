@@ -18,7 +18,6 @@ class UMotionControllerComponent;
 class UWidgetInteractionComponent;
 class UCameraComponent;
 class UWidgetComponent;
-class UMapSelectWidget;
 class USpringArmComponent;
 
 UCLASS()

@@ -96,7 +96,11 @@ void UInputManager::ToggleWidgetVisibility(UWidgetComponent* Widget)
 
 void UInputManager::Initialize(APlayerCharacter* PlayerCharacter, APlayerController* PC)
 {
-	Player = PlayerCharacter;
+	if (!Player)
+	{
+		Player = PlayerCharacter;
+	}
+	
 
 	if (PC)
 	{

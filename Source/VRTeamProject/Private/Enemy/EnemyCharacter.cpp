@@ -391,9 +391,9 @@ void AEnemyCharacter::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, A
 	{
 		if (GetCurrentHp() > 0)
 		{
-			const float finalDamage = FMath::Max(1.0f, Bullet->GetDamage()-GetDef());
 			PlayHitEffect();
 			PlayHitMontage();
+			const float finalDamage = FMath::Max(1.0f, Bullet->GetDamage()-GetDef());
 			float EnemyHp = GetCurrentHp() - finalDamage;
 			if (EnemyHp > 0)
 			{

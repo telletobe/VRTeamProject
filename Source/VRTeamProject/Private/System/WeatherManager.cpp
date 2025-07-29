@@ -158,7 +158,7 @@ void AWeatherManager::OnWeatherResponse(FHttpRequestPtr Request, FHttpResponsePt
     }
 }
 
-void AWeatherManager::ApplyWeatherEffectToEnemy(EWeatherData NewWeather)
+void AWeatherManager::ApplyWeatherEffectToEnemy(const EWeatherData NewWeather) const
 {
 
     UE_LOG(LogTemp,Warning,TEXT("WeatherManager : Applyweather EweatherData : %d"), (int32)NewWeather);
@@ -263,7 +263,7 @@ void AWeatherManager::SetWeatherData(const FRegionData& Data)
     return;
 }
 
-FString AWeatherManager::SetURLData(int32 RegionNum) const
+FString AWeatherManager::SetURLData(const int32 RegionNum) const
 {
     // 현재 시간 기준 포맷된 기상청 시간 문자열 생성
     FString FormattedTime = FDateTime::Now().ToString(TEXT("%Y%m%d%H00"));
